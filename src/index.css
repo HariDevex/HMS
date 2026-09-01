@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-surface text-ink font-sans text-body;
+  }
+
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-card border border-line rounded-card shadow-card;
+  }
+
+  .input {
+    @apply h-[44px] w-full rounded-input border border-input bg-white px-3.5 text-body text-ink placeholder:text-slate-400 transition-colors duration-150 focus:border-primary focus:ring-2 focus:ring-blue-100 focus:outline-none disabled:bg-slate-50 disabled:text-slate-400;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-ink mb-1.5;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-input px-4 h-[40px] text-body font-semibold transition-all duration-150 select-none;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-white hover:bg-primary-dark active:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply btn bg-white text-[#334155] border border-line hover:bg-slate-50;
+  }
+
+  .btn-danger {
+    @apply btn bg-error text-white hover:bg-red-700;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-ink-secondary hover:bg-slate-100 hover:text-ink;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-small font-medium;
+  }
+
+  .th {
+    @apply px-4 py-3 text-left text-small font-semibold text-ink-secondary whitespace-nowrap;
+  }
+
+  .td {
+    @apply px-4 py-3.5 text-ink whitespace-nowrap text-body;
+  }
+
+  .toast-enter {
+    animation: slide-in-right 0.2s ease-out;
+  }
+}
+
+@layer utilities {
+  .pattern {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+}
