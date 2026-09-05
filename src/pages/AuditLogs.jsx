@@ -30,21 +30,21 @@ export default function AuditLogs() {
       />
 
       <div className="card">
-        <div className="p-4 border-b border-line flex flex-col sm:flex-row gap-3 sm:items-center">
-          <div className="relative flex-1 max-w-xs">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-secondary" />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search audit logs…" className="input pl-10" aria-label="Search logs" />
+        <div className="hdx_p-4 hdx_border-b hdx_border-line hdx_flex hdx_flex-col hdx_sm_flex-row hdx_gap-3 hdx_sm_items-center">
+          <div className="hdx_relative hdx_flex-1 hdx_max-w-xs">
+            <Search size={16} className="hdx_absolute hdx_left-3.5 hdx_top-1/2 hdx_transform hdx_translate-y--1/2 hdx_text-ink-secondary" />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search audit logs…" className="input hdx_pl-10" aria-label="Search logs" />
           </div>
-          <label className="flex items-center gap-2 text-small text-ink-secondary ml-auto cursor-pointer select-none">
-            <input type="checkbox" checked={onlyFailed} onChange={(e) => setOnlyFailed(e.target.checked)} className="h-4 w-4 rounded border-line accent-error" />
+          <label className="hdx_flex hdx_items-center hdx_gap-2 hdx_text-small hdx_text-ink-secondary hdx_ml-auto hdx_cursor-pointer hdx_select-none">
+            <input type="checkbox" checked={onlyFailed} onChange={(e) => setOnlyFailed(e.target.checked)} className="hdx_h-4 hdx_w-4 hdx_rounded hdx_border-line hdx_accent-error" />
             Show failures only
           </label>
         </div>
 
-        <div className="overflow-x-auto scrollbar-thin">
-          <table className="w-full min-w-[900px]">
+        <div className="hdx_overflow-x-auto scrollbar-thin">
+          <table className="hdx_w-full hdx_min-w-900px">
             <thead>
-              <tr className="border-b border-line bg-slate-50/50">
+              <tr className="hdx_border-b hdx_border-line hdx_bg-slate-50-50">
                 <th className="th">User</th>
                 <th className="th">Role</th>
                 <th className="th">Action</th>
@@ -54,20 +54,20 @@ export default function AuditLogs() {
                 <th className="th">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-line">
+            <tbody className="hdx_divide-y hdx_divide-line">
               {filtered.map((l) => (
-                <tr key={l.id} className="hover:bg-slate-50/60 transition-colors">
+                <tr key={l.id} className="hdx_hover_bg-slate-50-60 hdx_transition-colors">
                   <td className="td">
-                    <div className="flex items-center gap-3">
+                    <div className="hdx_flex hdx_items-center hdx_gap-3">
                       <Avatar initials={l.user === 'Unknown' ? 'UN' : l.user.split(' ').filter((w) => /^[A-Z]/.test(w)).map((w) => w[0]).join('').slice(0, 2)} size="sm" />
-                      <span className="font-medium">{l.user}</span>
+                      <span className="hdx_font-medium">{l.user}</span>
                     </div>
                   </td>
-                  <td className="td text-ink-secondary">{l.role}</td>
-                  <td className="td text-ink">{l.action}</td>
-                  <td className="td text-ink-secondary">{l.resource}</td>
-                  <td className="td text-ink-secondary whitespace-nowrap">{l.timestamp}</td>
-                  <td className="td text-ink-secondary max-w-[200px] truncate"><span className="inline-flex items-center gap-1.5"><Globe size={13} className="text-ink-secondary" />{l.ip}</span></td>
+                  <td className="td hdx_text-ink-secondary">{l.role}</td>
+                  <td className="td hdx_text-ink">{l.action}</td>
+                  <td className="td hdx_text-ink-secondary">{l.resource}</td>
+                  <td className="td hdx_text-ink-secondary hdx_whitespace-nowrap">{l.timestamp}</td>
+                  <td className="td hdx_text-ink-secondary hdx_max-w-200px hdx_truncate"><span className="hdx_inline-flex hdx_items-center hdx_gap-1.5"><Globe size={13} className="hdx_text-ink-secondary" />{l.ip}</span></td>
                   <td className="td">
                     <Badge color={l.status === 'Success' ? 'success' : 'error'}>
                       {l.status === 'Success' ? <ShieldCheck size={11} /> : <ShieldX size={11} />} {l.status}

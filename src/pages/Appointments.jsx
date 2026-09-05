@@ -51,27 +51,27 @@ export default function Appointments() {
         }
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="hdx_grid hdx_grid-cols-2 hdx_lg_grid-cols-4 hdx_gap-4 hdx_mb-6">
         {stats.map((s) => (
-          <div key={s.label} className="card p-4 flex items-center gap-3">
-            <div className="h-10 w-10 rounded-[10px] bg-primary-light flex items-center justify-center text-primary">
+          <div key={s.label} className="card hdx_p-4 hdx_flex hdx_items-center hdx_gap-3">
+            <div className="hdx_h-10 hdx_w-10 hdx_rounded-10 hdx_bg-primary-light hdx_flex hdx_items-center hdx_justify-center hdx_text-primary">
               <CalendarDays size={18} />
             </div>
-            <div><p className="text-2xl font-bold text-ink">{s.value}</p><p className="text-small text-ink-secondary">{s.label}</p></div>
+            <div><p className="hdx_text-2xl hdx_font-bold hdx_text-ink">{s.value}</p><p className="hdx_text-small hdx_text-ink-secondary">{s.label}</p></div>
           </div>
         ))}
       </div>
 
       <div className="card">
-        <div className="p-4 border-b border-line flex flex-col sm:flex-row gap-3 sm:items-center">
-          <div className="flex items-center gap-2">
+        <div className="hdx_p-4 hdx_border-b hdx_border-line hdx_flex hdx_flex-col hdx_sm_flex-row hdx_gap-3 hdx_sm_items-center">
+          <div className="hdx_flex hdx_items-center hdx_gap-2">
             <button className="btn-secondary !h-9 !px-2.5" aria-label="Previous"><ChevronLeft size={16} /></button>
-            <div className="px-4 text-body font-semibold text-ink">Monday, Aug 31, 2026</div>
+            <div className="hdx_px-4 hdx_text-body hdx_font-semibold hdx_text-ink">Monday, Aug 31, 2026</div>
             <button className="btn-secondary !h-9 !px-2.5" aria-label="Next"><ChevronRight size={16} /></button>
           </div>
-          <div className="flex flex-wrap gap-2 ml-auto">
+          <div className="hdx_flex hdx_flex-wrap hdx_gap-2 hdx_ml-auto">
             {['Daily', 'Weekly', 'Monthly'].map((v) => (
-              <button key={v} onClick={() => setView(v)} className={`px-3.5 h-9 rounded-input text-small font-medium transition-colors ${view === v ? 'bg-primary text-white' : 'text-ink-secondary hover:bg-slate-50'}`}>
+              <button key={v} onClick={() => setView(v)} className={`hdx_px-3.5 hdx_h-9 hdx_rounded-input hdx_text-small hdx_font-medium hdx_transition-colors ${view === v ? 'hdx_bg-primary hdx_text-white' : 'hdx_text-ink-secondary hdx_hover_bg-slate-50'}`}>
                 {v}
               </button>
             ))}
@@ -81,41 +81,41 @@ export default function Appointments() {
         {view === 'Weekly' ? (
           <WeeklyView />
         ) : (
-          <div className="overflow-x-auto scrollbar-thin">
-            <table className="w-full min-w-[820px]">
+          <div className="hdx_overflow-x-auto scrollbar-thin">
+            <table className="hdx_w-full hdx_min-w-820px">
               <thead>
-                <tr className="border-b border-line bg-slate-50/50">
+                <tr className="hdx_border-b hdx_border-line hdx_bg-slate-50-50">
                   <th className="th">Time</th>
                   <th className="th">Patient</th>
                   <th className="th">Doctor</th>
                   <th className="th">Department</th>
                   <th className="th">Status</th>
-                  <th className="th text-right">Action</th>
+                  <th className="th hdx_text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-line">
+              <tbody className="hdx_divide-y hdx_divide-line">
                 {filtered.map((a) => (
-                  <tr key={a.id} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="td"><span className="inline-flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" />{a.time}</span></td>
-                    <td className="td"><div className="flex items-center gap-2.5"><Avatar initials={a.patient.split(' ').map((n) => n[0]).join('')} size="sm" /><span className="font-medium">{a.patient}</span></div></td>
-                    <td className="td text-ink-secondary">{a.doctor}</td>
-                    <td className="td text-ink-secondary">{a.dept}</td>
+                  <tr key={a.id} className="hdx_hover_bg-slate-50-60 hdx_transition-colors">
+                    <td className="td"><span className="hdx_inline-flex hdx_items-center hdx_gap-2"><span className="hdx_h-2 hdx_w-2 hdx_rounded-full hdx_bg-primary" />{a.time}</span></td>
+                    <td className="td"><div className="hdx_flex hdx_items-center hdx_gap-2.5"><Avatar initials={a.patient.split(' ').map((n) => n[0]).join('')} size="sm" /><span className="hdx_font-medium">{a.patient}</span></div></td>
+                    <td className="td hdx_text-ink-secondary">{a.doctor}</td>
+                    <td className="td hdx_text-ink-secondary">{a.dept}</td>
                     <td className="td"><Badge color={statusColor(a.status)} dot>{a.status}</Badge></td>
-                    <td className="td text-right">
-                      <div className="inline-flex gap-1.5">
+                    <td className="td hdx_text-right">
+                      <div className="hdx_inline-flex hdx_gap-1.5">
                         {canCheckIn(a.status) && (
-                          <button onClick={() => advance(a)} title="Check in" className="p-1.5 rounded-input text-info hover:bg-cyan-50" aria-label="Check in">
+                          <button onClick={() => advance(a)} title="Check in" className="hdx_p-1.5 hdx_rounded-input hdx_text-info hdx_hover_bg-cyan-50" aria-label="Check in">
                             <UserCheck size={17} />
                           </button>
                         )}
                         {canDone(a.status) && (
-                          <button onClick={() => advance(a)} title="Start/Complete consultation" className="p-1.5 rounded-input text-success hover:bg-green-50" aria-label="Update consultation">
+                          <button onClick={() => advance(a)} title="Start/Complete consultation" className="hdx_p-1.5 hdx_rounded-input hdx_text-success hdx_hover_bg-green-50" aria-label="Update consultation">
                             <CheckCircle2 size={17} />
                           </button>
                         )}
-                        <Dropdown trigger={<button className="p-1.5 rounded-input text-ink-secondary hover:bg-slate-100" aria-label="More">⋯</button>}>
+                        <Dropdown trigger={<button className="hdx_p-1.5 hdx_rounded-input hdx_text-ink-secondary hdx_hover_bg-slate-100" aria-label="More">⋯</button>}>
                           {appointmentStatuses.filter((s) => s !== a.status).map((s) => (
-                            <button key={s} onClick={() => pushToast(`${a.patient}: status set to ${s}`, 'info')} className="w-full text-left px-3 py-2 rounded-input text-body text-ink-secondary hover:bg-slate-50">{s}</button>
+                            <button key={s} onClick={() => pushToast(`${a.patient}: status set to ${s}`, 'info')} className="hdx_w-full hdx_text-left hdx_px-3 hdx_py-2 hdx_rounded-input hdx_text-body hdx_text-ink-secondary hdx_hover_bg-slate-50">{s}</button>
                           ))}
                         </Dropdown>
                       </div>
@@ -135,19 +135,19 @@ export default function Appointments() {
 
 function WeeklyView() {
   return (
-    <div className="p-4 overflow-x-auto">
-      <div className="grid grid-cols-7 gap-2 min-w-[800px]">
+    <div className="hdx_p-4 hdx_overflow-x-auto">
+      <div className="hdx_grid hdx_grid-cols-7 hdx_gap-2 hdx_min-w-800px">
         {weekDays.map((d, i) => (
-          <div key={d} className={i === 0 ? 'rounded-card bg-primary-light border border-blue-100' : 'rounded-card border border-line'}>
-            <div className={`p-2.5 text-center font-semibold text-small ${i === 0 ? 'text-primary' : 'text-ink'}`}>{d}</div>
-            <div className="border-t border-line px-1.5 py-2 space-y-1.5 min-h-[160px]">
+          <div key={d} className={i === 0 ? 'hdx_rounded-card hdx_bg-primary-light hdx_border hdx_border-blue-100' : 'hdx_rounded-card hdx_border hdx_border-line'}>
+            <div className={`hdx_p-2.5 hdx_text-center hdx_font-semibold hdx_text-small ${i === 0 ? 'hdx_text-primary' : 'hdx_text-ink'}`}>{d}</div>
+            <div className="hdx_border-t hdx_border-line hdx_px-1.5 hdx_py-2 hdx_space-y-1.5 hdx_min-h-160px">
               {appointments.filter((a) => (i === 0 ? true : a.date === 'Sep 1, 2026')).slice(0, 3).map((a) => (
-                <div key={a.id} className="rounded-input bg-background px-2 py-1.5 text-[11px] border-l-2 border-primary">
-                  <p className="font-medium text-ink truncate">{a.time} {a.patient.split(' ')[0]}</p>
-                  <p className="text-ink-secondary truncate">{a.doctor}</p>
+                <div key={a.id} className="hdx_rounded-input hdx_bg-background hdx_px-2 hdx_py-1.5 hdx_text-11 hdx_border-l-2 hdx_border-primary">
+                  <p className="hdx_font-medium hdx_text-ink hdx_truncate">{a.time} {a.patient.split(' ')[0]}</p>
+                  <p className="hdx_text-ink-secondary hdx_truncate">{a.doctor}</p>
                 </div>
               ))}
-              {i === 0 && <div className="text-center text-[11px] text-primary font-semibold pt-1">+{appointments.filter((aa) => new Date(aa.date.split(',')[0] + ' 2026') > new Date()).length} more</div>}
+              {i === 0 && <div className="hdx_text-center hdx_text-11 hdx_text-primary hdx_font-semibold hdx_pt-1">+{appointments.filter((aa) => new Date(aa.date.split(',')[0] + ' 2026') > new Date()).length} more</div>}
             </div>
           </div>
         ))}
@@ -158,10 +158,10 @@ function WeeklyView() {
 function NewAppointmentModal({ onClose }) {
   const { pushToast } = useApp();
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-slate-900/40 p-4 sm:p-6 overflow-y-auto" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="card w-full max-w-lg my-8 animate-slide-up">
-        <div className="px-6 pt-5 pb-4 border-b border-line"><h3 className="text-card-title text-ink">Book New Appointment</h3><p className="text-secondary text-ink-secondary mt-0.5">Schedule a patient appointment</p></div>
-        <div className="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
+    <div className="hdx_fixed hdx_inset-0 hdx_z-50 hdx_flex hdx_items-start hdx_justify-center hdx_bg-slate-900-40 hdx_p-4 hdx_sm_p-6 hdx_overflow-y-auto" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="card hdx_w-full hdx_max-w-lg hdx_my-8 hdx_animate-slide-up">
+        <div className="hdx_px-6 hdx_pt-5 hdx_pb-4 hdx_border-b hdx_border-line"><h3 className="hdx_text-card-title hdx_text-ink">Book New Appointment</h3><p className="hdx_text-secondary-text hdx_text-ink-secondary hdx_mt-0.5">Schedule a patient appointment</p></div>
+        <div className="hdx_px-6 hdx_py-5 hdx_grid hdx_grid-cols-1 hdx_sm_grid-cols-2 hdx_gap-5">
           {[
             { l: 'Patient', t: 'select', placeholder: 'Select patient' },
             { l: 'Doctor', t: 'select', placeholder: 'Select doctor' },
@@ -170,13 +170,13 @@ function NewAppointmentModal({ onClose }) {
             { l: 'Time', t: 'time' },
             { l: 'Reason', t: 'text', placeholder: 'Reason for visit' },
           ].map((f) => (
-            <div key={f.l} className={f.l === 'Reason' ? 'sm:col-span-2' : ''}>
+            <div key={f.l} className={f.l === 'Reason' ? 'hdx_sm_col-span-2' : ''}>
               <label className="label">{f.l}</label>
               <input type={f.t} placeholder={f.placeholder} className="input" />
             </div>
           ))}
         </div>
-        <div className="flex justify-end gap-3 px-6 py-4 border-t border-line bg-slate-50/50 rounded-b-card">
+        <div className="hdx_flex hdx_justify-end hdx_gap-3 hdx_px-6 hdx_py-4 hdx_border-t hdx_border-line hdx_bg-slate-50-50 hdx_rounded-b-card">
           <button className="btn-secondary" onClick={onClose}>Cancel</button>
           <button className="btn-primary" onClick={() => { pushToast('Appointment scheduled', 'success'); onClose(); }}>Schedule</button>
         </div>

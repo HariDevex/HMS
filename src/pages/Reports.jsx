@@ -40,54 +40,54 @@ export default function Reports() {
       />
 
       <div className="card">
-        <div className="p-4 border-b border-line flex flex-col sm:flex-row gap-3 sm:items-center">
-          <div className="relative flex-1 max-w-xs">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-secondary" />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search reports…" className="input pl-10" aria-label="Search reports" />
+        <div className="hdx_p-4 hdx_border-b hdx_border-line hdx_flex hdx_flex-col hdx_sm_flex-row hdx_gap-3 hdx_sm_items-center">
+          <div className="hdx_relative hdx_flex-1 hdx_max-w-xs">
+            <Search size={16} className="hdx_absolute hdx_left-3.5 hdx_top-1/2 hdx_transform hdx_translate-y--1/2 hdx_text-ink-secondary" />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search reports…" className="input hdx_pl-10" aria-label="Search reports" />
           </div>
-          <div className="flex gap-2.5 ml-auto">
-            <div className="input !w-44 !bg-white cursor-pointer flex items-center justify-between">
-              <span className="text-ink-secondary">Report type</span><SlidersHorizontal size={15} className="text-ink-secondary" />
+          <div className="hdx_flex hdx_gap-2.5 hdx_ml-auto">
+            <div className="input !w-44 !bg-white hdx_cursor-pointer hdx_flex hdx_items-center hdx_justify-between">
+              <span className="hdx_text-ink-secondary">Report type</span><SlidersHorizontal size={15} className="hdx_text-ink-secondary" />
             </div>
-            <div className="input !w-40 !bg-white cursor-pointer flex items-center justify-between">
-              <span className="text-ink-secondary">Date range</span><SlidersHorizontal size={15} className="text-ink-secondary" />
+            <div className="input !w-40 !bg-white hdx_cursor-pointer hdx_flex hdx_items-center hdx_justify-between">
+              <span className="hdx_text-ink-secondary">Date range</span><SlidersHorizontal size={15} className="hdx_text-ink-secondary" />
             </div>
           </div>
         </div>
 
-        <div className="overflow-x-auto scrollbar-thin">
-          <table className="w-full min-w-[860px]">
+        <div className="hdx_overflow-x-auto scrollbar-thin">
+          <table className="hdx_w-full hdx_min-w-860px">
             <thead>
-              <tr className="border-b border-line bg-slate-50/50">
+              <tr className="hdx_border-b hdx_border-line hdx_bg-slate-50-50">
                 <th className="th">Report</th>
                 <th className="th">Patient</th>
                 <th className="th">Type</th>
                 <th className="th">Date</th>
                 <th className="th">Uploaded By</th>
                 <th className="th">Status</th>
-                <th className="th text-right">Actions</th>
+                <th className="th hdx_text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-line">
+            <tbody className="hdx_divide-y hdx_divide-line">
               {filtered.map((r) => (
-                <tr key={r.id} className="hover:bg-slate-50/60 transition-colors">
+                <tr key={r.id} className="hdx_hover_bg-slate-50-60 hdx_transition-colors">
                   <td className="td">
-                    <div className="flex items-center gap-2.5">
-                      <span className={`h-9 w-9 rounded-[8px] flex items-center justify-center ${r.fileType === 'PDF' ? 'bg-red-50 text-error' : 'bg-blue-50 text-primary'}`}>
+                    <div className="hdx_flex hdx_items-center hdx_gap-2.5">
+                      <span className={`hdx_h-9 hdx_w-9 hdx_rounded-8 hdx_flex hdx_items-center hdx_justify-center ${r.fileType === 'PDF' ? 'hdx_bg-red-50 hdx_text-error' : 'hdx_bg-blue-50 hdx_text-primary'}`}>
                         {r.fileType === 'PDF' ? <FileText size={17} /> : <ImageIcon size={17} />}
                       </span>
-                      <span className="font-medium">{r.report}</span>
+                      <span className="hdx_font-medium">{r.report}</span>
                     </div>
                   </td>
-                  <td className="td text-ink-secondary">{r.patient}</td>
-                  <td className="td text-ink-secondary">{r.type}</td>
-                  <td className="td text-ink-secondary">{r.date}</td>
-                  <td className="td text-ink-secondary">{r.uploadedBy}</td>
+                  <td className="td hdx_text-ink-secondary">{r.patient}</td>
+                  <td className="td hdx_text-ink-secondary">{r.type}</td>
+                  <td className="td hdx_text-ink-secondary">{r.date}</td>
+                  <td className="td hdx_text-ink-secondary">{r.uploadedBy}</td>
                   <td className="td"><Badge color={statusColor(r.status)} dot>{r.status}</Badge></td>
-                  <td className="td text-right">
-                    <div className="inline-flex gap-1.5">
-                      <button onClick={() => setPreview(r)} className="p-1.5 rounded-input text-primary hover:bg-primary-light" aria-label="Preview"><Eye size={17} /></button>
-                      <button onClick={() => pushToast('Report downloaded', 'success')} className="p-1.5 rounded-input text-ink-secondary hover:bg-slate-100" aria-label="Download"><Download size={17} /></button>
+                  <td className="td hdx_text-right">
+                    <div className="hdx_inline-flex hdx_gap-1.5">
+                      <button onClick={() => setPreview(r)} className="hdx_p-1.5 hdx_rounded-input hdx_text-primary hdx_hover_bg-primary-light" aria-label="Preview"><Eye size={17} /></button>
+                      <button onClick={() => pushToast('Report downloaded', 'success')} className="hdx_p-1.5 hdx_rounded-input hdx_text-ink-secondary hdx_hover_bg-slate-100" aria-label="Download"><Download size={17} /></button>
                     </div>
                   </td>
                 </tr>
@@ -112,33 +112,33 @@ function PreviewModal({ report, onClose }) {
         <button className="btn-secondary" onClick={onClose}>Close</button>
         <button className="btn-primary" onClick={() => pushToast('Report downloaded', 'success')}><FileDown size={16} /> Download</button>
       </>}>
-      <div className="rounded-card border border-line overflow-hidden">
-        <div className="bg-slate-800 px-4 py-2.5 flex items-center justify-between">
-          <span className="text-small text-slate-300">{report.report}.{report.fileType === 'PDF' ? 'pdf' : 'png'}</span>
-          <div className="flex items-center gap-1">
-            <button className="p-1 text-slate-300 hover:text-white" aria-label="Fullscreen"><Maximize size={15} /></button>
-            <button className="p-1 text-slate-300 hover:text-white" onClick={onClose} aria-label="Close preview"><X size={15} /></button>
+      <div className="hdx_rounded-card hdx_border hdx_border-line hdx_overflow-hidden">
+        <div className="hdx_bg-slate-800 hdx_px-4 hdx_py-2.5 hdx_flex hdx_items-center hdx_justify-between">
+          <span className="hdx_text-small hdx_text-slate-300">{report.report}.{report.fileType === 'PDF' ? 'pdf' : 'png'}</span>
+          <div className="hdx_flex hdx_items-center hdx_gap-1">
+            <button className="hdx_p-1 hdx_text-slate-300 hdx_hover_text-white" aria-label="Fullscreen"><Maximize size={15} /></button>
+            <button className="hdx_p-1 hdx_text-slate-300 hdx_hover_text-white" onClick={onClose} aria-label="Close preview"><X size={15} /></button>
           </div>
         </div>
-        <div className="h-80 bg-[repeating-linear-gradient(0deg,#f8fafc,#f8fafc_24px,#eef2f7_24px,#eef2f7_25px)] flex items-center justify-center">
+        <div className="hdx_h-80 hdx_chart-grid hdx_flex hdx_items-center hdx_justify-center">
           {report.fileType === 'PDF' ? (
-            <div className="text-center">
-              <FileText size={48} className="mx-auto text-slate-300" />
-              <p className="text-body text-ink-secondary mt-3">Secure PDF preview — {report.report}</p>
-              <p className="text-small text-ink-secondary">Encrypted document · viewable by authorized staff</p>
+            <div className="hdx_text-center">
+              <FileText size={48} className="hdx_mx-auto hdx_text-slate-300" />
+              <p className="hdx_text-body hdx_text-ink-secondary hdx_mt-3">Secure PDF preview — {report.report}</p>
+              <p className="hdx_text-small hdx_text-ink-secondary">Encrypted document · viewable by authorized staff</p>
             </div>
           ) : (
-            <div className="text-center">
-              <ImageIcon size={48} className="mx-auto text-slate-300" />
-              <p className="text-body text-ink-secondary mt-3">Imaging file preview</p>
-              <p className="text-small text-ink-secondary">Open the scan viewer for full resolution</p>
+            <div className="hdx_text-center">
+              <ImageIcon size={48} className="hdx_mx-auto hdx_text-slate-300" />
+              <p className="hdx_text-body hdx_text-ink-secondary hdx_mt-3">Imaging file preview</p>
+              <p className="hdx_text-small hdx_text-ink-secondary">Open the scan viewer for full resolution</p>
             </div>
           )}
         </div>
       </div>
-      <div className="mt-4 flex items-center gap-2">
+      <div className="hdx_mt-4 hdx_flex hdx_items-center hdx_gap-2">
         <Badge color={statusColor(report.status)} dot>{report.status}</Badge>
-        <span className="text-small text-ink-secondary">Shared securely — {report.patient} (HIPAA protected)</span>
+        <span className="hdx_text-small hdx_text-ink-secondary">Shared securely — {report.patient} (HIPAA protected)</span>
       </div>
     </Modal>
   );
@@ -153,8 +153,8 @@ function UploadModal({ open, onClose }) {
         <button className="btn-secondary" onClick={onClose}>Cancel</button>
         <button className="btn-primary" onClick={() => { pushToast('Report uploaded for review', 'success'); onClose(); }}>Upload</button>
       </>}>
-      <div className="space-y-5">
-        <div className="grid grid-cols-2 gap-4">
+      <div className="hdx_space-y-5">
+        <div className="hdx_grid hdx_grid-cols-2 hdx_gap-4">
           <div><label className="label">Patient</label><input className="input" placeholder="Select patient" /></div>
           <div><label className="label">Report type</label><input className="input" placeholder="Laboratory / Imaging" /></div>
         </div>
@@ -162,11 +162,11 @@ function UploadModal({ open, onClose }) {
           onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
           onDragLeave={() => setDrag(false)}
           onDrop={(e) => { e.preventDefault(); setDrag(false); pushToast('File attached', 'success'); }}
-          className={`border-2 border-dashed rounded-card p-8 text-center transition-colors ${drag ? 'border-primary bg-primary-light' : 'border-line'}`}
+          className={`hdx_border-2 hdx_border-dashed hdx_rounded-card hdx_p-8 hdx_text-center hdx_transition-colors ${drag ? 'hdx_border-primary hdx_bg-primary-light' : 'hdx_border-line'}`}
         >
-          <FileText size={28} className="mx-auto text-primary" />
-          <p className="text-body font-medium text-ink mt-3">Drop files here or click to browse</p>
-          <p className="text-small text-ink-secondary mt-1">PDF, JPG, PNG, DICOM · Max 50MB</p>
+          <FileText size={28} className="hdx_mx-auto hdx_text-primary" />
+          <p className="hdx_text-body hdx_font-medium hdx_text-ink hdx_mt-3">Drop files here or click to browse</p>
+          <p className="hdx_text-small hdx_text-ink-secondary hdx_mt-1">PDF, JPG, PNG, DICOM · Max 50MB</p>
         </div>
       </div>
     </Modal>

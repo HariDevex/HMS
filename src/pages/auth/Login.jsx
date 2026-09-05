@@ -33,20 +33,20 @@ export default function Login() {
 
   return (
     <AuthLayout sideNote="Protected by end-to-end encryption & multi-factor authentication.">
-      <h1 className="text-2xl font-bold text-ink">Welcome back</h1>
-      <p className="text-secondary text-ink-secondary mt-1.5">
+      <h1 className="hdx_text-2xl hdx_font-bold hdx_text-ink">Welcome back</h1>
+      <p className="hdx_text-secondary-text hdx_text-ink-secondary hdx_mt-1.5">
         Sign in to your hospital account to continue.
       </p>
 
-      <form onSubmit={onSubmit} className="mt-8 space-y-5" noValidate>
+      <form onSubmit={onSubmit} className="hdx_mt-8 hdx_space-y-5" noValidate>
         <Field label="Email address" error={errors.email}>
-          <div className="relative">
-            <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-secondary" />
+          <div className="hdx_relative">
+            <Mail size={16} className="hdx_absolute hdx_left-3.5 hdx_top-1/2 hdx_transform hdx_translate-y--1/2 hdx_text-ink-secondary" />
             <Input
               name="email"
               type="email"
               placeholder="you@hospital.com"
-              className="pl-10"
+              className="hdx_pl-10"
               value={values.email}
               onChange={onChange}
             />
@@ -54,20 +54,20 @@ export default function Login() {
         </Field>
 
         <Field label="Password" error={errors.password}>
-          <div className="relative">
-            <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-secondary" />
+          <div className="hdx_relative">
+            <Lock size={16} className="hdx_absolute hdx_left-3.5 hdx_top-1/2 hdx_transform hdx_translate-y--1/2 hdx_text-ink-secondary" />
             <Input
               name="password"
               type={show ? 'text' : 'password'}
               placeholder="••••••••"
-              className="pl-10 pr-10"
+              className="hdx_pl-10 hdx_pr-10"
               value={values.password}
               onChange={onChange}
             />
             <button
               type="button"
               onClick={() => setShow((s) => !s)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-secondary hover:text-ink"
+              className="hdx_absolute hdx_right-3.5 hdx_top-1/2 hdx_transform hdx_translate-y--1/2 hdx_text-ink-secondary hdx_hover_text-ink"
               aria-label={show ? 'Hide password' : 'Show password'}
             >
               {show ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -75,24 +75,24 @@ export default function Login() {
           </div>
         </Field>
 
-        <div className="flex items-center justify-between">
-          <label className="flex items-center gap-2 text-small text-ink-secondary cursor-pointer select-none">
-            <input type="checkbox" className="h-4 w-4 rounded border-line accent-primary" />
+        <div className="hdx_flex hdx_items-center hdx_justify-between">
+          <label className="hdx_flex hdx_items-center hdx_gap-2 hdx_text-small hdx_text-ink-secondary hdx_cursor-pointer hdx_select-none">
+            <input type="checkbox" className="hdx_h-4 hdx_w-4 hdx_rounded hdx_border-line hdx_accent-primary" />
             Remember me
           </label>
-          <Link to="/forgot-password" className="text-small font-medium text-primary hover:underline">
+          <Link to="/forgot-password" className="hdx_text-small hdx_font-medium hdx_text-primary hdx_hover_underline">
             Forgot password?
           </Link>
         </div>
 
-        <button type="submit" className="btn-primary w-full h-[44px]">
+        <button type="submit" className="btn-primary hdx_w-full hdx_h-44px">
           Sign in <ArrowRight size={16} />
         </button>
       </form>
 
-      <div className="mt-6 rounded-card bg-surface border border-line p-3.5 flex items-start gap-2.5">
-        <ShieldCheck size={17} className="text-primary shrink-0 mt-0.5" />
-        <p className="text-small text-ink-secondary">
+      <div className="hdx_mt-6 hdx_rounded-card hdx_bg-surface hdx_border hdx_border-line hdx_p-3.5 hdx_flex hdx_items-start hdx_gap-2.5">
+        <ShieldCheck size={17} className="hdx_text-primary hdx_shrink-0 hdx_mt-0.5" />
+        <p className="hdx_text-small hdx_text-ink-secondary">
           Your session is protected with two-factor authentication and modern encryption standards.
         </p>
       </div>

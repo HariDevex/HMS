@@ -74,18 +74,18 @@ export default function Patients() {
       />
 
       <div className="card">
-        <div className="p-4 border-b border-line flex flex-col sm:flex-row gap-3 sm:items-center">
-          <div className="relative flex-1 max-w-xs">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-secondary" />
+        <div className="hdx_p-4 hdx_border-b hdx_border-line hdx_flex hdx_flex-col hdx_sm_flex-row hdx_gap-3 hdx_sm_items-center">
+          <div className="hdx_relative hdx_flex-1 hdx_max-w-xs">
+            <Search size={16} className="hdx_absolute hdx_left-3.5 hdx_top-1/2 hdx_transform hdx_translate-y--1/2 hdx_text-ink-secondary" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search patients…"
-              className="input pl-10"
+              className="input hdx_pl-10"
               aria-label="Search patients"
             />
           </div>
-          <div className="flex gap-2.5 ml-auto">
+          <div className="hdx_flex hdx_gap-2.5 hdx_ml-auto">
             <Select value={dept} onChange={(e) => setDept(e.target.value)} aria-label="Filter by department" className="!w-auto">
               <option value="">All departments</option>
               {DEPARTMENTS.map((d) => (
@@ -104,10 +104,10 @@ export default function Patients() {
           </div>
         </div>
 
-        <div className="overflow-x-auto scrollbar-thin">
-          <table className="w-full min-w-[900px]">
+        <div className="hdx_overflow-x-auto scrollbar-thin">
+          <table className="hdx_w-full hdx_min-w-900px">
             <thead>
-              <tr className="border-b border-line bg-slate-50/50">
+              <tr className="hdx_border-b hdx_border-line hdx_bg-slate-50-50">
                 <th className="th">Patient</th>
                 <th className="th">ID</th>
                 <th className="th">Age/Gender</th>
@@ -115,27 +115,27 @@ export default function Patients() {
                 <th className="th">Department</th>
                 <th className="th">Last Visit</th>
                 <th className="th">Status</th>
-                <th className="th text-right">Actions</th>
+                <th className="th hdx_text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-line">
+            <tbody className="hdx_divide-y hdx_divide-line">
               {filtered.map((p) => (
-                <tr key={p.id} className="hover:bg-slate-50/60 transition-colors cursor-pointer" onClick={() => navigate(`/patients/${p.id}`)}>
+                <tr key={p.id} className="hdx_hover_bg-slate-50-60 hdx_transition-colors hdx_cursor-pointer" onClick={() => navigate(`/patients/${p.id}`)}>
                   <td className="td">
-                    <div className="flex items-center gap-3">
+                    <div className="hdx_flex hdx_items-center hdx_gap-3">
                       <Avatar initials={p.avatar} size="sm" />
-                      <span className="font-semibold">{p.name}</span>
+                      <span className="hdx_font-semibold">{p.name}</span>
                     </div>
                   </td>
-                  <td className="td text-ink-secondary">{p.id}</td>
+                  <td className="td hdx_text-ink-secondary">{p.id}</td>
                   <td className="td">{p.age} · {p.gender === 'Female' ? 'F' : 'M'}</td>
-                  <td className="td text-ink-secondary">{p.doctor}</td>
-                  <td className="td text-ink-secondary">{p.department}</td>
-                  <td className="td text-ink-secondary">{p.lastVisit}</td>
+                  <td className="td hdx_text-ink-secondary">{p.doctor}</td>
+                  <td className="td hdx_text-ink-secondary">{p.department}</td>
+                  <td className="td hdx_text-ink-secondary">{p.lastVisit}</td>
                   <td className="td"><Badge color={statusColor(p.status)} dot>{p.status}</Badge></td>
-                  <td className="td text-right" onClick={(e) => e.stopPropagation()}>
+                  <td className="td hdx_text-right" onClick={(e) => e.stopPropagation()}>
                     <Dropdown
-                      trigger={<button className="p-1.5 rounded-input text-ink-secondary hover:bg-slate-100" aria-label="Actions"><MoreHorizontal size={18} /></button>}
+                      trigger={<button className="hdx_p-1.5 hdx_rounded-input hdx_text-ink-secondary hdx_hover_bg-slate-100" aria-label="Actions"><MoreHorizontal size={18} /></button>}
                     >
                       <DropdownItem icon={Eye} onClick={() => navigate(`/patients/${p.id}`)}>View profile</DropdownItem>
                       <DropdownItem icon={CalendarPlus} onClick={() => navigate('/appointments?new=1')}>Book appointment</DropdownItem>
@@ -146,7 +146,7 @@ export default function Patients() {
             </tbody>
           </table>
         </div>
-        <div className="px-4 py-3 border-t border-line text-small text-ink-secondary">
+        <div className="hdx_px-4 hdx_py-3 hdx_border-t hdx_border-line hdx_text-small hdx_text-ink-secondary">
           Showing {filtered.length} of {patients.length} patients
         </div>
       </div>
@@ -187,8 +187,8 @@ function AddPatientModal({ open, onClose, onSave }) {
         <button className="btn-secondary" onClick={onClose}>Cancel</button>
         <button className="btn-primary" onClick={submit}>Create Patient</button>
       </>}>
-      <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 gap-5" noValidate>
-        <Field label="Full name" required error={errors.name} className="sm:col-span-2">
+      <form onSubmit={submit} className="hdx_grid hdx_grid-cols-1 hdx_sm_grid-cols-2 hdx_gap-5" noValidate>
+        <Field label="Full name" required error={errors.name} className="hdx_sm_col-span-2">
           <Input placeholder="e.g. John Carter" value={form.name} onChange={set('name')} />
         </Field>
         <Field label="Age" required error={errors.age}>
@@ -212,13 +212,13 @@ function AddPatientModal({ open, onClose, onSave }) {
             {DEPARTMENTS.map((d) => <option key={d.id} value={d.name}>{d.name}</option>)}
           </Select>
         </Field>
-        <Field label="Phone" required error={errors.phone} className="sm:col-span-2">
+        <Field label="Phone" required error={errors.phone} className="hdx_sm_col-span-2">
           <Input placeholder="+1 (555) 000-0000" value={form.phone} onChange={set('phone')} />
         </Field>
-        <Field label="Email" className="sm:col-span-2">
+        <Field label="Email" className="hdx_sm_col-span-2">
           <Input type="email" placeholder="patient@example.com" value={form.email} onChange={set('email')} />
         </Field>
-        <Field label="Address" className="sm:col-span-2">
+        <Field label="Address" className="hdx_sm_col-span-2">
           <Input placeholder="Street, City, State" value={form.address} onChange={set('address')} />
         </Field>
         <Field label="Current medications">

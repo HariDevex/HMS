@@ -24,47 +24,47 @@ export default function Recommendations() {
         }
       />
 
-      <div className="relative max-w-xs mb-6">
-        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-secondary" />
-        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search recommendations…" className="input pl-10" aria-label="Search" />
+      <div className="hdx_relative hdx_max-w-xs hdx_mb-6">
+        <Search size={16} className="hdx_absolute hdx_left-3.5 hdx_top-1/2 hdx_transform hdx_translate-y--1/2 hdx_text-ink-secondary" />
+        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search recommendations…" className="input hdx_pl-10" aria-label="Search" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="hdx_grid hdx_grid-cols-1 hdx_lg_grid-cols-2 hdx_gap-4">
         {filtered.map((r) => (
-          <div key={r.id} className="card p-6 flex flex-col">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
+          <div key={r.id} className="card hdx_p-6 hdx_flex hdx_flex-col">
+            <div className="hdx_flex hdx_items-center hdx_justify-between hdx_mb-4">
+              <div className="hdx_flex hdx_items-center hdx_gap-3">
                 <Avatar initials={r.doctor.split(' ').map((n) => n[0]).join('')} size="sm" />
                 <div>
-                  <p className="text-body font-semibold text-ink">{r.doctor}</p>
-                  <p className="text-small text-ink-secondary">{r.date} · {r.patient}</p>
+                  <p className="hdx_text-body hdx_font-semibold hdx_text-ink">{r.doctor}</p>
+                  <p className="hdx_text-small hdx_text-ink-secondary">{r.date} · {r.patient}</p>
                 </div>
               </div>
               <Badge color="warning">{r.diagnosis}</Badge>
             </div>
 
-            <div className="rounded-input bg-surface border border-line p-4 flex-1">
-              <p className="text-small font-semibold text-ink mb-1.5">Clinical Notes</p>
-              <p className="text-body text-ink-secondary leading-relaxed">{r.notes}</p>
+            <div className="hdx_rounded-input hdx_bg-surface hdx_border hdx_border-line hdx_p-4 hdx_flex-1">
+              <p className="hdx_text-small hdx_font-semibold hdx_text-ink hdx_mb-1.5">Clinical Notes</p>
+              <p className="hdx_text-body hdx_text-ink-secondary hdx_leading-relaxed">{r.notes}</p>
             </div>
 
-            <p className="text-small font-semibold text-ink mt-4 mb-2">Recommendations</p>
-            <ul className="space-y-2">
+            <p className="hdx_text-small hdx_font-semibold hdx_text-ink hdx_mt-4 hdx_mb-2">Recommendations</p>
+            <ul className="hdx_space-y-2">
               {r.recommendations.map((rec, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-body text-ink">
-                  <span className="mt-1.5 h-2 w-2 rounded-full bg-primary flex-shrink-0" />
+                <li key={i} className="hdx_flex hdx_items-start hdx_gap-2.5 hdx_text-body hdx_text-ink">
+                  <span className="hdx_mt-1.5 hdx_h-2 hdx_w-2 hdx_rounded-full hdx_bg-primary hdx_shrink-0" />
                   {rec}
                 </li>
               ))}
             </ul>
 
-            <div className="mt-4 pt-4 border-t border-line space-y-2">
+            <div className="hdx_mt-4 hdx_pt-4 hdx_border-t hdx_border-line hdx_space-y-2">
               <div>
-                <p className="text-small font-semibold text-ink mb-0.5">Medication Instructions</p>
-                <p className="text-body text-ink-secondary">{r.medicationInstructions}</p>
+                <p className="hdx_text-small hdx_font-semibold hdx_text-ink hdx_mb-0.5">Medication Instructions</p>
+                <p className="hdx_text-body hdx_text-ink-secondary">{r.medicationInstructions}</p>
               </div>
-              <div className="flex items-center gap-2">
-                <Badge color="primary"><span className="inline-flex items-center gap-1">Follow-up: {r.followUp}</span></Badge>
+              <div className="hdx_flex hdx_items-center hdx_gap-2">
+                <Badge color="primary"><span className="hdx_inline-flex hdx_items-center hdx_gap-1">Follow-up: {r.followUp}</span></Badge>
               </div>
             </div>
           </div>
@@ -84,8 +84,8 @@ function NewRecommendationModal({ open, onClose }) {
         <button className="btn-secondary" onClick={onClose}>Cancel</button>
         <button className="btn-primary" onClick={() => { pushToast('Recommendation recorded', 'success'); onClose(); }}>Save Recommendation</button>
       </>}>
-      <div className="space-y-5">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="hdx_space-y-5">
+        <div className="hdx_grid hdx_grid-cols-1 hdx_sm_grid-cols-3 hdx_gap-4">
           <Field label="Patient"><Input placeholder="Patient name" /></Field>
           <Field label="Diagnosis"><Input placeholder="Diagnosis" /></Field>
           <Field label="Follow-up date"><Input type="date" /></Field>

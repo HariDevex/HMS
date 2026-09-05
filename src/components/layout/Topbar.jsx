@@ -24,31 +24,31 @@ export default function Topbar({ onMenu }) {
   const unread = notifications.filter((n) => n.unread).length;
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white border-b border-line flex items-center gap-3 px-4 sm:px-6">
+    <header className="hdx_sticky hdx_top-0 hdx_z-30 hdx_h-16 hdx_bg-white hdx_border-b hdx_border-line hdx_flex hdx_items-center hdx_gap-3 hdx_px-4 hdx_sm_px-6">
       <button
-        className="lg:hidden p-2 rounded-input text-ink-secondary hover:bg-slate-100"
+        className="hdx_lg_hidden hdx_p-2 hdx_rounded-input hdx_text-ink-secondary hdx_hover_bg-slate-100"
         onClick={onMenu}
         aria-label="Open menu"
       >
         <Menu size={20} />
       </button>
 
-      <div className="relative flex-1 max-w-md hidden sm:block">
-        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-secondary" />
+      <div className="hdx_relative hdx_flex-1 hdx_max-w-md hdx_hidden hdx_sm_block">
+        <Search size={16} className="hdx_absolute hdx_left-3.5 hdx_top-1/2 hdx_transform hdx_translate-y--1/2 hdx_text-ink-secondary" />
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search patients, staff, reports…"
-          className="input !bg-surface pl-10"
+          className="input !bg-surface hdx_pl-10"
           aria-label="Global search"
         />
       </div>
 
-      <div className="flex-1 sm:hidden" />
+      <div className="hdx_flex-1 hdx_sm_hidden" />
 
-      <div className="flex items-center gap-1 ml-auto">
+      <div className="hdx_flex hdx_items-center hdx_gap-1 hdx_ml-auto">
         <button
-          className="p-2.5 rounded-input text-ink-secondary hover:bg-slate-100 hover:text-ink transition-colors"
+          className="hdx_p-2.5 hdx_rounded-input hdx_text-ink-secondary hdx_hover_bg-slate-100 hdx_hover_text-ink hdx_transition-colors"
           onClick={() => setSidebarOpen(true)}
           aria-label="Search"
         >
@@ -58,32 +58,32 @@ export default function Topbar({ onMenu }) {
         <Dropdown
           trigger={
             <button
-              className="relative p-2.5 rounded-input text-ink-secondary hover:bg-slate-100 hover:text-ink transition-colors"
+              className="hdx_relative hdx_p-2.5 hdx_rounded-input hdx_text-ink-secondary hdx_hover_bg-slate-100 hdx_hover_text-ink hdx_transition-colors"
               aria-label={`Notifications, ${unread} unread`}
             >
               <Bell size={19} />
               {unread > 0 && (
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-error ring-2 ring-white" />
+                <span className="hdx_absolute hdx_top-1.5 hdx_right-1.5 hdx_h-2 hdx_w-2 hdx_rounded-full hdx_bg-error hdx_ring-2 hdx_ring-white" />
               )}
             </button>
           }
         >
-          <div className="px-3 py-2 flex items-center justify-between">
-            <span className="text-card-title text-ink">Notifications</span>
-            <BellRing size={16} className="text-primary" />
+          <div className="hdx_px-3 hdx_py-2 hdx_flex hdx_items-center hdx_justify-between">
+            <span className="hdx_text-card-title hdx_text-ink">Notifications</span>
+            <BellRing size={16} className="hdx_text-primary" />
           </div>
-          <div className="py-1 max-h-72 overflow-y-auto scrollbar-thin">
+          <div className="hdx_py-1 hdx_max-h-72 hdx_overflow-y-auto scrollbar-thin">
             {notifications.slice(0, 4).map((n) => (
               <button
                 key={n.id}
-                className="w-full text-left px-3 py-2.5 rounded-input hover:bg-slate-50"
+                className="hdx_w-full hdx_text-left hdx_px-3 hdx_py-2.5 hdx_rounded-input hdx_hover_bg-slate-50"
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-body font-medium text-ink">#{n.type}</span>
-                  {n.unread && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                <div className="hdx_flex hdx_items-center hdx_gap-2">
+                  <span className="hdx_text-body hdx_font-medium hdx_text-ink">#{n.type}</span>
+                  {n.unread && <span className="hdx_w-1.5 hdx_h-1.5 hdx_rounded-full hdx_bg-primary" />}
                 </div>
-                <p className="text-secondary text-ink-secondary mt-0.5">{n.message}</p>
-                <p className="text-small text-ink-secondary mt-0.5">{n.time}</p>
+                <p className="hdx_text-secondary-text hdx_text-ink-secondary hdx_mt-0.5">{n.message}</p>
+                <p className="hdx_text-small hdx_text-ink-secondary hdx_mt-0.5">{n.time}</p>
               </button>
             ))}
           </div>
@@ -93,25 +93,25 @@ export default function Topbar({ onMenu }) {
         </Dropdown>
 
         <button
-          className="hidden md:inline-flex p-2.5 rounded-input text-ink-secondary hover:bg-slate-100 hover:text-ink transition-colors"
+          className="hdx_hidden hdx_md_inline-flex hdx_p-2.5 hdx_rounded-input hdx_text-ink-secondary hdx_hover_bg-slate-100 hdx_hover_text-ink hdx_transition-colors"
           aria-label="Help"
         >
           <HelpCircle size={19} />
         </button>
 
-        <div className="hidden sm:block w-px h-7 bg-line mx-1" />
+        <div className="hdx_hidden hdx_sm_block hdx_w-px hdx_h-7 hdx_bg-line hdx_mx-1" />
 
         <Dropdown
-          width="w-56"
+          width="hdx_w-56"
           trigger={
-            <button className="flex items-center gap-2 px-3 py-2 rounded-input border border-line text-body font-medium text-ink-secondary hover:bg-slate-50 transition-colors" aria-label="Demo role">
-              <Shield size={15} className="text-primary" />
-              <span className="hidden sm:inline">{role}</span>
+            <button className="hdx_flex hdx_items-center hdx_gap-2 hdx_px-3 hdx_py-2 hdx_rounded-input hdx_border hdx_border-line hdx_text-body hdx_font-medium hdx_text-ink-secondary hdx_hover_bg-slate-50 hdx_transition-colors" aria-label="Demo role">
+              <Shield size={15} className="hdx_text-primary" />
+              <span className="hdx_hidden hdx_sm_inline">{role}</span>
               <ChevronDown size={14} />
             </button>
           }
         >
-          <p className="px-3 py-1.5 text-small font-semibold text-ink-secondary">Demo: switch role</p>
+          <p className="hdx_px-3 hdx_py-1.5 hdx_text-small hdx_font-semibold hdx_text-ink-secondary">Demo: switch role</p>
           {ROLES.map((r) => (
             <button
               key={r.id}
@@ -119,7 +119,7 @@ export default function Topbar({ onMenu }) {
                 setRole(r.name);
                 navigate('/');
               }}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-input text-body transition-colors ${role === r.name ? 'bg-primary-light text-primary font-medium' : 'text-ink-secondary hover:bg-slate-50'}`}
+              className={`hdx_w-full hdx_flex hdx_items-center hdx_gap-2.5 hdx_px-3 hdx_py-2 hdx_rounded-input hdx_text-body hdx_transition-colors ${role === r.name ? 'hdx_bg-primary-light hdx_text-primary hdx_font-medium' : 'hdx_text-ink-secondary hdx_hover_bg-slate-50'}`}
             >
               <Shield size={15} /> {r.name}
             </button>
@@ -127,27 +127,27 @@ export default function Topbar({ onMenu }) {
         </Dropdown>
 
         <Dropdown
-          width="w-60"
+          width="hdx_w-60"
           trigger={
-            <button className="flex items-center gap-2.5 p-1.5 pr-2 rounded-input hover:bg-slate-50 transition-colors">
+            <button className="hdx_flex hdx_items-center hdx_gap-2.5 hdx_p-1.5 hdx_pr-2 hdx_rounded-input hdx_hover_bg-slate-50 hdx_transition-colors">
               <Avatar initials={currentUser.avatar} />
-              <span className="hidden sm:block text-left">
-                <span className="block text-body font-semibold text-ink leading-tight">
+              <span className="hdx_hidden hdx_sm_block hdx_text-left">
+                <span className="hdx_block hdx_text-body hdx_font-semibold hdx_text-ink hdx_leading-tight">
                   {currentUser.name}
                 </span>
-                <span className="block text-small text-ink-secondary leading-tight">
+                <span className="hdx_block hdx_text-small hdx_text-ink-secondary hdx_leading-tight">
                   {currentUser.role}
                 </span>
               </span>
-              <ChevronDown size={15} className="hidden sm:block text-ink-secondary" />
+              <ChevronDown size={15} className="hdx_hidden hdx_sm_block hdx_text-ink-secondary" />
             </button>
           }
         >
-          <div className="px-3 py-2.5 flex items-center gap-3">
+          <div className="hdx_px-3 hdx_py-2.5 hdx_flex hdx_items-center hdx_gap-3">
             <Avatar initials={currentUser.avatar} size="lg" />
             <div>
-              <p className="text-body font-semibold text-ink">{currentUser.name}</p>
-              <p className="text-small text-ink-secondary">{currentUser.role}</p>
+              <p className="hdx_text-body hdx_font-semibold hdx_text-ink">{currentUser.name}</p>
+              <p className="hdx_text-small hdx_text-ink-secondary">{currentUser.role}</p>
             </div>
           </div>
           <DropdownItem icon={UserIcon} onClick={() => navigate('/settings')}>My Profile</DropdownItem>

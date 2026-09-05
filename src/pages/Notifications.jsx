@@ -14,12 +14,12 @@ import { notifications } from '../data/mock';
 import { useApp } from '../context/AppContext';
 
 const typeMeta = {
-  report: { icon: FileText, color: 'bg-blue-50 text-primary' },
-  appointment: { icon: CalendarDays, color: 'bg-cyan-50 text-info' },
-  recommendation: { icon: ClipboardList, color: 'bg-amber-50 text-warning' },
-  followup: { icon: CalendarClock, color: 'bg-violet-50 text-violet-600' },
-  pending: { icon: Clock3, color: 'bg-red-50 text-error' },
-  staff: { icon: Users, color: 'bg-slate-100 text-ink-secondary' },
+  report: { icon: FileText, color: 'hdx_bg-blue-50 hdx_text-primary' },
+  appointment: { icon: CalendarDays, color: 'hdx_bg-cyan-50 hdx_text-info' },
+  recommendation: { icon: ClipboardList, color: 'hdx_bg-amber-50 hdx_text-warning' },
+  followup: { icon: CalendarClock, color: 'hdx_bg-violet-50 hdx_text-violet-600' },
+  pending: { icon: Clock3, color: 'hdx_bg-red-50 hdx_text-error' },
+  staff: { icon: Users, color: 'hdx_bg-slate-100 hdx_text-ink-secondary' },
 };
 
 export default function Notifications() {
@@ -45,45 +45,45 @@ export default function Notifications() {
         }
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        <div className="lg:col-span-1 card p-4 h-fit">
-          <p className="text-small font-semibold text-ink mb-3">Filter by category</p>
-          <button onClick={() => setFilter('')} className={`w-full text-left px-3 py-2 rounded-input text-body font-medium mb-1 ${!filter ? 'bg-primary-light text-primary' : 'text-ink-secondary hover:bg-slate-50'}`}>
+      <div className="hdx_grid hdx_grid-cols-1 hdx_lg_grid-cols-4 hdx_gap-4">
+        <div className="hdx_lg_col-span-1 card hdx_p-4 hdx_h-fit">
+          <p className="hdx_text-small hdx_font-semibold hdx_text-ink hdx_mb-3">Filter by category</p>
+          <button onClick={() => setFilter('')} className={`hdx_w-full hdx_text-left hdx_px-3 hdx_py-2 hdx_rounded-input hdx_text-body hdx_font-medium hdx_mb-1 ${!filter ? 'hdx_bg-primary-light hdx_text-primary' : 'hdx_text-ink-secondary hdx_hover_bg-slate-50'}`}>
             All notifications
           </button>
           {Object.entries({
             report: 'Reports', appointment: 'Appointments', recommendation: 'Recommendations',
             followup: 'Follow-ups', pending: 'Pending', staff: 'Staff activity',
           }).map(([k, label]) => (
-            <button key={k} onClick={() => setFilter(k)} className={`w-full text-left px-3 py-2 rounded-input text-body font-medium mb-1 ${filter === k ? 'bg-primary-light text-primary' : 'text-ink-secondary hover:bg-slate-50'}`}>
+            <button key={k} onClick={() => setFilter(k)} className={`hdx_w-full hdx_text-left hdx_px-3 hdx_py-2 hdx_rounded-input hdx_text-body hdx_font-medium hdx_mb-1 ${filter === k ? 'hdx_bg-primary-light hdx_text-primary' : 'hdx_text-ink-secondary hdx_hover_bg-slate-50'}`}>
               {label}
             </button>
           ))}
         </div>
 
-        <div className="lg:col-span-3 card divide-y divide-line">
+        <div className="hdx_lg_col-span-3 card hdx_divide-y hdx_divide-line">
           {filtered.map((n) => {
             const meta = typeMeta[n.type];
             const Icon = meta.icon;
             return (
-              <div key={n.id} className={`flex items-start gap-3.5 px-5 py-4 ${n.unread ? 'bg-primary-light/40' : ''}`}>
-                <span className={`h-10 w-10 rounded-[10px] flex items-center justify-center shrink-0 ${meta.color}`}>
+              <div key={n.id} className={`hdx_flex hdx_items-start hdx_gap-3.5 hdx_px-5 hdx_py-4 ${n.unread ? 'hdx_bg-primary-light-40' : ''}`}>
+                <span className={`hdx_h-10 hdx_w-10 hdx_rounded-10 hdx_flex hdx_items-center hdx_justify-center hdx_shrink-0 ${meta.color}`}>
                   <Icon size={18} />
                 </span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-body font-semibold text-ink">{n.title}</p>
+                <div className="hdx_flex-1 hdx_min-w-0">
+                  <div className="hdx_flex hdx_items-center hdx_gap-2">
+                    <p className="hdx_text-body hdx_font-semibold hdx_text-ink">{n.title}</p>
                     {n.unread && <Badge color="primary">New</Badge>}
                   </div>
-                  <p className="text-secondary text-ink-secondary mt-0.5">{n.message}</p>
-                  <p className="text-small text-ink-secondary mt-1">{n.time}</p>
+                  <p className="hdx_text-secondary-text hdx_text-ink-secondary hdx_mt-0.5">{n.message}</p>
+                  <p className="hdx_text-small hdx_text-ink-secondary hdx_mt-1">{n.time}</p>
                 </div>
-                {n.unread && <span className="mt-2 w-2 h-2 rounded-full bg-primary flex-shrink-0" />}
+                {n.unread && <span className="hdx_mt-2 hdx_w-2 hdx_h-2 hdx_rounded-full hdx_bg-primary hdx_shrink-0" />}
               </div>
             );
           })}
           {filtered.length === 0 && (
-            <div className="px-5 py-14 text-center text-ink-secondary">No notifications in this category.</div>
+            <div className="hdx_px-5 hdx_py-14 hdx_text-center hdx_text-ink-secondary">No notifications in this category.</div>
           )}
         </div>
       </div>

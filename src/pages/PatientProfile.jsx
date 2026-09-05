@@ -45,28 +45,28 @@ export default function PatientProfile() {
 
   return (
     <div>
-      <button onClick={() => navigate('/patients')} className="inline-flex items-center gap-2 text-body font-medium text-ink-secondary hover:text-ink mb-4">
+      <button onClick={() => navigate('/patients')} className="hdx_inline-flex hdx_items-center hdx_gap-2 hdx_text-body hdx_font-medium hdx_text-ink-secondary hdx_hover_text-ink hdx_mb-4">
         <ArrowLeft size={16} /> Back to Patients
       </button>
 
-      <div className="card p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+      <div className="card hdx_p-6">
+        <div className="hdx_flex hdx_flex-col hdx_sm_flex-row hdx_sm_items-center hdx_gap-5">
           <Avatar initials={patient.avatar} size="xl" />
-          <div className="flex-1">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-2xl font-bold text-ink">{patient.name}</h1>
+          <div className="hdx_flex-1">
+            <div className="hdx_flex hdx_flex-wrap hdx_items-center hdx_gap-2.5">
+              <h1 className="hdx_text-2xl hdx_font-bold hdx_text-ink">{patient.name}</h1>
               <Badge color={statusColor(patient.status)} dot>{patient.status}</Badge>
             </div>
-            <p className="text-secondary text-ink-secondary mt-1">
+            <p className="hdx_text-secondary-text hdx_text-ink-secondary hdx_mt-1">
               {patient.id} · {patient.gender} · {patient.age} yrs · {patient.blood}
             </p>
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mt-3 text-small text-ink-secondary">
-              <span className="flex items-center gap-1.5"><MapPin size={13} /> {patient.address}</span>
-              <span className="flex items-center gap-1.5"><Stethoscope size={13} /> {patient.doctor}</span>
-              <span className="flex items-center gap-1.5"><Activity size={13} /> {patient.department}</span>
+            <div className="hdx_flex hdx_flex-wrap hdx_items-center hdx_gap-x-5 hdx_gap-y-1 hdx_mt-3 hdx_text-small hdx_text-ink-secondary">
+              <span className="hdx_flex hdx_items-center hdx_gap-1.5"><MapPin size={13} /> {patient.address}</span>
+              <span className="hdx_flex hdx_items-center hdx_gap-1.5"><Stethoscope size={13} /> {patient.doctor}</span>
+              <span className="hdx_flex hdx_items-center hdx_gap-1.5"><Activity size={13} /> {patient.department}</span>
             </div>
           </div>
-          <div className="flex items-center gap-2.5 flex-shrink-0">
+          <div className="hdx_flex hdx_items-center hdx_gap-2.5 hdx_shrink-0">
             <button className="btn-primary" onClick={() => { pushToast('Appointment booking opened', 'info'); navigate('/appointments?new=1'); }}>
               <CalendarPlus size={16} /> Book Appointment
             </button>
@@ -83,36 +83,36 @@ export default function PatientProfile() {
           </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 border-t border-line pt-5">
+        <div className="hdx_mt-6 hdx_grid hdx_grid-cols-2 hdx_sm_grid-cols-4 hdx_gap-3 hdx_border-t hdx_border-line hdx_pt-5">
           {[
             { icon: HeartPulse, label: 'Heart Rate', value: '72 bpm' },
             { icon: Activity, label: 'Blood Pressure', value: '128/82' },
             { icon: Clock, label: 'Last Visit', value: patient.lastVisit },
             { icon: Users, label: 'Last Doctor', value: patient.doctor.split(' ')[1] },
           ].map((s) => (
-            <div key={s.label} className="flex items-center gap-3">
-              <span className="h-10 w-10 rounded-[10px] bg-surface flex items-center justify-center text-primary">
+            <div key={s.label} className="hdx_flex hdx_items-center hdx_gap-3">
+              <span className="hdx_h-10 hdx_w-10 hdx_rounded-10 hdx_bg-surface hdx_flex hdx_items-center hdx_justify-center hdx_text-primary">
                 <s.icon size={18} />
               </span>
               <div>
-                <p className="text-small text-ink-secondary">{s.label}</p>
-                <p className="text-body font-semibold text-ink">{s.value}</p>
+                <p className="hdx_text-small hdx_text-ink-secondary">{s.label}</p>
+                <p className="hdx_text-body hdx_font-semibold hdx_text-ink">{s.value}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="mt-6 border-b border-line overflow-x-auto scrollbar-thin">
-        <div className="flex gap-1 min-w-max">
+      <div className="hdx_mt-6 hdx_border-b hdx_border-line hdx_overflow-x-auto scrollbar-thin">
+        <div className="hdx_flex hdx_gap-1 hdx_min-w-max">
           {tabs.map((t) => (
             <button
               key={t}
               onClick={() => setActive(t)}
-              className={`px-4 py-3 text-body font-medium border-b-2 -mb-px transition-colors ${
+              className={`hdx_px-4 hdx_py-3 hdx_text-body hdx_font-medium hdx_border-b-2 hdx_-mb-px hdx_transition-colors ${
                 active === t
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-ink-secondary hover:text-ink'
+                  ? 'hdx_border-primary hdx_text-primary'
+                  : 'hdx_border-transparent hdx_text-ink-secondary hdx_hover_text-ink'
               }`}
             >
               {t}
@@ -121,7 +121,7 @@ export default function PatientProfile() {
         </div>
       </div>
 
-      <div className="mt-6">
+      <div className="hdx_mt-6">
         {active === 'Overview' && <Overview patient={patient} />}
         {active === 'Medical History' && (
           <Card><Timeline items={timeline} /></Card>
@@ -137,12 +137,12 @@ export default function PatientProfile() {
           </Card>
         )}
         {active === 'Prescriptions' && (
-          <div className="space-y-4">
+          <div className="hdx_space-y-4">
             {prescriptions.map((rx) => <PrescriptionCard key={rx.id} rx={rx} />)}
           </div>
         )}
         {active === 'Recommendations' && (
-          <div className="space-y-4">
+          <div className="hdx_space-y-4">
             {recommendations.map((r) => <RecommendationCard key={r.id} r={r} compact />)}
           </div>
         )}
@@ -157,63 +157,63 @@ export default function PatientProfile() {
 }
 
 function Card({ children }) {
-  return <div className="card p-6">{children}</div>;
+  return <div className="card hdx_p-6">{children}</div>;
 }
 
 function InfoItem({ label, value }) {
   return (
     <div>
-      <p className="text-small text-ink-secondary mb-0.5">{label}</p>
-      <p className="text-body font-medium text-ink">{value}</p>
+      <p className="hdx_text-small hdx_text-ink-secondary hdx_mb-0.5">{label}</p>
+      <p className="hdx_text-body hdx_font-medium hdx_text-ink">{value}</p>
     </div>
   );
 }
 
 function Overview({ patient }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <div className="card p-6 lg:col-span-2">
-        <h2 className="text-card-title text-ink mb-4">Patient Information</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+    <div className="hdx_grid hdx_grid-cols-1 hdx_lg_grid-cols-3 hdx_gap-4">
+      <div className="card hdx_p-6 hdx_lg_col-span-2">
+        <h2 className="hdx_text-card-title hdx_text-ink hdx_mb-4">Patient Information</h2>
+        <div className="hdx_grid hdx_grid-cols-1 hdx_sm_grid-cols-2 hdx_gap-x-6 hdx_gap-y-4">
           {infoRows2(patient).map((r) => <InfoItem key={r.label} {...r} />)}
         </div>
       </div>
-      <div className="space-y-4">
-        <div className="card p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Phone size={16} className="text-primary" />
-            <h2 className="text-card-title text-ink">Emergency Contact</h2>
+      <div className="hdx_space-y-4">
+        <div className="card hdx_p-6">
+          <div className="hdx_flex hdx_items-center hdx_gap-2 hdx_mb-4">
+            <Phone size={16} className="hdx_text-primary" />
+            <h2 className="hdx_text-card-title hdx_text-ink">Emergency Contact</h2>
           </div>
-          <p className="text-body text-ink">{patient.emergencyContact}</p>
-          <p className="text-small text-ink-secondary mt-1">Primary emergency contact on file</p>
+          <p className="hdx_text-body hdx_text-ink">{patient.emergencyContact}</p>
+          <p className="hdx_text-small hdx_text-ink-secondary hdx_mt-1">Primary emergency contact on file</p>
         </div>
-        <div className="card p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <ShieldAlert size={16} className="text-warning" />
-            <h2 className="text-card-title text-ink">Allergies</h2>
+        <div className="card hdx_p-6">
+          <div className="hdx_flex hdx_items-center hdx_gap-2 hdx_mb-4">
+            <ShieldAlert size={16} className="hdx_text-warning" />
+            <h2 className="hdx_text-card-title hdx_text-ink">Allergies</h2>
           </div>
           {patient.allergies.length ? (
-            <div className="flex flex-wrap gap-2">
+            <div className="hdx_flex hdx_flex-wrap hdx_gap-2">
               {patient.allergies.map((a) => (
                 <Badge key={a} color="warning"><AlertTriangle size={11} /> {a}</Badge>
               ))}
             </div>
-          ) : <p className="text-body text-ink-secondary">No known allergies</p>}
+          ) : <p className="hdx_text-body hdx_text-ink-secondary">No known allergies</p>}
         </div>
-        <div className="card p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Pill size={16} className="text-success" />
-            <h2 className="text-card-title text-ink">Current Medications</h2>
+        <div className="card hdx_p-6">
+          <div className="hdx_flex hdx_items-center hdx_gap-2 hdx_mb-4">
+            <Pill size={16} className="hdx_text-success" />
+            <h2 className="hdx_text-card-title hdx_text-ink">Current Medications</h2>
           </div>
           {patient.medications.length ? (
-            <ul className="space-y-2">
+            <ul className="hdx_space-y-2">
               {patient.medications.map((m) => (
-                <li key={m} className="flex items-center gap-2 text-body text-ink">
-                  <span className="w-1.5 h-1.5 rounded-full bg-success" /> {m}
+                <li key={m} className="hdx_flex hdx_items-center hdx_gap-2 hdx_text-body hdx_text-ink">
+                  <span className="hdx_w-1.5 hdx_h-1.5 hdx_rounded-full hdx_bg-success" /> {m}
                 </li>
               ))}
             </ul>
-          ) : <p className="text-body text-ink-secondary">No active medications</p>}
+          ) : <p className="hdx_text-body hdx_text-ink-secondary">No active medications</p>}
         </div>
       </div>
     </div>
@@ -238,15 +238,15 @@ function infoRows2(p) {
 
 function ReportsTable() {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[560px]">
-        <thead><tr className="border-b border-line"><th className="th">Report</th><th className="th">Type</th><th className="th">Date</th><th className="th">Status</th></tr></thead>
-        <tbody className="divide-y divide-line">
+    <div className="hdx_overflow-x-auto">
+      <table className="hdx_w-full hdx_min-w-560px">
+        <thead><tr className="hdx_border-b hdx_border-line"><th className="th">Report</th><th className="th">Type</th><th className="th">Date</th><th className="th">Status</th></tr></thead>
+        <tbody className="hdx_divide-y hdx_divide-line">
           {reports.map((r) => (
-            <tr key={r.id} className="hover:bg-slate-50/60">
-              <td className="td font-medium">{r.report}</td>
-              <td className="td text-ink-secondary">{r.type}</td>
-              <td className="td text-ink-secondary">{r.date}</td>
+            <tr key={r.id} className="hdx_hover_bg-slate-50-60">
+              <td className="td hdx_font-medium">{r.report}</td>
+              <td className="td hdx_text-ink-secondary">{r.type}</td>
+              <td className="td hdx_text-ink-secondary">{r.date}</td>
               <td className="td"><Badge color={statusColor(r.status)}>{r.status}</Badge></td>
             </tr>
           ))}
@@ -258,15 +258,15 @@ function ReportsTable() {
 
 function ScansTable() {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[560px]">
-        <thead><tr className="border-b border-line"><th className="th">Scan</th><th className="th">Date</th><th className="th">Performed By</th><th className="th">Status</th></tr></thead>
-        <tbody className="divide-y divide-line">
+    <div className="hdx_overflow-x-auto">
+      <table className="hdx_w-full hdx_min-w-560px">
+        <thead><tr className="hdx_border-b hdx_border-line"><th className="th">Scan</th><th className="th">Date</th><th className="th">Performed By</th><th className="th">Status</th></tr></thead>
+        <tbody className="hdx_divide-y hdx_divide-line">
           {scans.map((s) => (
-            <tr key={s.id} className="hover:bg-slate-50/60">
-              <td className="td"><span className="inline-flex items-center gap-2"><Badge color="info">{s.type}</Badge><span className="text-ink-secondary">{s.id}</span></span></td>
-              <td className="td text-ink-secondary">{s.date}</td>
-              <td className="td text-ink-secondary">{s.performedBy}</td>
+            <tr key={s.id} className="hdx_hover_bg-slate-50-60">
+              <td className="td"><span className="hdx_inline-flex hdx_items-center hdx_gap-2"><Badge color="info">{s.type}</Badge><span className="hdx_text-ink-secondary">{s.id}</span></span></td>
+              <td className="td hdx_text-ink-secondary">{s.date}</td>
+              <td className="td hdx_text-ink-secondary">{s.performedBy}</td>
               <td className="td"><Badge color={statusColor(s.status)}>{s.status}</Badge></td>
             </tr>
           ))}
@@ -279,31 +279,31 @@ function ScansTable() {
 function PrescriptionCard({ rx }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="card p-6">
-      <div className="flex items-center justify-between">
+    <div className="card hdx_p-6">
+      <div className="hdx_flex hdx_items-center hdx_justify-between">
         <div>
-          <p className="text-body font-semibold text-ink">{rx.id} · <span className="text-ink-secondary">{rx.diagnosis}</span></p>
-          <p className="text-small text-ink-secondary mt-0.5">{rx.doctor} · {rx.date}</p>
+          <p className="hdx_text-body hdx_font-semibold hdx_text-ink">{rx.id} · <span className="hdx_text-ink-secondary">{rx.diagnosis}</span></p>
+          <p className="hdx_text-small hdx_text-ink-secondary hdx_mt-0.5">{rx.doctor} · {rx.date}</p>
         </div>
-        <button onClick={() => setOpen(!open)} className="btn-secondary"><ChevronDown size={16} className={`transition-transform ${open ? 'rotate-180' : ''}`} /> Details</button>
+        <button onClick={() => setOpen(!open)} className="btn-secondary"><ChevronDown size={16} className={`hdx_transition-transform ${open ? 'hdx_transform hdx_rotate-180' : ''}`} /> Details</button>
       </div>
       {open && (
-        <div className="mt-4">
-          <table className="w-full">
-            <thead><tr className="border-b border-line"><th className="th">Medicine</th><th className="th">Dosage</th><th className="th">Frequency</th><th className="th">Duration</th><th className="th">Instructions</th></tr></thead>
-            <tbody className="divide-y divide-line">
+        <div className="hdx_mt-4">
+          <table className="hdx_w-full">
+            <thead><tr className="hdx_border-b hdx_border-line"><th className="th">Medicine</th><th className="th">Dosage</th><th className="th">Frequency</th><th className="th">Duration</th><th className="th">Instructions</th></tr></thead>
+            <tbody className="hdx_divide-y hdx_divide-line">
               {rx.medications.map((m, i) => (
                 <tr key={i}>
-                  <td className="td font-medium">{m.name}</td>
-                  <td className="td text-ink-secondary">{m.dosage}</td>
-                  <td className="td text-ink-secondary">{m.frequency}</td>
-                  <td className="td text-ink-secondary">{m.duration}</td>
-                  <td className="td text-ink-secondary">{m.instructions}</td>
+                  <td className="td hdx_font-medium">{m.name}</td>
+                  <td className="td hdx_text-ink-secondary">{m.dosage}</td>
+                  <td className="td hdx_text-ink-secondary">{m.frequency}</td>
+                  <td className="td hdx_text-ink-secondary">{m.duration}</td>
+                  <td className="td hdx_text-ink-secondary">{m.instructions}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <p className="text-small text-ink-secondary mt-3">Follow-up: {rx.followUp}</p>
+          <p className="hdx_text-small hdx_text-ink-secondary hdx_mt-3">Follow-up: {rx.followUp}</p>
         </div>
       )}
     </div>
@@ -312,32 +312,32 @@ function PrescriptionCard({ rx }) {
 
 function RecommendationCard({ r, compact }) {
   return (
-    <div className="card p-6">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
+    <div className="card hdx_p-6">
+      <div className="hdx_flex hdx_items-center hdx_justify-between hdx_mb-3">
+        <div className="hdx_flex hdx_items-center hdx_gap-3">
           <Avatar initials={r.doctor.split(' ').map((n) => n[0]).join('')} size="sm" />
           <div>
-            <p className="text-body font-semibold text-ink">{r.doctor}</p>
-            <p className="text-small text-ink-secondary">{r.date}</p>
+            <p className="hdx_text-body hdx_font-semibold hdx_text-ink">{r.doctor}</p>
+            <p className="hdx_text-small hdx_text-ink-secondary">{r.date}</p>
           </div>
         </div>
         <Badge color="warning">{r.diagnosis}</Badge>
       </div>
       {!compact && (
         <>
-          <p className="text-body text-ink-secondary leading-relaxed">{r.notes}</p>
-          <div className="mt-4">
-            <p className="text-small font-semibold text-ink mb-2">Recommendations</p>
-            <ul className="space-y-1.5">
+          <p className="hdx_text-body hdx_text-ink-secondary hdx_leading-relaxed">{r.notes}</p>
+          <div className="hdx_mt-4">
+            <p className="hdx_text-small hdx_font-semibold hdx_text-ink hdx_mb-2">Recommendations</p>
+            <ul className="hdx_space-y-1.5">
               {r.recommendations.map((rec, i) => (
-                <li key={i} className="flex items-start gap-2 text-body text-ink-secondary"><span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />{rec}</li>
+                <li key={i} className="hdx_flex hdx_items-start hdx_gap-2 hdx_text-body hdx_text-ink-secondary"><span className="hdx_mt-1.5 hdx_w-1.5 hdx_h-1.5 hdx_rounded-full hdx_bg-primary hdx_shrink-0" />{rec}</li>
               ))}
             </ul>
           </div>
         </>
       )}
-      <div className="mt-4 pt-4 border-t border-line flex items-center justify-between">
-        <p className="text-small text-ink-secondary">{compact ? r.notes : r.medicationInstructions}</p>
+      <div className="hdx_mt-4 hdx_pt-4 hdx_border-t hdx_border-line hdx_flex hdx_items-center hdx_justify-between">
+        <p className="hdx_text-small hdx_text-ink-secondary">{compact ? r.notes : r.medicationInstructions}</p>
         <Badge color="primary">Follow-up: {r.followUp}</Badge>
       </div>
     </div>
@@ -346,15 +346,15 @@ function RecommendationCard({ r, compact }) {
 
 function AppointmentsTable() {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[580px]">
-        <thead><tr className="border-b border-line"><th className="th">Date/Time</th><th className="th">Doctor</th><th className="th">Department</th><th className="th">Status</th></tr></thead>
-        <tbody className="divide-y divide-line">
+    <div className="hdx_overflow-x-auto">
+      <table className="hdx_w-full hdx_min-w-580px">
+        <thead><tr className="hdx_border-b hdx_border-line"><th className="th">Date/Time</th><th className="th">Doctor</th><th className="th">Department</th><th className="th">Status</th></tr></thead>
+        <tbody className="hdx_divide-y hdx_divide-line">
           {appointments.map((a) => (
-            <tr key={a.id} className="hover:bg-slate-50/60">
-              <td className="td"><span className="font-medium">{a.date}</span><span className="text-ink-secondary ml-2">{a.time}</span></td>
-              <td className="td text-ink-secondary">{a.doctor}</td>
-              <td className="td text-ink-secondary">{a.dept}</td>
+            <tr key={a.id} className="hdx_hover_bg-slate-50-60">
+              <td className="td"><span className="hdx_font-medium">{a.date}</span><span className="hdx_text-ink-secondary hdx_ml-2">{a.time}</span></td>
+              <td className="td hdx_text-ink-secondary">{a.doctor}</td>
+              <td className="td hdx_text-ink-secondary">{a.dept}</td>
               <td className="td"><Badge color={statusColor(a.status)}>{a.status}</Badge></td>
             </tr>
           ))}
