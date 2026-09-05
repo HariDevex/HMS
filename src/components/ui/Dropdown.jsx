@@ -4,7 +4,7 @@ export default function Dropdown({
   trigger,
   children,
   align = 'right',
-  width = 'w-56',
+  width = 'hdx_w-56',
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -24,11 +24,11 @@ export default function Dropdown({
   }, [open]);
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="hdx_relative" ref={ref}>
       <div onClick={() => setOpen((o) => !o)}>{trigger}</div>
       {open && (
         <div
-          className={`absolute top-full mt-2 z-40 ${align === 'right' ? 'right-0' : 'left-0'} ${width} card shadow-dropdown p-1.5 animate-fade-in`}
+          className={`hdx_absolute hdx_top-full hdx_mt-2 hdx_z-40 ${align === 'right' ? 'hdx_right-0' : 'hdx_left-0'} ${width} card hdx_shadow-dropdown hdx_p-1.5 hdx_animate-fade-in`}
           role="menu"
         >
           {children}
@@ -41,16 +41,16 @@ export default function Dropdown({
 export function DropdownItem({ icon: Icon, children, onClick, danger, divider }) {
   return (
     <>
-      {divider && <div className="my-1.5 border-t border-line" />}
+      {divider && <div className="hdx_my-1.5 hdx_border-t hdx_border-line" />}
       <button
         onClick={onClick}
-        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-input text-body transition-colors ${
-          danger ? 'text-error hover:bg-red-50' : 'text-ink-secondary hover:bg-slate-50 hover:text-ink'
+        className={`hdx_w-full hdx_flex hdx_items-center hdx_gap-2.5 hdx_px-3 hdx_py-2 hdx_rounded-input hdx_text-body hdx_transition-colors ${
+          danger ? 'hdx_text-error hdx_hover_bg-red-50' : 'hdx_text-ink-secondary hdx_hover_bg-slate-50 hdx_hover_text-ink'
         }`}
         role="menuitem"
       >
         {Icon && <Icon size={16} />}
-        <span className="font-medium">{children}</span>
+        <span className="hdx_font-medium">{children}</span>
       </button>
     </>
   );

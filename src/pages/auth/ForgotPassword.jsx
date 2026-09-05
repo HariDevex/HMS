@@ -26,36 +26,36 @@ export default function ForgotPassword() {
 
   return (
     <AuthLayout sideNote="Recovery links expire after 30 minutes for security.">
-      <h1 className="text-2xl font-bold text-ink">Forgot password</h1>
-      <p className="text-secondary text-ink-secondary mt-1.5">
+      <h1 className="hdx_text-2xl hdx_font-bold hdx_text-ink">Forgot password</h1>
+      <p className="hdx_text-secondary-text hdx_text-ink-secondary hdx_mt-1.5">
         Enter your email and we'll send you a secure reset link.
       </p>
 
       {sent ? (
-        <div className="mt-8 rounded-card bg-green-50 border border-green-200 p-4 flex items-start gap-3">
-          <ShieldCheck size={18} className="text-success shrink-0 mt-0.5" />
+        <div className="hdx_mt-8 hdx_rounded-card hdx_bg-green-50 hdx_border hdx_border-green-200 hdx_p-4 hdx_flex hdx_items-start hdx_gap-3">
+          <ShieldCheck size={18} className="hdx_text-success hdx_shrink-0 hdx_mt-0.5" />
           <div>
-            <p className="text-body font-semibold text-ink">Check your inbox</p>
-            <p className="text-secondary text-ink-secondary mt-1">
+            <p className="hdx_text-body hdx_font-semibold hdx_text-ink">Check your inbox</p>
+            <p className="hdx_text-secondary-text hdx_text-ink-secondary hdx_mt-1">
               A password reset link has been sent to <strong>{email}</strong>. The link expires in 30 minutes.
             </p>
           </div>
         </div>
       ) : (
-        <form onSubmit={onSubmit} className="mt-8 space-y-5" noValidate>
+        <form onSubmit={onSubmit} className="hdx_mt-8 hdx_space-y-5" noValidate>
           <Field label="Email address" error={error}>
-            <div className="relative">
-              <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-secondary" />
+            <div className="hdx_relative">
+              <Mail size={16} className="hdx_absolute hdx_left-3.5 hdx_top-1/2 hdx_transform hdx_translate-y--1/2 hdx_text-ink-secondary" />
               <Input
                 type="email"
                 placeholder="you@hospital.com"
-                className="pl-10"
+                className="hdx_pl-10"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </Field>
-          <button type="submit" className="btn-primary w-full h-[44px]">
+          <button type="submit" className="btn-primary hdx_w-full hdx_h-44px">
             Send reset link
           </button>
         </form>
@@ -63,7 +63,7 @@ export default function ForgotPassword() {
 
       <Link
         to="/login"
-        className="mt-6 inline-flex items-center gap-2 text-body font-medium text-primary hover:underline"
+        className="hdx_mt-6 hdx_inline-flex hdx_items-center hdx_gap-2 hdx_text-body hdx_font-medium hdx_text-primary hdx_hover_underline"
       >
         <ArrowLeft size={16} /> Back to sign in
       </Link>

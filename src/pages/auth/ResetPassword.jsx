@@ -31,27 +31,27 @@ export default function ResetPassword() {
 
   return (
     <AuthLayout sideNote="Choose a strong, unique password you haven't used before.">
-      <h1 className="text-2xl font-bold text-ink">Set a new password</h1>
-      <p className="text-secondary text-ink-secondary mt-1.5">
+      <h1 className="hdx_text-2xl hdx_font-bold hdx_text-ink">Set a new password</h1>
+      <p className="hdx_text-secondary-text hdx_text-ink-secondary hdx_mt-1.5">
         Create a strong password for your account.
       </p>
 
-      <form onSubmit={onSubmit} className="mt-8 space-y-5" noValidate>
+      <form onSubmit={onSubmit} className="hdx_mt-8 hdx_space-y-5" noValidate>
         {fields.map((f) => (
           <Field key={f.key} label={f.label} error={errors[f.key]}>
-            <div className="relative">
-              <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-secondary" />
+            <div className="hdx_relative">
+              <Lock size={16} className="hdx_absolute hdx_left-3.5 hdx_top-1/2 hdx_transform hdx_translate-y--1/2 hdx_text-ink-secondary" />
               <Input
                 type={show[f.showKey] ? 'text' : 'password'}
                 placeholder="••••••••"
-                className="pl-10 pr-10"
+                className="hdx_pl-10 hdx_pr-10"
                 value={values[f.key]}
                 onChange={(e) => setValues({ ...values, [f.key]: e.target.value })}
               />
               <button
                 type="button"
                 onClick={() => setShow({ ...show, [f.showKey]: !show[f.showKey] })}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-secondary hover:text-ink"
+                className="hdx_absolute hdx_right-3.5 hdx_top-1/2 hdx_transform hdx_translate-y--1/2 hdx_text-ink-secondary hdx_hover_text-ink"
                 aria-label={show[f.showKey] ? 'Hide password' : 'Show password'}
               >
                 {show[f.showKey] ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -60,20 +60,20 @@ export default function ResetPassword() {
           </Field>
         ))}
 
-        <div className="rounded-card bg-surface border border-line p-3.5 flex items-start gap-2.5">
-          <ShieldCheck size={17} className="text-primary shrink-0 mt-0.5" />
-          <div className="text-small text-ink-secondary">
-            <p className="font-semibold text-ink mb-0.5">Password strength</p>
+        <div className="hdx_rounded-card hdx_bg-surface hdx_border hdx_border-line hdx_p-3.5 hdx_flex hdx_items-start hdx_gap-2.5">
+          <ShieldCheck size={17} className="hdx_text-primary hdx_shrink-0 hdx_mt-0.5" />
+          <div className="hdx_text-small hdx_text-ink-secondary">
+            <p className="hdx_font-semibold hdx_text-ink hdx_mb-0.5">Password strength</p>
             <p>Minimum 8 characters with letters and numbers.</p>
           </div>
         </div>
 
-        <button type="submit" className="btn-primary w-full h-[44px]">
+        <button type="submit" className="btn-primary hdx_w-full hdx_h-44px">
           Update password
         </button>
       </form>
 
-      <Link to="/login" className="mt-6 inline-block text-body font-medium text-primary hover:underline">
+      <Link to="/login" className="hdx_mt-6 hdx_inline-block hdx_text-body hdx_font-medium hdx_text-primary hdx_hover_underline">
         Back to sign in
       </Link>
     </AuthLayout>

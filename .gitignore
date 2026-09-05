@@ -22,3 +22,7 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# feedback
+
+hdx_style_feedback.txt

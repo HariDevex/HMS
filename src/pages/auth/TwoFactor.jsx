@@ -38,16 +38,16 @@ export default function TwoFactor() {
 
   return (
     <AuthLayout sideNote="Multi-factor authentication adds a critical layer of account protection.">
-      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-light mb-6">
-        <ShieldCheck size={24} className="text-primary" />
+      <div className="hdx_flex hdx_h-12 hdx_w-12 hdx_items-center hdx_justify-center hdx_rounded-xl hdx_bg-primary-light hdx_mb-6">
+        <ShieldCheck size={24} className="hdx_text-primary" />
       </div>
-      <h1 className="text-2xl font-bold text-ink">Two-factor authentication</h1>
-      <p className="text-secondary text-ink-secondary mt-1.5">
+      <h1 className="hdx_text-2xl hdx_font-bold hdx_text-ink">Two-factor authentication</h1>
+      <p className="hdx_text-secondary-text hdx_text-ink-secondary hdx_mt-1.5">
         Enter the 6-digit code from your authenticator app to verify your identity.
       </p>
 
-      <div className="mt-8">
-        <div className="flex gap-2.5" role="group" aria-label="Verification code">
+      <div className="hdx_mt-8">
+        <div className="hdx_flex hdx_gap-2.5" role="group" aria-label="Verification code">
           {digits.map((d, i) => (
             <input
               key={i}
@@ -57,22 +57,22 @@ export default function TwoFactor() {
               onKeyDown={(e) => onKey(e, i)}
               inputMode="numeric"
               maxLength={1}
-              className="input !w-12 text-center text-page-title font-bold"
+              className="input !w-12 hdx_text-center hdx_text-page-title hdx_font-bold"
               aria-label={`Digit ${i + 1}`}
             />
           ))}
         </div>
-        <button onClick={verify} className="btn-primary w-full h-[44px] mt-6">
+        <button onClick={verify} className="btn-primary hdx_w-full hdx_h-44px hdx_mt-6">
           Verify & continue
         </button>
       </div>
 
-      <div className="mt-6 flex items-center justify-between text-small">
-        <span className="text-ink-secondary">Didn't get a code?</span>
-        <button className="font-medium text-primary hover:underline">Resend code</button>
+      <div className="hdx_mt-6 hdx_flex hdx_items-center hdx_justify-between hdx_text-small">
+        <span className="hdx_text-ink-secondary">Didn't get a code?</span>
+        <button className="hdx_font-medium hdx_text-primary hdx_hover_underline">Resend code</button>
       </div>
 
-      <Link to="/login" className="mt-4 inline-block text-body font-medium text-primary hover:underline">
+      <Link to="/login" className="hdx_mt-4 hdx_inline-block hdx_text-body hdx_font-medium hdx_text-primary hdx_hover_underline">
         Back to sign in
       </Link>
     </AuthLayout>
