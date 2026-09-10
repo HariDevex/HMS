@@ -1,81 +1,103 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Lock, Eye, EyeOff, ShieldCheck } from 'lucide-react';
-import AuthLayout from './AuthLayout';
-import { Field, Input } from '../../components/ui/Field';
-import { useApp } from '../../context/AppContext';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Hospital, CheckCircle2, AlertCircle } from 'lucide-react';
+import Button from '../../components/ui/Button';
 
 export default function ResetPassword() {
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { pushToast } = useApp();
-  const [show, setShow] = useState({ a: false, b: false });
-  const [values, setValues] = useState({ a: '', b: '' });
-  const [errors, setErrors] = useState({});
 
-  const onSubmit = (e) => {
+  const handleReset = (e) => {
     e.preventDefault();
-    const errs = {};
-    if (values.a.length < 8) errs.a = 'Must be at least 8 characters';
-    if (!/^(?=.*[A-Za-z])(?=.*\d)/.test(values.a)) errs.a = 'Include letters and numbers';
-    if (values.b !== values.a) errs.b = 'Passwords do not match';
-    setErrors(errs);
-    if (Object.keys(errs).length) return;
-    pushToast('Password updated successfully', 'success');
-    navigate('/login');
+    setError('');
+
+    if (newPassword.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setSuccess(true);
+    }, 500);
   };
 
-  const fields = [
-    { key: 'a', label: 'New password', showKey: 'a' },
-    { key: 'b', label: 'Confirm new password', showKey: 'b' },
-  ];
-
   return (
-    <AuthLayout sideNote="Choose a strong, unique password you haven't used before.">
-      <h1 className="hdx_text-2xl hdx_font-bold hdx_text-ink">Set a new password</h1>
-      <p className="hdx_text-secondary-text hdx_text-ink-secondary hdx_mt-1.5">
-        Create a strong password for your account.
-      </p>
-
-      <form onSubmit={onSubmit} className="hdx_mt-8 hdx_space-y-5" noValidate>
-        {fields.map((f) => (
-          <Field key={f.key} label={f.label} error={errors[f.key]}>
-            <div className="hdx_relative">
-              <Lock size={16} className="hdx_absolute hdx_left-3.5 hdx_top-1/2 hdx_transform hdx_translate-y--1/2 hdx_text-ink-secondary" />
-              <Input
-                type={show[f.showKey] ? 'text' : 'password'}
-                placeholder="••••••••"
-                className="hdx_pl-10 hdx_pr-10"
-                value={values[f.key]}
-                onChange={(e) => setValues({ ...values, [f.key]: e.target.value })}
-              />
-              <button
-                type="button"
-                onClick={() => setShow({ ...show, [f.showKey]: !show[f.showKey] })}
-                className="hdx_absolute hdx_right-3.5 hdx_top-1/2 hdx_transform hdx_translate-y--1/2 hdx_text-ink-secondary hdx_hover_text-ink"
-                aria-label={show[f.showKey] ? 'Hide password' : 'Show password'}
-              >
-                {show[f.showKey] ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </Field>
-        ))}
-
-        <div className="hdx_rounded-card hdx_bg-surface hdx_border hdx_border-line hdx_p-3.5 hdx_flex hdx_items-start hdx_gap-2.5">
-          <ShieldCheck size={17} className="hdx_text-primary hdx_shrink-0 hdx_mt-0.5" />
-          <div className="hdx_text-small hdx_text-ink-secondary">
-            <p className="hdx_font-semibold hdx_text-ink hdx_mb-0.5">Password strength</p>
-            <p>Minimum 8 characters with letters and numbers.</p>
+    <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center p-4">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 sm:p-8 animate-slide-up">
+        <div className="text-center mb-6">
+          <div className="w-12 h-12 rounded-2xl bg-primary text-white mx-auto flex items-center justify-center shadow-lg mb-3">
+            <Hospital className="w-6 h-6" />
           </div>
+          <h2 className="text-xl font-bold text-slate-900">Set New Password</h2>
+          <p className="text-xs text-slate-500 mt-1">Must meet hospital security compliance standards</p>
         </div>
 
-        <button type="submit" className="btn-primary hdx_w-full hdx_h-44px">
-          Update password
-        </button>
-      </form>
+        {error && (
+          <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-error text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
 
-      <Link to="/login" className="hdx_mt-6 hdx_inline-block hdx_text-body hdx_font-medium hdx_text-primary hdx_hover_underline">
-        Back to sign in
-      </Link>
-    </AuthLayout>
+        {success ? (
+          <div className="text-center py-4 space-y-4">
+            <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
+              <CheckCircle2 className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-900">Password Changed</h4>
+              <p className="text-xs text-slate-500 mt-1">Your password has been successfully updated.</p>
+            </div>
+            <Button variant="primary" className="w-full" onClick={() => navigate('/login')}>
+              Proceed to Sign In
+            </Button>
+          </div>
+        ) : (
+          <form onSubmit={handleReset} className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                New Password
+              </label>
+              <input
+                type="password"
+                required
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="••••••••••••"
+                className="w-full h-11 px-3 text-sm bg-slate-50 rounded-xl border border-slate-300 focus:outline-none focus:border-primary"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                Confirm New Password
+              </label>
+              <input
+                type="password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••••••"
+                className="w-full h-11 px-3 text-sm bg-slate-50 rounded-xl border border-slate-300 focus:outline-none focus:border-primary"
+              />
+            </div>
+
+            <Button type="submit" size="lg" loading={loading} className="w-full">
+              Update Password
+            </Button>
+          </form>
+        )}
+      </div>
+    </div>
   );
 }
