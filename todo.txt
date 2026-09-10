@@ -1,0 +1,126 @@
+# HOSPITAL MANAGEMENT SYSTEM (HMS) — UI DEVELOPMENT TODO
+
+[x] 1. Project Foundation & Tailwind CSS Design System Setup
+    [x] 1.1 Configure Tailwind CSS v4 and @tailwindcss/vite with healthcare design tokens
+    [x] 1.2 Setup base stylesheet (src/index.css) with @import "tailwindcss", @theme tokens, animations, and custom scrollbars
+    [x] 1.3 Setup rich mock clinical & operational data store (src/data/mockData.js) with 7 personas, patients, labs, radiology, MAR, beds, invoices, audit logs
+    [x] 1.4 Setup App Context (src/context/AppContext.jsx) with role switching (Admin, Doctor, Nurse, Lab, Radiology, Reception, Patient), active patient, toasts, notifications, and modals
+    [x] 1.5 Configure routing in src/App.jsx for all views and role-based navigation
+
+[x] 2. Core Reusable Component System (Tailwind CSS)
+    [x] 2.1 Buttons (Primary, Secondary, Outline, Danger, Ghost, Icon buttons, Loading states)
+    [x] 2.2 Form Controls (Input, Select, Textarea, Checkbox, Radio, SearchInput, Field wrappers with validation & labels)
+    [x] 2.3 Cards & StatCards (Elevated, bordered, hoverable, metric badges, trends)
+    [x] 2.4 Badges & Status Indicators (Healthcare status chips with accessible contrast & dot/icon indicators)
+    [x] 2.5 Modals & Drawers (Animated backdrop, accessible close, responsive drawer for mobile/tablet)
+    [x] 2.6 Tables & Work Queues (Sortable headers, filter bars, pagination, bulk selection, row actions, empty & skeleton states)
+    [x] 2.7 UI State Indicators (Loading skeletons, empty states with friendly icons/guidance, error screens with retry, success toasts)
+    [x] 2.8 Critical Alert Banners (Clinical alert badges, allergy indicators, vital warning chips)
+    [x] 2.9 Read-Only & Verified Visual Badges ("Verified by", timestamp, locked visual cues)
+
+[x] 3. Global Application Shell
+    [x] 3.1 Enterprise Header (Logo, breadcrumbs, page title, global search bar, role switcher dropdown, notifications popover, messages, user profile menu)
+    [x] 3.2 Responsive Collapsible Sidebar (Role-specific navigation, collapse toggle, department badge, active route styling)
+    [x] 3.3 Mobile Navigation Drawer & Bottom Nav (For compact screens and patient view)
+    [x] 3.4 Breadcrumb & PageHeader component
+
+[x] 4. Authentication & Security UI
+    [x] 4.1 Login page (Hospital branding, email/password, toggle visibility, remember me, forgot password link, validation states)
+    [x] 4.2 Forgot Password & Reset Password screens
+    [x] 4.3 Two-Factor Authentication (2FA) verification code screen
+    [x] 4.4 Permission Denied / 403 Access Denied screen
+    [x] 4.5 404 Not Found screen
+
+[x] 5. Administrator Module
+    [x] 5.1 Admin Dashboard (8 Metric cards: Patients, Appointments, Doctors, Nurses, Pending Labs, Pending Scans, Available Beds, Revenue)
+    [x] 5.2 Patient & Appointment Analytics charts (Recharts: occupancy, volume, revenue)
+    [x] 5.3 Department Activity & Critical Alerts feed
+    [x] 5.4 User Management (User table, role filter, status pills, Add/Edit User modal, role assignment)
+    [x] 5.5 Audit Logs Screen (Filterable clinical and administrative event stream, read-only visual presentation)
+    [x] 5.6 Hospital Settings (Facility configuration, departments, shift schedules)
+
+[x] 6. Doctor Module
+    [x] 6.1 Doctor Dashboard (Today's schedule, waiting room counter, active consultations, pending lab/scan alerts, quick actions)
+    [x] 6.2 Consultation Workspace (Chief complaint, vitals review, clinical examination, diagnosis coding, orders, notes)
+    [x] 6.3 Order Lab Test Modal & Order Radiology Scan Modal
+    [x] 6.4 E-Prescription Writer Modal (Drug search, dosage, frequency, duration, instructions, allergy warning)
+    [x] 6.5 Lab & Scan Results review panel
+
+[x] 7. Nurse Module
+    [x] 7.1 Nurse Dashboard (Assigned ward patients, medication due schedule, pending vitals, nursing tasks)
+    [x] 7.2 Patient Vitals Recorder Modal (BP, Pulse, Temp, SpO2, Resp Rate, Pain scale, BMI calculation)
+    [x] 7.3 Medication Administration Record (MAR) (Due, Given, Missed, Held, verify administration)
+    [x] 7.4 Nursing Care Notes Drawer (Shift handover notes, patient condition changes)
+
+[x] 8. Laboratory Module
+    [x] 8.1 Lab Work Queue (Stages: Ordered -> Sample Pending -> Collected -> Processing -> Results Ready -> Verified -> Published)
+    [x] 8.2 Sample Collection Interface (Barcodes, specimen type, collection timestamp)
+    [x] 8.3 Result Entry Screen (Reference ranges, abnormal high/low indicators, critical value flags)
+    [x] 8.4 Result Verification Screen (Read-only verified state, verified by doctor/technician signature)
+    [x] 8.5 Lab Report Preview & Print Modal
+
+[x] 9. Radiology Module
+    [x] 9.1 Radiology Work Queue (New Requests, Scheduled, Waiting, In Progress, Completed, Report Draft, Verified)
+    [x] 9.2 Modality Filters (X-Ray, CT, MRI, Ultrasound, PET)
+    [x] 9.3 Scan Details & Viewer Mockup (Interactive scan viewer mockup, scan parameters)
+    [x] 9.4 Radiologist Reporting Interface (Technique, Findings, Impression, Urgent notification flag)
+    [x] 9.5 Verified Scan Report Preview (Read-only verified layout with radiologist stamp)
+
+[x] 10. Receptionist Module
+    [x] 10.1 Reception Dashboard (Today's check-ins, registrations, waiting queue, cashier activity)
+    [x] 10.2 Comprehensive Patient Registration Modal (Demographics, Contact, Emergency, Insurance)
+    [x] 10.3 Appointment Scheduler & Calendar View (Doctor availability, slot picker, status management)
+    [x] 10.4 Patient Queue Management (Token display, waiting time, consultation room assignment, call patient action)
+    [x] 10.5 Quick Check-in & Arrival confirmation
+
+[x] 11. Central Patient Profile & Clinical Timeline
+    [x] 11.1 Patient Header (Name, MRN, Age/Gender, Blood group, Allergies, Critical condition badges, Emergency contact)
+    [x] 11.2 Interactive Clinical Timeline (Registration -> Appointments -> Vitals -> Orders -> Lab results -> Radiology -> Meds -> Invoices)
+    [x] 11.3 Patient Tabs with Role-Specific Visibility:
+        - Overview
+        - Timeline
+        - Consultations
+        - Medical History
+        - Vitals (Chart & history)
+        - Medications & Prescriptions
+        - Laboratory
+        - Radiology
+        - Nursing
+        - Appointments
+        - Admissions & Beds
+        - Billing & Invoices
+        - Documents
+
+[x] 12. Ward & Bed Management Module
+    [x] 12.1 Ward Occupancy Dashboard (ICU, General, Maternity, Pediatric, Surgical)
+    [x] 12.2 Interactive Bed Grid (States: Available, Occupied, Reserved, Cleaning, Maintenance)
+    [x] 12.3 Patient Bed Assignment & Admission Modal
+    [x] 12.4 Bed Transfer Modal & Discharge Workflow UI
+
+[x] 13. Billing & Invoicing Module
+    [x] 13.1 Billing Dashboard & Financial Summary (Total billed, collected, pending, insurance claims)
+    [x] 13.2 Invoice List & Filter (Paid, Pending, Partially Paid, Overdue)
+    [x] 13.3 Invoice Detail & Printable View (Itemized services, consultation fees, lab tests, medications, taxes, payments)
+    [x] 13.4 Payment Entry Modal (Cash, Card, Insurance claim, receipt generation)
+
+[x] 14. Reports & Analytics Module
+    [x] 14.1 Reports Dashboard with Filter Controls (Date ranges, Department, Doctor, Service type)
+    [x] 14.2 Departmental & Operational Performance Charts
+    [x] 14.3 Revenue & Billing Analytics
+    [x] 14.4 Bed Occupancy & Length of Stay Analytics
+    [x] 14.5 Export UI (PDF, CSV, Print triggers)
+
+[x] 15. Patient Portal (Mobile-First Interface)
+    [x] 15.1 Dedicated Mobile-First Patient Layout & Navigation
+    [x] 15.2 Patient Home Dashboard (Next appointment countdown, assigned doctor, recent test reports, active prescriptions, balance due)
+    [x] 15.3 Patient Appointments (Upcoming, past visits, book appointment wizard)
+    [x] 15.4 Patient Medical Records & Diagnostic Reports (Accessible layman explanations + download report)
+    [x] 15.5 Patient Prescriptions with dosage schedule & refill request
+    [x] 15.6 Patient Billing & Online Pay interface
+    [x] 15.7 Patient Profile, Emergency contacts & Health documents
+
+[x] 16. Responsive Design, Polish & Verification
+    [x] 16.1 Test Desktop (1440px), Tablet (1024px), Mobile (390px)
+    [x] 16.2 Migrated to official Tailwind CSS v4 (@tailwindcss/vite) with clean production build
+    [x] 16.3 Run Vite build & linter to verify zero syntax/build errors (oxlint: 0 errors, 0 warnings)
+    [x] 16.4 Complete UI Delivery Checklist verification (Accessibility, contrast, consistency, no dead buttons)

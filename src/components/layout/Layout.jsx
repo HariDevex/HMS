@@ -1,26 +1,39 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import React from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import { useApp } from '../../context/AppContext';
+import Header from './Header';
 import Sidebar from './Sidebar';
-import Topbar from './Topbar';
-import Toaster from '../ui/Toast';
+import GlobalSearchModal from './GlobalSearchModal';
+import ToastContainer from '../ui/Toast';
+import PatientPortalLayout from './PatientPortalLayout';
 
 export default function Layout() {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { currentRole } = useApp();
+  const location = useLocation();
+
+  // If active role is patient or on /portal, show PatientPortalLayout
+  if (currentRole === 'patient' || location.pathname.startsWith('/portal')) {
+    return <PatientPortalLayout />;
+  }
 
   return (
-    <div className="hdx_flex hdx_min-h-screen hdx_bg-surface">
+    <div className="min-h-screen bg-slate-50 flex antialiased text-slate-800">
+      {/* Global Notifications & Modals */}
+      <ToastContainer />
+      <GlobalSearchModal />
+
+      {/* Enterprise Staff Collapsible Sidebar */}
       <Sidebar />
-      {mobileOpen && <Sidebar mobile onClose={() => setMobileOpen(false)} />}
-      <div className="hdx_flex-1 hdx_flex hdx_flex-col hdx_min-w-0">
-        <Topbar onMenu={() => setMobileOpen(true)} />
-        <main className="hdx_flex-1 hdx_p-4 hdx_sm_p-6 hdx_lg_p-8 hdx_max-w-1440px hdx_w-full hdx_mx-auto">
-          <Outlet />
+
+      {/* Main Staff App Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <Header />
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 scrollbar-thin">
+          <div className="max-w-7xl mx-auto space-y-6">
+            <Outlet />
+          </div>
         </main>
-        <footer className="hdx_px-6 hdx_py-4 hdx_text-small hdx_text-ink-secondary hdx_border-t hdx_border-line hdx_bg-white">
-          © 2026 MediCore Hospital Management System · Secure · HIPAA Compliant
-        </footer>
       </div>
-      <Toaster />
     </div>
   );
 }

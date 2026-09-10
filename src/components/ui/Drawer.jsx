@@ -1,21 +1,18 @@
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 
-export default function Modal({
+export default function Drawer({
   isOpen,
   onClose,
   title,
   subtitle,
   children,
   footer,
-  maxWidth = 'max-w-xl',
+  width = 'max-w-md',
 }) {
-  // ESC to close
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
+      if (e.key === 'Escape' && isOpen) onClose();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -24,43 +21,40 @@ export default function Modal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 sm:p-6 animate-fade-in">
+    <div className="fixed inset-0 z-50 overflow-hidden flex justify-end">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
         onClick={onClose}
       />
 
-      {/* Dialog container */}
+      {/* Slide-over panel */}
       <div
-        className={`relative w-full ${maxWidth} bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-10 animate-slide-up flex flex-col max-h-[90vh]`}
-        role="dialog"
-        aria-modal="true"
+        className={`relative w-full ${width} bg-white shadow-2xl z-10 flex flex-col h-full border-l border-slate-200 animate-slide-in-right`}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between gap-4 shrink-0 bg-slate-50/50">
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between gap-4 shrink-0 bg-slate-50/70">
           <div>
-            {title && <h3 className="text-lg font-bold text-slate-900 tracking-tight">{title}</h3>}
+            {title && <h3 className="text-base font-bold text-slate-900 tracking-tight">{title}</h3>}
             {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
           </div>
           <button
             type="button"
             onClick={onClose}
             className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-            aria-label="Close dialog"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Body */}
-        <div className="px-6 py-5 overflow-y-auto grow scrollbar-thin">
+        {/* Content */}
+        <div className="p-6 overflow-y-auto grow scrollbar-thin space-y-5">
           {children}
         </div>
 
         {/* Footer */}
         {footer && (
-          <div className="px-6 py-3.5 bg-slate-50/80 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0">
+          <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0">
             {footer}
           </div>
         )}

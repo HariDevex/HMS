@@ -1,80 +1,72 @@
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { ShieldCheck } from 'lucide-react';
-import AuthLayout from './AuthLayout';
-import { useApp } from '../../context/AppContext';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ShieldCheck, ArrowRight } from 'lucide-react';
+import Button from '../../components/ui/Button';
 
 export default function TwoFactor() {
+  const [code, setCode] = useState(['', '', '', '', '', '']);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { pushToast } = useApp();
-  const inputs = useRef([]);
-  const [digits, setDigits] = useState(['', '', '', '', '', '']);
 
-  const setDigit = (i, val) => {
-    const v = val.replace(/\D/g, '').slice(-1);
-    const next = [...digits];
-    next[i] = v;
-    setDigits(next);
-    if (v && i < 5) inputs.current[i + 1]?.focus();
-  };
+  const handleChange = (index, value) => {
+    if (value.length > 1) value = value.slice(-1);
+    const newCode = [...code];
+    newCode[index] = value;
+    setCode(newCode);
 
-  const onKey = (e, i) => {
-    if (e.key === 'Backspace' && !digits[i] && i > 0) inputs.current[i - 1]?.focus();
-  };
-
-  useEffect(() => {
-    inputs.current[0]?.focus();
-  }, []);
-
-  const code = digits.join('');
-  const verify = () => {
-    if (code.length < 6) {
-      pushToast('Enter the 6-digit code', 'info');
-      return;
+    // Auto-focus next input
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`otp-${index + 1}`);
+      if (nextInput) nextInput.focus();
     }
-    pushToast('Two-factor authentication verified', 'success');
-    navigate('/');
+  };
+
+  const handleVerify = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigate('/doctor');
+    }, 500);
   };
 
   return (
-    <AuthLayout sideNote="Multi-factor authentication adds a critical layer of account protection.">
-      <div className="hdx_flex hdx_h-12 hdx_w-12 hdx_items-center hdx_justify-center hdx_rounded-xl hdx_bg-primary-light hdx_mb-6">
-        <ShieldCheck size={24} className="hdx_text-primary" />
-      </div>
-      <h1 className="hdx_text-2xl hdx_font-bold hdx_text-ink">Two-factor authentication</h1>
-      <p className="hdx_text-secondary-text hdx_text-ink-secondary hdx_mt-1.5">
-        Enter the 6-digit code from your authenticator app to verify your identity.
-      </p>
-
-      <div className="hdx_mt-8">
-        <div className="hdx_flex hdx_gap-2.5" role="group" aria-label="Verification code">
-          {digits.map((d, i) => (
-            <input
-              key={i}
-              ref={(el) => (inputs.current[i] = el)}
-              value={d}
-              onChange={(e) => setDigit(i, e.target.value)}
-              onKeyDown={(e) => onKey(e, i)}
-              inputMode="numeric"
-              maxLength={1}
-              className="input !w-12 hdx_text-center hdx_text-page-title hdx_font-bold"
-              aria-label={`Digit ${i + 1}`}
-            />
-          ))}
+    <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center p-4">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 sm:p-8 animate-slide-up text-center">
+        <div className="w-12 h-12 rounded-2xl bg-primary text-white mx-auto flex items-center justify-center shadow-lg mb-3">
+          <ShieldCheck className="w-6 h-6" />
         </div>
-        <button onClick={verify} className="btn-primary hdx_w-full hdx_h-44px hdx_mt-6">
-          Verify & continue
-        </button>
-      </div>
+        <h2 className="text-xl font-bold text-slate-900">Two-Factor Authentication</h2>
+        <p className="text-xs text-slate-500 mt-1 mb-6">
+          Enter the 6-digit security verification code sent to your registered authenticator or phone.
+        </p>
 
-      <div className="hdx_mt-6 hdx_flex hdx_items-center hdx_justify-between hdx_text-small">
-        <span className="hdx_text-ink-secondary">Didn't get a code?</span>
-        <button className="hdx_font-medium hdx_text-primary hdx_hover_underline">Resend code</button>
-      </div>
+        <form onSubmit={handleVerify} className="space-y-6">
+          <div className="flex justify-center gap-2 sm:gap-3">
+            {code.map((digit, idx) => (
+              <input
+                key={idx}
+                id={`otp-${idx}`}
+                type="text"
+                inputMode="numeric"
+                maxLength={1}
+                value={digit}
+                onChange={(e) => handleChange(idx, e.target.value)}
+                className="w-11 h-13 text-xl font-bold text-center bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-primary focus:bg-white transition-colors"
+              />
+            ))}
+          </div>
 
-      <Link to="/login" className="hdx_mt-4 hdx_inline-block hdx_text-body hdx_font-medium hdx_text-primary hdx_hover_underline">
-        Back to sign in
-      </Link>
-    </AuthLayout>
+          <Button type="submit" size="lg" loading={loading} className="w-full">
+            <span>Verify & Enter</span>
+            <ArrowRight className="w-4 h-4 ml-1" />
+          </Button>
+        </form>
+
+        <p className="text-xs text-slate-400 mt-4">
+          Didn't receive code? <button className="text-primary font-semibold hover:underline">Resend code</button>
+        </p>
+      </div>
+    </div>
   );
 }

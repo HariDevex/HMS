@@ -1,28 +1,49 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldAlert, ArrowLeft } from 'lucide-react';
-import AuthLayout from './AuthLayout';
+import { useApp } from '../../context/AppContext';
+import { ShieldAlert, ArrowLeft, Home } from 'lucide-react';
+import Button from '../../components/ui/Button';
 
 export default function AccessDenied() {
+  const { currentRole } = useApp();
   const navigate = useNavigate();
+
+  const getRoleHome = () => {
+    switch (currentRole) {
+      case 'patient': return '/portal';
+      case 'doctor': return '/doctor';
+      case 'nurse': return '/nurse';
+      case 'lab': return '/laboratory';
+      case 'radiology': return '/radiology';
+      case 'reception': return '/reception';
+      case 'admin':
+      default: return '/admin';
+    }
+  };
+
   return (
-    <AuthLayout sideNote="Access is logged and monitored for compliance.">
-      <div className="hdx_flex hdx_h-12 hdx_w-12 hdx_items-center hdx_justify-center hdx_rounded-xl hdx_bg-red-50 hdx_mb-6">
-        <ShieldAlert size={24} className="hdx_text-error" />
+    <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
+      <div className="w-16 h-16 rounded-3xl bg-red-100 text-error flex items-center justify-center shadow-lg shadow-red-500/10 mb-4">
+        <ShieldAlert className="w-8 h-8" />
       </div>
-      <p className="hdx_text-secondary-text hdx_font-semibold hdx_text-error">403 · Access denied</p>
-      <h1 className="hdx_text-2xl hdx_font-bold hdx_text-ink hdx_mt-1">You don't have permission</h1>
-      <p className="hdx_text-secondary-text hdx_text-ink-secondary hdx_mt-2 hdx_leading-relaxed">
-        Your role does not grant access to this resource. If you believe this is a mistake, contact your
-        administrator or request elevated permissions.
+      <span className="text-xs font-bold uppercase tracking-wider text-error bg-red-50 px-2.5 py-1 rounded-full border border-red-200 mb-2">
+        Error 403 • Restricted Area
+      </span>
+      <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+        Permission Denied
+      </h2>
+      <p className="text-sm text-slate-500 max-w-md mt-2 mb-6 leading-relaxed">
+        You do not have administrative or clinical privileges to access this resource under your current role (<span className="font-semibold text-slate-700">{currentRole}</span>). Please consult your department head or system administrator if you believe this is in error.
       </p>
-      <div className="hdx_mt-8 hdx_flex hdx_gap-3">
-        <button onClick={() => navigate('/')} className="btn-primary">
-          <ArrowLeft size={16} /> Back to dashboard
-        </button>
-        <button onClick={() => navigate('/settings')} className="btn-secondary">
-          Request access
-        </button>
+
+      <div className="flex items-center gap-3">
+        <Button variant="secondary" icon={ArrowLeft} onClick={() => navigate(-1)}>
+          Go Back
+        </Button>
+        <Button variant="primary" icon={Home} onClick={() => navigate(getRoleHome())}>
+          Return to Dashboard
+        </Button>
       </div>
-    </AuthLayout>
+    </div>
   );
 }

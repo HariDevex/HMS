@@ -1,39 +1,50 @@
+import React from 'react';
+import Card from './Card';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
-export default function StatCard({ icon: Icon, iconBg, label, value, trend, trendDir = 'up', hint, sparkline }) {
-  const positive = trendDir === 'up';
+export default function StatCard({
+  title,
+  value,
+  subtitle,
+  trend,
+  trendType = 'up',
+  icon: Icon,
+  iconBg = 'bg-blue-50 text-primary',
+  className = '',
+  onClick,
+}) {
   return (
-    <div className="card hdx_p-5 hdx_transition-shadow hdx_duration-150 hdx_hover_shadow-card-hover">
-      <div className="hdx_flex hdx_items-start hdx_justify-between">
-        <div className={`hdx_w-11 hdx_h-11 hdx_rounded-10 hdx_flex hdx_items-center hdx_justify-center ${iconBg}`}>
-          <Icon size={21} className="hdx_text-white" />
+    <Card
+      onClick={onClick}
+      hover={Boolean(onClick)}
+      className={`p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between ${className}`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">{title}</p>
+          <h4 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1 tracking-tight">{value}</h4>
         </div>
-        {sparkline && (
-          <svg width="64" height="32" className="hdx_text-primary hdx_opacity-70" aria-hidden="true">
-            <polyline
-              points={sparkline}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+        {Icon && (
+          <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-xs ${iconBg}`}>
+            <Icon className="w-5 h-5" />
+          </div>
         )}
       </div>
-      <p className="hdx_mt-4 hdx_text-stat-number hdx_text-ink">{value}</p>
-      <p className="hdx_text-body hdx_font-medium hdx_text-ink-secondary hdx_mt-0.5">{label}</p>
-      <div className="hdx_flex hdx_items-center hdx_gap-1.5 hdx_mt-3">
-        <span
-          className={`hdx_inline-flex hdx_items-center hdx_gap-0.5 hdx_text-small hdx_font-semibold ${
-            positive ? 'hdx_text-success' : 'hdx_text-error'
-          }`}
-        >
-          {positive ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
-          {trend}
-        </span>
-        <span className="hdx_text-small hdx_text-ink-secondary">{hint}</span>
-      </div>
-    </div>
+
+      {(trend || subtitle) && (
+        <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+          {trend && (
+            <div className={`flex items-center gap-1 font-semibold ${
+              trendType === 'up' ? 'text-green-600' : trendType === 'down' ? 'text-red-600' : 'text-slate-600'
+            }`}>
+              {trendType === 'up' && <TrendingUp className="w-3.5 h-3.5" />}
+              {trendType === 'down' && <TrendingDown className="w-3.5 h-3.5" />}
+              <span>{trend}</span>
+            </div>
+          )}
+          {subtitle && <span className="truncate">{subtitle}</span>}
+        </div>
+      )}
+    </Card>
   );
 }
