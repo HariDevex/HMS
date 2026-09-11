@@ -208,12 +208,15 @@ Accessible patient experience (`/portal`, `/portal/*`):
 
 | Layer | Technology | Description |
 | :--- | :--- | :--- |
-| **Core Framework** | React 19 (`v19.2.8`) | Modern React with hooks, lazy loading, and suspense |
+| **Frontend Framework** | React 19 (`v19.2.8`) | Modern React with hooks, lazy loading, and suspense |
 | **Build Tooling** | Vite 8 (`v8.2.2`) | Ultra-fast HMR and optimized production asset bundling |
 | **Styling Engine** | Tailwind CSS v4 (`v4.3.3`) | Tailwind v4 with `@tailwindcss/vite` plugin and modern CSS tokens |
 | **Routing** | React Router DOM v7 (`v7.18.3`) | Declarative client-side routing, redirects, and dynamic params |
 | **Charts & Graphs** | Recharts (`v3.10.1`) | Responsive SVG clinical vitals charts and analytics bars/lines |
 | **Iconography** | Lucide React (`v1.38.0`) | Clean, accessible healthcare and operational vector icons |
+| **Backend Framework** | Express 5 (`v5.2.1`) | Fast, minimalist REST API backend with modular controllers & routes |
+| **Database Architecture** | PostgreSQL Ready | Complete production DDL schema (`schema.sql`), connection adapter, & zero-config in-memory mock store |
+| **Process Orchestration** | Concurrently (`v10.0.5`) | Multi-process task runner managing frontend (Vite) and backend (Express) concurrently |
 | **Linter & Quality** | Oxlint (`v1.79.0`) | High-performance Rust-based linter with zero errors across the codebase |
 
 ---
@@ -224,10 +227,47 @@ Accessible patient experience (`/portal`, `/portal/*`):
 HMS/
 ├── index.html                     # HTML entry point
 ├── package.json                   # Project metadata, scripts, and dependencies
-├── vite.config.js                 # Vite configuration with React and Tailwind v4 plugins
-├── todo.txt                       # Development milestone tracking (17 completed modules)
+├── vite.config.js                 # Vite config with React, Tailwind v4, and /api proxy
+├── todo.txt                       # Development milestone tracking
 ├── README.md                      # Comprehensive project documentation
-└── src/
+│
+├── server/                        # Express.js REST API Backend
+│   ├── index.js                   # Express server entry point (port 5000, CORS, logging, proxy)
+│   ├── README.md                  # Comprehensive Backend & REST API documentation
+│   │
+│   ├── controllers/               # Express request handlers (business logic)
+│   │   ├── appointmentController.js # Appointment booking, status updates, scheduling
+│   │   ├── authController.js      # Login, 2FA validation, session user info
+│   │   ├── billingController.js   # Invoices, claims, payments, co-pay calculation
+│   │   ├── labController.js       # Lab tests, analyte entry, pathologist sign-off, PDF attach
+│   │   ├── patientController.js   # Master patient index, demographic CRUD, clinical suggestions
+│   │   ├── prescriptionController.js # Drug ordering, dispensing, MAR administration
+│   │   ├── radiologyController.js # Imaging studies, DICOM views, radiologist reports, PDF attach
+│   │   ├── reportsController.js   # Analytics, occupancy, clinical KPI aggregates
+│   │   ├── vitalsController.js    # Patient vital sign logging and trend retrieval
+│   │   └── wardController.js      # Bed allocation, admissions, inter-ward transfers
+│   │
+│   ├── routes/                    # Express modular route definitions
+│   │   ├── appointmentRoutes.js   # /api/appointments
+│   │   ├── auditLogRoutes.js      # /api/audit-logs
+│   │   ├── authRoutes.js          # /api/auth
+│   │   ├── billingRoutes.js       # /api/billing
+│   │   ├── labRoutes.js           # /api/labs
+│   │   ├── patientRoutes.js       # /api/patients
+│   │   ├── prescriptionRoutes.js  # /api/prescriptions
+│   │   ├── radiologyRoutes.js     # /api/radiology
+│   │   ├── reportsRoutes.js       # /api/reports
+│   │   ├── vitalsRoutes.js        # /api/vitals
+│   │   └── wardRoutes.js          # /api/wards
+│   │
+│   ├── db/                        # Database schemas and connection management
+│   │   ├── schema.sql             # PostgreSQL production DDL (tables, enums, FKs, indexes)
+│   │   └── postgresClient.js      # PostgreSQL client adapter (DATABASE_URL fallback)
+│   │
+│   └── data/                      # Backend mock repository data store
+│       └── inMemoryDb.js          # In-memory relational store matching PostgreSQL schema
+│
+└── src/                           # React 19 Frontend Application
     ├── main.jsx                   # Application bootstrapping
     ├── App.jsx                    # Route declarations, lazy imports, role path resolvers
     ├── index.css                  # Tailwind v4 import, color tokens, custom scrollbars
@@ -237,32 +277,31 @@ HMS/
     │   │   ├── Header.jsx         # Global top bar, search, role switcher, notifications
     │   │   ├── Sidebar.jsx        # Role-based collapsible navigation drawer
     │   │   ├── Layout.jsx         # App shell wrapper for clinical/admin modules
-    │   │   └── PatientPortalLayout.jsx # Mobile-first layout for patient portal
+    │   │   ├── PatientPortalLayout.jsx # Mobile-first layout for patient portal
+    │   │   └── GlobalSearchModal.jsx # Quick lookup modal (Cmd/Ctrl+K) for patients & records
     │   │
-    │   ├── ui/
-    │   │   ├── Badge.jsx          # Status chips, priority badges, dot indicators
-    │   │   ├── Button.jsx         # Primary, secondary, outline, ghost, danger, sizes
-    │   │   ├── Card.jsx           # Elevated, bordered containers with CardHeader & CardBody
-    │   │   ├── CriticalAlert.jsx  # STAT panic alerts, allergy warnings
-    │   │   ├── Drawer.jsx         # Right-side animated slide-over panels
-    │   │   ├── EmptyState.jsx     # Friendly zero-data visual states
-    │   │   ├── Field.jsx          # Form input wrappers, Select, Textarea, Checkbox
-    │   │   ├── LoadingState.jsx   # Suspense skeleton screens and spinners
-    │   │   ├── Modal.jsx          # Accessible modal dialogs with backdrop animation
-    │   │   ├── PdfViewerModal.jsx # Reusable on-site popup clinical PDF viewer
-    │   │   ├── StatCard.jsx       # Metric cards with trends and icons
-    │   │   ├── Table.jsx          # Sortable columns, sticky headers, row actions
-    │   │   ├── Tabs.jsx           # Pill, underline, and enclosed tab switchers
-    │   │   ├── Toast.jsx          # Toast notification alerts
-    │   │   └── VerifiedBadge.jsx  # Official verified/published read-only badge
-    │   │
-    │   └── modals/                # Context-triggered operational dialogs
+    │   └── ui/
+    │       ├── Badge.jsx          # Status chips, priority badges, dot indicators
+    │       ├── Button.jsx         # Primary, secondary, outline, ghost, danger, sizes
+    │       ├── Card.jsx           # Elevated, bordered containers with CardHeader & CardBody
+    │       ├── CriticalAlert.jsx  # STAT panic alerts, allergy warnings
+    │       ├── Drawer.jsx         # Right-side animated slide-over panels
+    │       ├── EmptyState.jsx     # Friendly zero-data visual states
+    │       ├── Field.jsx          # Form input wrappers, Select, Textarea, Checkbox
+    │       ├── LoadingState.jsx   # Suspense skeleton screens and spinners
+    │       ├── Modal.jsx          # Accessible modal dialogs with backdrop animation
+    │       ├── PdfViewerModal.jsx # Reusable on-site popup clinical PDF viewer
+    │       ├── StatCard.jsx       # Metric cards with trends and icons
+    │       ├── Table.jsx          # Sortable columns, sticky headers, row actions
+    │       ├── Tabs.jsx           # Pill, underline, and enclosed tab switchers
+    │       ├── Toast.jsx          # Toast notification alerts
+    │       └── VerifiedBadge.jsx  # Official verified/published read-only badge
     │
     ├── context/
     │   └── AppContext.jsx         # Global state: roles, patients, labs, scans, MAR, toasts
     │
     ├── data/
-    │   └── mockData.js            # Mock dataset: 7 personas, 5 patients, labs, beds, bills
+    │   └── mockData.js            # Frontend mock dataset: personas, patients, labs, beds, bills
     │
     └── pages/
         ├── NotFound.jsx           # 404 error page
@@ -345,7 +384,7 @@ The application utilizes a custom healthcare-themed design system built directly
 ## 🚀 Getting Started & Installation
 
 ### Prerequisites
-* **Node.js**: `v18.0.0` or higher
+* **Node.js**: `v18.0.0` or higher (Node `v20+` or `v24` recommended)
 * **npm**: `v9.0.0` or higher
 
 ### Installation
@@ -360,16 +399,42 @@ The application utilizes a custom healthcare-themed design system built directly
    npm install
    ```
 
-3. **Start the local development server**:
+3. **Start the Full-Stack Application (Frontend + Express API)**:
+   Run both the Express backend server and the Vite frontend simultaneously with a single command:
    ```bash
-   npm run dev
+   npm run dev:all
+   # OR
+   npm start
    ```
 
 4. **Access the application**:
-   Open your browser and navigate to:
-   ```text
-   http://localhost:5173
-   ```
+   * **Frontend Web Application**: [http://localhost:5173](http://localhost:5173)
+   * **Express REST API**: [http://localhost:5000](http://localhost:5000)
+   * **API Health Check**: [http://localhost:5000/api/health](http://localhost:5000/api/health)
+   * **API Reverse Proxy**: All calls from the frontend to `/api/*` are automatically forwarded to `http://localhost:5000` via Vite proxy.
+
+---
+
+### Running Individual Services (Optional)
+
+If you prefer running services in separate terminal windows:
+
+* **Frontend Only**:
+  ```bash
+  npm run dev
+  ```
+  Accessible at `http://localhost:5173`.
+
+* **Express API Server Only (with hot-reload)**:
+  ```bash
+  npm run server:dev
+  ```
+  Accessible at `http://localhost:5000`.
+
+* **Express API Server (production mode)**:
+  ```bash
+  npm run server
+  ```
 
 ---
 
@@ -377,9 +442,11 @@ The application utilizes a custom healthcare-themed design system built directly
 
 | Script | Command | Purpose |
 | :--- | :--- | :--- |
-| `npm run dev` | `vite` | Starts Vite local development server with Hot Module Replacement (HMR) |
-| `npm run server` | `node server/index.js` | Starts Express REST API backend server (port 5000) |
-| `npm run server:dev` | `node --watch server/index.js` | Starts Express server with native file watch & hot reload |
+| `npm run dev:all` | `concurrently ...` | **Recommended**: Concurrently launches Express API (`:5000`) and Vite frontend (`:5173`) |
+| `npm start` | `concurrently ...` | Standard alias for `npm run dev:all` |
+| `npm run dev` | `vite` | Starts Vite local development server with Hot Module Replacement (HMR) on port 5173 |
+| `npm run server:dev` | `node --watch server/index.js` | Starts Express server with native file watching and auto-reload on port 5000 |
+| `npm run server` | `node server/index.js` | Starts Express REST API backend server in production mode on port 5000 |
 | `npm run build` | `vite build` | Compiles and optimizes assets into `dist/` with chunk splitting |
 | `npm run preview` | `vite preview` | Previews the production build locally |
 | `npm run lint` | `oxlint` | Runs fast Oxlint checks across all JavaScript and JSX source files |
@@ -442,7 +509,7 @@ Follow these steps to experience the complete clinical workflow:
 
 * **Accessibility & Contrast**: Built to meet WCAG AA standards with clear typography, visible focus rings, and distinguishable color contrasts for medical alerts.
 * **Tamper-Evident Record Simulation**: All finalized laboratory and radiology reports feature read-only locking, verification timestamps, and simulated SHA-256 digital fingerprint seals.
-* **Master Prompt Compliance**: Designed strictly to the comprehensive HMS UI specifications, containing zero server dependencies and zero backend database overhead.
+* **Architecture Design Compliance**: Cleanly decoupled full-stack architecture featuring a modular Express.js REST API with zero-config in-memory mock repository, complete PostgreSQL DDL schemas (`schema.sql`), and a reactive React 19 / Tailwind CSS v4 frontend.
 
 ---
 
