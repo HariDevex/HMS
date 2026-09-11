@@ -27,11 +27,11 @@ export default function PatientPortalLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col antialiased text-slate-800">
+    <div className="h-screen overflow-hidden bg-slate-50 flex flex-col antialiased text-slate-800">
       <ToastContainer />
 
-      {/* Top Patient Header */}
-      <header className="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-xs">
+      {/* Top Patient Header (Fixed) */}
+      <header className="shrink-0 sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-xs">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center font-bold shadow-xs">
@@ -96,8 +96,8 @@ export default function PatientPortalLayout() {
         </div>
       </header>
 
-      {/* Main Patient Content Area */}
-      <main className="grow max-w-4xl w-full mx-auto p-4 pb-24 sm:p-6 sm:pb-12">
+      {/* Main Patient Content Area (Independently Scrollable) */}
+      <main className="flex-1 overflow-y-auto max-w-4xl w-full mx-auto p-4 pb-24 sm:p-6 sm:pb-24 scrollbar-thin">
         <Outlet />
       </main>
 

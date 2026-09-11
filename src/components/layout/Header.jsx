@@ -77,7 +77,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200/80 sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 shadow-xs">
+    <header className="h-16 shrink-0 bg-white border-b border-slate-200/80 sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 shadow-xs">
       {/* Left: Mobile Hamburger + Breadcrumb / Title */}
       <div className="flex items-center gap-3">
         <button

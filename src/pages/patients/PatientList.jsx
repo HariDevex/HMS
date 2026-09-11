@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import Card, { CardHeader } from '../../components/ui/Card';
@@ -15,15 +15,17 @@ export default function PatientList() {
   const [departmentFilter, setDepartmentFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
 
-  const filteredPatients = patients.filter((p) => {
-    const matchesSearch =
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.mrn.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.diagnosis.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDept = departmentFilter === 'All' || p.department === departmentFilter;
-    const matchesStatus = statusFilter === 'All' || p.status === statusFilter;
-    return matchesSearch && matchesDept && matchesStatus;
-  });
+  const filteredPatients = useMemo(() => {
+    return patients.filter((p) => {
+      const matchesSearch =
+        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.mrn.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.diagnosis.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesDept = departmentFilter === 'All' || p.department === departmentFilter;
+      const matchesStatus = statusFilter === 'All' || p.status === statusFilter;
+      return matchesSearch && matchesDept && matchesStatus;
+    });
+  }, [patients, searchTerm, departmentFilter, statusFilter]);
 
   const columns = [
     {
@@ -54,7 +56,12 @@ export default function PatientList() {
     {
       key: 'diagnosis',
       label: 'Primary Condition',
-      render: (val) => <span className="text-xs font-medium text-slate-800 truncate max-w-xs block">{val}</span>,
+      headerClassName: 'min-w-[240px]',
+      render: (val) => (
+        <span className="text-xs font-medium text-slate-800 whitespace-normal break-words leading-relaxed block max-w-sm">
+          {val}
+        </span>
+      ),
     },
     {
       key: 'assignedDoctor',
@@ -94,18 +101,22 @@ export default function PatientList() {
     {
       key: 'actions',
       label: 'Action',
+      headerClassName: 'text-right min-w-[120px]',
       render: (_, row) => (
-        <Button
-          size="sm"
-          variant="secondary"
-          icon={Eye}
-          onClick={() => {
-            setSelectedPatientId(row.id);
-            navigate(`/patients/${row.id}`);
-          }}
-        >
-          View Chart
-        </Button>
+        <div className="flex justify-end">
+          <Button
+            size="xs"
+            variant="secondary"
+            icon={Eye}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedPatientId(row.id);
+              navigate(`/patients/${row.id}`);
+            }}
+          >
+            View Chart
+          </Button>
+        </div>
       ),
     },
   ];
@@ -177,6 +188,7 @@ export default function PatientList() {
         <Table
           columns={columns}
           data={filteredPatients}
+          minWidth="min-w-[960px]"
           onRowClick={(row) => {
             setSelectedPatientId(row.id);
             navigate(`/patients/${row.id}`);

@@ -158,6 +158,7 @@ export function AppProvider({ children }) {
 
   // Actions for Vitals
   const recordVitals = (patientId, vitalsData) => {
+    const targetPatient = patients.find(p => p.id === patientId) || selectedPatient;
     setPatients(prev => prev.map(p => {
       if (p.id === patientId) {
         return {
@@ -170,27 +171,125 @@ export function AppProvider({ children }) {
       }
       return p;
     }));
-    logAuditAction('Vitals Recorded', `BP: ${vitalsData.bp}, HR: ${vitalsData.heartRate} bpm, SpO2: ${vitalsData.oxygenSaturation}%`, 'Info', selectedPatient.name);
+    logAuditAction('Vitals Recorded', `BP: ${vitalsData.bp}, HR: ${vitalsData.heartRate} bpm, SpO2: ${vitalsData.oxygenSaturation}%`, 'Info', targetPatient.name);
+    setClinicalTimeline(prev => [
+      {
+        id: `TL-${Date.now()}-1`,
+        patientId: targetPatient.id,
+        date: new Date().toISOString().split('T')[0],
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        department: 'Bedside Care',
+        user: currentUser.name,
+        role: currentUser.role,
+        action: 'Vitals Recorded',
+        status: 'Recorded',
+        badgeVariant: 'info',
+        title: `Vital Signs Recorded (BP ${vitalsData.bp}, HR ${vitalsData.heartRate} bpm)`,
+        description: `BP: ${vitalsData.bp} mmHg, HR: ${vitalsData.heartRate} bpm, SpO2: ${vitalsData.oxygenSaturation}%, Temp: ${vitalsData.temperature}°F, Resp: ${vitalsData.respiratoryRate}/min.`,
+      },
+      ...prev,
+    ]);
     addToast({
       title: 'Vitals Saved',
-      message: `Vitals recorded successfully for ${selectedPatient.name}.`,
+      message: `Vitals recorded successfully for ${targetPatient.name}.`,
       type: 'success',
     });
   };
 
+  const getDefaultLabParameters = (testName = '') => {
+    const name = testName.toLowerCase();
+    if (name.includes('cbc') || name.includes('blood count')) {
+      return [
+        { name: 'White Blood Cells (WBC)', value: '10.8', unit: 'x10^3/uL', refRange: '4.5 - 11.0', flag: 'Normal' },
+        { name: 'Red Blood Cells (RBC)', value: '4.72', unit: 'x10^6/uL', refRange: '4.3 - 5.9', flag: 'Normal' },
+        { name: 'Hemoglobin (Hgb)', value: '14.2', unit: 'g/dL', refRange: '13.5 - 17.5', flag: 'Normal' },
+        { name: 'Hematocrit (Hct)', value: '42.5', unit: '%', refRange: '41.0 - 50.0', flag: 'Normal' },
+        { name: 'Platelet Count', value: '248', unit: 'x10^3/uL', refRange: '150 - 450', flag: 'Normal' },
+        { name: 'Absolute Neutrophils', value: '7.8', unit: 'x10^3/uL', refRange: '1.8 - 7.7', flag: 'High' },
+      ];
+    }
+    if (name.includes('troponin') || name.includes('cadiac') || name.includes('c-tni')) {
+      return [
+        { name: 'Cardiac Troponin I (hs-cTnI)', value: '0.086', unit: 'ng/mL', refRange: '0.000 - 0.034', flag: 'Critical High' },
+        { name: 'CK-MB', value: '6.2', unit: 'ng/mL', refRange: '0.0 - 5.0', flag: 'High' },
+        { name: 'Myoglobin', value: '92', unit: 'ng/mL', refRange: '25 - 72', flag: 'High' },
+      ];
+    }
+    if (name.includes('metabolic') || name.includes('cmp')) {
+      return [
+        { name: 'Sodium', value: '139', unit: 'mmol/L', refRange: '136 - 145', flag: 'Normal' },
+        { name: 'Potassium', value: '4.4', unit: 'mmol/L', refRange: '3.5 - 5.1', flag: 'Normal' },
+        { name: 'Chloride', value: '102', unit: 'mmol/L', refRange: '98 - 107', flag: 'Normal' },
+        { name: 'Carbon Dioxide (CO2)', value: '24', unit: 'mmol/L', refRange: '22 - 29', flag: 'Normal' },
+        { name: 'Blood Urea Nitrogen (BUN)', value: '22', unit: 'mg/dL', refRange: '7 - 20', flag: 'High' },
+        { name: 'Serum Creatinine', value: '1.2', unit: 'mg/dL', refRange: '0.7 - 1.3', flag: 'Normal' },
+        { name: 'Glucose Fasting', value: '112', unit: 'mg/dL', refRange: '70 - 99', flag: 'High' },
+        { name: 'eGFR', value: '68', unit: 'mL/min/1.73m²', refRange: '> 60', flag: 'Normal' },
+      ];
+    }
+    if (name.includes('lipid')) {
+      return [
+        { name: 'Total Cholesterol', value: '215', unit: 'mg/dL', refRange: '< 200', flag: 'High' },
+        { name: 'Triglycerides', value: '180', unit: 'mg/dL', refRange: '< 150', flag: 'High' },
+        { name: 'HDL Cholesterol', value: '42', unit: 'mg/dL', refRange: '> 40', flag: 'Normal' },
+        { name: 'LDL Cholesterol (Calc)', value: '137', unit: 'mg/dL', refRange: '< 100', flag: 'High' },
+      ];
+    }
+    if (name.includes('abg') || name.includes('arterial')) {
+      return [
+        { name: 'pH', value: '7.34', unit: '', refRange: '7.35 - 7.45', flag: 'Low' },
+        { name: 'PaCO2', value: '48', unit: 'mmHg', refRange: '35 - 45', flag: 'High' },
+        { name: 'PaO2', value: '76', unit: 'mmHg', refRange: '80 - 100', flag: 'Low' },
+        { name: 'HCO3', value: '25.2', unit: 'mmol/L', refRange: '22 - 26', flag: 'Normal' },
+        { name: 'Oxygen Saturation (SaO2)', value: '93.5', unit: '%', refRange: '95 - 100', flag: 'Low' },
+      ];
+    }
+    return [
+      { name: 'Primary Diagnostic Marker', value: 'Within Normal Limits', unit: '', refRange: 'Standard Reference', flag: 'Normal' },
+      { name: 'Secondary Biochemical Marker', value: 'Negative', unit: '', refRange: 'Negative', flag: 'Normal' },
+    ];
+  };
+
   // Actions for Lab
   const orderLabTest = (orderData) => {
+    const generatedOrderNum = `ORD-LAB-${Math.floor(4000 + Math.random() * 5000)}`;
     const newOrder = {
       id: `LAB-${labOrders.length + 901}`,
-      orderNumber: `ORD-LAB-${Math.floor(4000 + Math.random() * 5000)}`,
+      orderNumber: generatedOrderNum,
       orderedBy: currentUser.name,
       orderDate: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      status: 'Ordered',
-      parameters: [],
+      status: 'Result Ready',
+      verifiedBy: 'Dr. R. Patel, MD (Clinical Pathology)',
+      verifiedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      parameters: (orderData.parameters && orderData.parameters.length > 0) ? orderData.parameters : getDefaultLabParameters(orderData.testName),
+      pdfReport: orderData.pdfReport || {
+        fileName: `Certified_Lab_Report_${generatedOrderNum}.pdf`,
+        fileSize: '1.4 MB',
+        pages: 2,
+        uploadedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        uploadedBy: currentUser.name,
+      },
       ...orderData,
     };
     setLabOrders(prev => [newOrder, ...prev]);
     logAuditAction('Lab Test Ordered', `Ordered ${newOrder.testName} (${newOrder.priority})`, 'Info', newOrder.patientName);
+    setClinicalTimeline(prev => [
+      {
+        id: `TL-${Date.now()}-2`,
+        patientId: newOrder.patientId,
+        date: new Date().toISOString().split('T')[0],
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        department: 'Pathology & Lab',
+        user: currentUser.name,
+        role: currentUser.role,
+        action: 'Lab Test Ordered',
+        status: newOrder.priority === 'STAT' ? 'Critical' : 'Ordered',
+        badgeVariant: newOrder.priority === 'STAT' ? 'critical' : 'primary',
+        title: `${newOrder.testName} Ordered`,
+        description: `Priority: ${newOrder.priority}. Specimen: ${newOrder.specimenType || 'Venous Blood'}. Notes: ${newOrder.notes || 'Diagnostic workup'}.`,
+      },
+      ...prev,
+    ]);
     addToast({
       title: 'Lab Order Submitted',
       message: `${newOrder.testName} ordered for ${newOrder.patientName}.`,
@@ -198,7 +297,7 @@ export function AppProvider({ children }) {
     });
   };
 
-  const verifyLabOrder = (orderId, verifiedParameters, comments) => {
+  const verifyLabOrder = (orderId, verifiedParameters, comments, pdfReport) => {
     setLabOrders(prev => prev.map(o => {
       if (o.id === orderId) {
         return {
@@ -208,6 +307,13 @@ export function AppProvider({ children }) {
           technicianComment: comments || o.technicianComment,
           verifiedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           verifiedBy: `${currentUser.name} (${currentUser.role})`,
+          pdfReport: pdfReport || o.pdfReport || {
+            fileName: `Certified_Lab_Report_${o.orderNumber || orderId}.pdf`,
+            fileSize: '1.4 MB',
+            pages: 2,
+            uploadedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            uploadedBy: currentUser.name,
+          },
         };
       }
       return o;
@@ -215,23 +321,55 @@ export function AppProvider({ children }) {
     logAuditAction('Lab Result Verified', `Order ${orderId} verified and published to clinical record`, 'Success');
     addToast({
       title: 'Lab Result Verified',
-      message: `Order ${orderId} is now verified and read-only.`,
+      message: `Order ${orderId} is now verified and read-only. Certified PDF attached.`,
       type: 'success',
     });
   };
 
   // Actions for Radiology
   const orderRadiologyScan = (scanData) => {
+    const generatedReqNum = `REQ-RAD-${Math.floor(8000 + Math.random() * 1000)}`;
     const newScan = {
       id: `RAD-${radiologyOrders.length + 501}`,
-      requestNumber: `REQ-RAD-${Math.floor(8000 + Math.random() * 1000)}`,
+      requestNumber: generatedReqNum,
       orderedBy: currentUser.name,
       orderDate: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      status: 'New Requests',
+      status: 'Verified',
+      imageMock: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=600&h=400&fit=crop',
+      dicomSeries: 2,
+      dicomImages: 8,
+      radiologist: 'Dr. David Miller, MD',
+      reportedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      findings: 'Target examination acquired without acute motion artifact. Clear visualization of anatomical boundaries. Normal parenchymal architecture without focal mass effect, consolidation, or acute hemorrhage.',
+      impression: `1. Diagnostic study demonstrates stable anatomical morphology.\n2. No acute critical finding identified on current ${scanData.modality || 'imaging'} series.`,
+      pdfReport: scanData.pdfReport || {
+        fileName: `Certified_Radiology_Report_${generatedReqNum}.pdf`,
+        fileSize: '2.8 MB',
+        pages: 2,
+        uploadedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        uploadedBy: 'Dr. David Miller, MD',
+      },
       ...scanData,
     };
     setRadiologyOrders(prev => [newScan, ...prev]);
     logAuditAction('Radiology Ordered', `Ordered ${newScan.modality} (${newScan.priority})`, 'Info', newScan.patientName);
+    setClinicalTimeline(prev => [
+      {
+        id: `TL-${Date.now()}-3`,
+        patientId: newScan.patientId,
+        date: new Date().toISOString().split('T')[0],
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        department: 'Radiology & Imaging',
+        user: currentUser.name,
+        role: currentUser.role,
+        action: 'Imaging Requested',
+        status: newScan.priority === 'STAT' ? 'Critical' : 'Ordered',
+        badgeVariant: newScan.priority === 'STAT' ? 'critical' : 'purple',
+        title: `${newScan.studyName || newScan.modality} Study Ordered`,
+        description: `Modality: ${newScan.modality} (${newScan.priority}). Indication: ${newScan.clinicalIndication || 'Diagnostic evaluation'}.`,
+      },
+      ...prev,
+    ]);
     addToast({
       title: 'Radiology Request Created',
       message: `${newScan.modality} ordered for ${newScan.patientName}.`,
@@ -239,7 +377,7 @@ export function AppProvider({ children }) {
     });
   };
 
-  const verifyRadiologyReport = (scanId, findings, impression) => {
+  const verifyRadiologyReport = (scanId, findings, impression, pdfReport) => {
     setRadiologyOrders(prev => prev.map(s => {
       if (s.id === scanId) {
         return {
@@ -248,21 +386,29 @@ export function AppProvider({ children }) {
           findings,
           impression,
           reportedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          radiologist: `${currentUser.name}, MD`,
+          radiologist: `${currentUser.name} (${currentUser.role})`,
+          pdfReport: pdfReport || s.pdfReport || {
+            fileName: `Certified_Radiology_Report_${s.requestNumber || scanId}.pdf`,
+            fileSize: '2.8 MB',
+            pages: 2,
+            uploadedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            uploadedBy: currentUser.name,
+          },
         };
       }
       return s;
     }));
-    logAuditAction('Radiology Report Verified', `Scan ${scanId} finalized with diagnostic impressions`, 'Success');
+    logAuditAction('Radiology Report Verified', `Report for ${scanId} verified and signed`, 'Success');
     addToast({
-      title: 'Report Verified & Published',
-      message: `Diagnostic report for scan ${scanId} is now locked & verified.`,
+      title: 'Radiology Report Verified',
+      message: `Study ${scanId} certified and published to patient chart. PDF report attached.`,
       type: 'success',
     });
   };
 
   // Actions for Prescriptions
   const prescribeMedication = (medData) => {
+    const ptName = medData.patientName || selectedPatient.name;
     const newMed = {
       id: `MED-${medications.length + 101}`,
       prescribedBy: currentUser.name,
@@ -272,10 +418,27 @@ export function AppProvider({ children }) {
       ...medData,
     };
     setMedications(prev => [newMed, ...prev]);
-    logAuditAction('Prescription Created', `Prescribed ${newMed.name} ${newMed.dose} ${newMed.frequency}`, 'Info', selectedPatient.name);
+    logAuditAction('Prescription Created', `Prescribed ${newMed.name} ${newMed.dose} ${newMed.frequency}`, 'Info', ptName);
+    setClinicalTimeline(prev => [
+      {
+        id: `TL-${Date.now()}-4`,
+        patientId: newMed.patientId,
+        date: new Date().toISOString().split('T')[0],
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        department: 'Clinical Pharmacy',
+        user: currentUser.name,
+        role: currentUser.role,
+        action: 'Prescription Created',
+        status: 'Active',
+        badgeVariant: 'success',
+        title: `Rx: ${newMed.name} ${newMed.dose}`,
+        description: `Route: ${newMed.route}, Frequency: ${newMed.frequency}, Duration: ${newMed.duration}. Indication: ${newMed.indication}.`,
+      },
+      ...prev,
+    ]);
     addToast({
       title: 'Prescription Added',
-      message: `${newMed.name} prescribed for ${selectedPatient.name}.`,
+      message: `${newMed.name} prescribed for ${ptName}.`,
       type: 'success',
     });
   };

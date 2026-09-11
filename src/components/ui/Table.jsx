@@ -19,13 +19,14 @@ export default function Table({
   onSelectRow,
   idKey = 'id',
   className = '',
+  minWidth = 'min-w-[850px]',
 }) {
   const allSelected = data.length > 0 && selectedIds.length === data.length;
 
   return (
-    <div className={`overflow-x-auto scrollbar-thin border border-slate-200/80 rounded-xl bg-white shadow-xs ${className}`}>
-      <table className="w-full text-left border-collapse text-sm">
-        <thead className="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+    <div className={`overflow-x-auto scrollbar-table border border-slate-200/80 rounded-xl bg-white shadow-xs ${className}`}>
+      <table className={`w-full ${minWidth} text-left border-collapse text-sm`}>
+        <thead className="sticky top-0 z-10 bg-slate-50/95 backdrop-blur-xs border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
           <tr>
             {selectable && (
               <th className="px-4 py-3.5 w-10">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import Card, { CardHeader } from '../../components/ui/Card';
 import Table from '../../components/ui/Table';
@@ -41,15 +41,17 @@ export default function AppointmentsList() {
   const [type, setType] = useState('Follow-up');
   const [notes, setNotes] = useState('');
 
-  const filteredAppointments = appointments.filter((a) => {
-    const matchesSearch =
-      a.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      a.doctor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      a.tokenNumber.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'All' || a.status === statusFilter;
-    const matchesDoctor = doctorFilter === 'All' || a.doctor === doctorFilter;
-    return matchesSearch && matchesStatus && matchesDoctor;
-  });
+  const filteredAppointments = useMemo(() => {
+    return appointments.filter((a) => {
+      const matchesSearch =
+        a.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        a.doctor.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        a.tokenNumber.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'All' || a.status === statusFilter;
+      const matchesDoctor = doctorFilter === 'All' || a.doctor === doctorFilter;
+      return matchesSearch && matchesStatus && matchesDoctor;
+    });
+  }, [appointments, searchTerm, statusFilter, doctorFilter]);
 
   const handleCreate = (e) => {
     e.preventDefault();
