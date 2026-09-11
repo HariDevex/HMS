@@ -46,15 +46,15 @@ export default function PatientBilling() {
             <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl text-center text-xs">
               <div>
                 <span className="text-[10px] text-slate-400 block uppercase">Total Charges</span>
-                <span className="font-bold text-slate-800">${inv.subtotal.toFixed(2)}</span>
+                <span className="font-bold text-slate-800">₹{inv.subtotal.toFixed(2)}</span>
               </div>
               <div>
                 <span className="text-[10px] text-emerald-700 block uppercase">Insurance Paid</span>
-                <span className="font-bold text-emerald-600">${inv.insuranceCovered.toFixed(2)}</span>
+                <span className="font-bold text-emerald-600">₹{inv.insuranceCovered.toFixed(2)}</span>
               </div>
               <div>
                 <span className="text-[10px] text-red-700 block uppercase">You Owe</span>
-                <span className="font-bold text-error font-mono">${inv.balanceDue.toFixed(2)}</span>
+                <span className="font-bold text-error font-mono">₹{inv.balanceDue.toFixed(2)}</span>
               </div>
             </div>
 
@@ -73,7 +73,7 @@ export default function PatientBilling() {
                     setAmount(inv.balanceDue.toString());
                   }}
                 >
-                  Pay ${inv.balanceDue.toFixed(2)}
+                  Pay ₹{inv.balanceDue.toFixed(2)}
                 </Button>
               ) : (
                 <span className="text-xs font-bold text-emerald-700 flex items-center gap-1">
@@ -96,13 +96,13 @@ export default function PatientBilling() {
             <>
               <Button variant="secondary" onClick={() => setPayModalInvoice(null)}>Cancel</Button>
               <Button variant="primary" icon={ShieldCheck} onClick={handlePay}>
-                Submit Payment of ${amount}
+                Submit Payment of ₹{amount}
               </Button>
             </>
           }
         >
           <form onSubmit={handlePay} className="space-y-4 text-xs">
-            <Field label="Payment Amount ($)" required>
+            <Field label="Payment Amount (₹)" required>
               <Input
                 type="number"
                 step="0.01"

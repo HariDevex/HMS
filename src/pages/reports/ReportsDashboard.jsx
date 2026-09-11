@@ -4,12 +4,12 @@ import Card, { CardHeader, CardBody } from '../../components/ui/Card';
 import StatCard from '../../components/ui/StatCard';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
+import RupeeIcon from '../../components/ui/RupeeIcon';
 import {
   Download,
   Filter,
   Activity,
   BedDouble,
-  DollarSign,
   FlaskConical,
   } from 'lucide-react';
 import {
@@ -161,7 +161,7 @@ export default function ReportsDashboard() {
           subtitle="Revenue vs Operating Exp"
           trend="+3.2% YoY"
           trendType="up"
-          icon={DollarSign}
+          icon={RupeeIcon}
           iconBg="bg-emerald-50 text-emerald-600"
         />
       </div>

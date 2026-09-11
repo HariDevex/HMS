@@ -62,7 +62,7 @@ export const recordPayment = (req, res) => {
 
   db.auditLogs.create({
     action: 'Payment Processed',
-    details: `Processed $${amount} for invoice ${invoice.invoiceNumber} via ${paymentMethod || 'Card'}`,
+    details: `Processed ₹${amount} for invoice ${invoice.invoiceNumber} via ${paymentMethod || 'Card'}`,
     status: 'Success',
     patientName: invoice.patientName,
   });
