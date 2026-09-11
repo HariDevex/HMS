@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import Card, { CardHeader } from '../../components/ui/Card';
 import Table from '../../components/ui/Table';
@@ -20,16 +20,18 @@ export default function AuditLogs() {
   const [severityFilter, setSeverityFilter] = useState('All');
   const [selectedLog, setSelectedLog] = useState(null);
 
-  const filteredLogs = auditLogs.filter((log) => {
-    const matchesSearch =
-      log.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.details.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = roleFilter === 'All' || log.role === roleFilter;
-    const matchesSeverity = severityFilter === 'All' || log.severity === severityFilter;
-    return matchesSearch && matchesRole && matchesSeverity;
-  });
+  const filteredLogs = useMemo(() => {
+    return auditLogs.filter((log) => {
+      const matchesSearch =
+        log.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        log.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        log.details.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesRole = roleFilter === 'All' || log.role === roleFilter;
+      const matchesSeverity = severityFilter === 'All' || log.severity === severityFilter;
+      return matchesSearch && matchesRole && matchesSeverity;
+    });
+  }, [auditLogs, searchTerm, roleFilter, severityFilter]);
 
   const columns = [
     {

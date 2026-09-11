@@ -15,7 +15,9 @@ import {
   Stethoscope,
   Pill,
   Eye,
+  FileText,
 } from 'lucide-react';
+import PdfViewerModal from '../../components/ui/PdfViewerModal';
 
 export default function DoctorDashboard() {
   const {
@@ -37,6 +39,8 @@ export default function DoctorDashboard() {
   const [isLabModalOpen, setIsLabModalOpen] = useState(false);
   const [isScanModalOpen, setIsScanModalOpen] = useState(false);
   const [isRxModalOpen, setIsRxModalOpen] = useState(false);
+  const [pdfReportModal, setPdfReportModal] = useState(null);
+  const [pdfReportType, setPdfReportType] = useState('lab');
 
   // Form states
   const [targetPatientId, setTargetPatientId] = useState(patients[0].id);
@@ -339,12 +343,27 @@ export default function DoctorDashboard() {
                 <div key={lab.id} className="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-900">{lab.testName}</span>
-                    <Badge
-                      size="sm"
-                      variant={lab.status === 'Verified' ? 'success' : lab.status === 'Processing' ? 'info' : 'warning'}
-                    >
-                      {lab.status}
-                    </Badge>
+                    <div className="flex items-center gap-1.5">
+                      {(lab.status === 'Verified' || lab.pdfReport) && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPdfReportModal(lab);
+                            setPdfReportType('lab');
+                          }}
+                          className="inline-flex items-center gap-0.5 text-[11px] font-bold text-primary hover:underline cursor-pointer"
+                          title="Open On-Site PDF Report Popup"
+                        >
+                          <FileText className="w-3 h-3 text-red-500" /> PDF
+                        </button>
+                      )}
+                      <Badge
+                        size="sm"
+                        variant={lab.status === 'Verified' ? 'success' : lab.status === 'Processing' ? 'info' : 'warning'}
+                      >
+                        {lab.status}
+                      </Badge>
+                    </div>
                   </div>
                   <p className="text-xs text-slate-500 mt-1">Patient: {lab.patientName}</p>
                   {lab.parameters.length > 0 && (
@@ -371,9 +390,24 @@ export default function DoctorDashboard() {
                 <div key={rad.id} className="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-900">{rad.modality}</span>
-                    <Badge size="sm" variant={rad.status === 'Verified' ? 'purple' : 'neutral'}>
-                      {rad.status}
-                    </Badge>
+                    <div className="flex items-center gap-1.5">
+                      {(rad.status === 'Verified' || rad.pdfReport) && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPdfReportModal(rad);
+                            setPdfReportType('radiology');
+                          }}
+                          className="inline-flex items-center gap-0.5 text-[11px] font-bold text-purple-700 hover:underline cursor-pointer"
+                          title="Open On-Site PDF Report Popup"
+                        >
+                          <FileText className="w-3 h-3 text-red-500" /> PDF
+                        </button>
+                      )}
+                      <Badge size="sm" variant={rad.status === 'Verified' ? 'purple' : 'neutral'}>
+                        {rad.status}
+                      </Badge>
+                    </div>
                   </div>
                   <p className="text-xs text-slate-500 mt-1">{rad.patientName} • {rad.orderedBy}</p>
                   {rad.findings && (
@@ -561,6 +595,16 @@ export default function DoctorDashboard() {
           </div>
         </form>
       </Modal>
+
+      {/* On-Site Popup PDF Viewer Modal */}
+      {pdfReportModal && (
+        <PdfViewerModal
+          isOpen={Boolean(pdfReportModal)}
+          onClose={() => setPdfReportModal(null)}
+          report={pdfReportModal}
+          type={pdfReportType}
+        />
+      )}
     </div>
   );
 }

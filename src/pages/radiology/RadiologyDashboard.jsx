@@ -15,7 +15,10 @@ import {
   Search,
   Eye, Maximize2,
   Calendar,
+  UploadCloud,
+  Trash2,
 } from 'lucide-react';
+import PdfViewerModal from '../../components/ui/PdfViewerModal';
 
 export default function RadiologyDashboard() {
   const { radiologyOrders, verifyRadiologyReport, addToast } = useApp();
@@ -25,6 +28,8 @@ export default function RadiologyDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedScan, setSelectedScan] = useState(null); // For Report Writing / Reading Drawer
   const [previewScan, setPreviewScan] = useState(null); // Printable report modal
+  const [activePdfScan, setActivePdfScan] = useState(null); // On-Site Popup PDF Viewer
+  const [attachedPdf, setAttachedPdf] = useState(null); // PDF report attachment
 
   // Report writing form state
   const [findings, setFindings] = useState('');
@@ -53,10 +58,18 @@ export default function RadiologyDashboard() {
     setSelectedScan(scan);
     setFindings(scan.findings || '');
     setImpression(scan.impression || '');
+    setAttachedPdf(scan.pdfReport || null);
   };
 
   const handleVerifyReport = (scan) => {
-    verifyRadiologyReport(scan.id, findings, impression);
+    const finalPdf = attachedPdf || scan.pdfReport || {
+      fileName: `Certified_Radiology_Report_${scan.requestNumber || scan.id}.pdf`,
+      fileSize: '2.8 MB',
+      pages: 2,
+      uploadedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      uploadedBy: 'Consultant Radiologist',
+    };
+    verifyRadiologyReport(scan.id, findings, impression, finalPdf);
     setSelectedScan(null);
   };
 
@@ -132,6 +145,17 @@ export default function RadiologyDashboard() {
             >
               {isVerified ? 'View Report' : 'Dictate / Report'}
             </Button>
+            {(isVerified || row.pdfReport) && (
+              <Button
+                size="sm"
+                variant="outline"
+                icon={FileText}
+                onClick={() => setActivePdfScan(row)}
+                title="Open On-Site PDF Report Preview"
+              >
+                PDF
+              </Button>
+            )}
             {isVerified && (
               <Button
                 size="sm"
@@ -329,6 +353,120 @@ export default function RadiologyDashboard() {
               />
             </Field>
           </div>
+
+          {/* Official Signed Diagnostic Radiology PDF Report Attachment */}
+          <div className="space-y-2 pt-2 border-t border-slate-200">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                Certified Radiology PDF Report / PACS Export
+              </label>
+              <span className="text-[11px] text-slate-400">ACR Standard Document</span>
+            </div>
+
+            {attachedPdf ? (
+              <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-100">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-slate-900 truncate">{attachedPdf.fileName}</p>
+                    <p className="text-[11px] text-slate-500">
+                      {attachedPdf.fileSize} • {attachedPdf.pages || 2} Pages • {attachedPdf.uploadedAt || 'Ready for signing'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    icon={Eye}
+                    onClick={() =>
+                      setActivePdfScan({
+                        ...selectedScan,
+                        findings,
+                        impression,
+                        pdfReport: attachedPdf,
+                      })
+                    }
+                  >
+                    Preview PDF
+                  </Button>
+                  {selectedScan.status !== 'Verified' && selectedScan.status !== 'Published' && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                      icon={Trash2}
+                      onClick={() => setAttachedPdf(null)}
+                      title="Remove PDF"
+                    />
+                  )}
+                </div>
+              </div>
+            ) : (
+              selectedScan.status !== 'Verified' && selectedScan.status !== 'Published' ? (
+                <div className="p-4 border-2 border-dashed border-slate-200 hover:border-primary/50 rounded-xl bg-slate-50/60 hover:bg-purple-50/20 transition-colors text-center space-y-2.5">
+                  <UploadCloud className="w-8 h-8 text-slate-400 mx-auto" />
+                  <div>
+                    <label className="cursor-pointer text-xs font-bold text-primary hover:underline block">
+                      Attach or Upload Certified Radiology PDF
+                      <input
+                        type="file"
+                        accept="application/pdf"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setAttachedPdf({
+                              fileName: file.name,
+                              fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+                              pages: 2,
+                              uploadedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                              uploadedBy: 'Radiology PACS Tech',
+                            });
+                            addToast({
+                              title: 'PDF Report Attached',
+                              message: `Attached ${file.name} to imaging study.`,
+                              type: 'success',
+                            });
+                          }
+                        }}
+                      />
+                    </label>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Drag and drop signed PACS imaging PDF (up to 25MB)</p>
+                  </div>
+                  <div className="pt-1">
+                    <Button
+                      type="button"
+                      size="xs"
+                      variant="secondary"
+                      onClick={() => {
+                        setAttachedPdf({
+                          fileName: `ScanReport_${selectedScan.requestNumber}_${selectedScan.modality}.pdf`,
+                          fileSize: '2.8 MB',
+                          pages: 2,
+                          uploadedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                          uploadedBy: 'Consultant Radiologist',
+                        });
+                        addToast({
+                          title: 'Standard Radiology PDF Generated',
+                          message: 'Standard ACR certified PDF imaging report generated.',
+                          type: 'info',
+                        });
+                      }}
+                    >
+                      ⚡ Auto-Generate Certified Radiology PDF
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3 bg-slate-50 rounded-lg text-xs text-slate-400 border border-slate-200">
+                  No external PDF report attached for this study.
+                </div>
+              )
+            )}
+          </div>
         </Drawer>
       )}
 
@@ -342,6 +480,16 @@ export default function RadiologyDashboard() {
           footer={
             <>
               <Button variant="secondary" onClick={() => setPreviewScan(null)}>Close</Button>
+              <Button
+                variant="outline"
+                icon={FileText}
+                onClick={() => {
+                  setActivePdfScan(previewScan);
+                  setPreviewScan(null);
+                }}
+              >
+                On-Site PDF Preview
+              </Button>
               <Button variant="primary" icon={Printer} onClick={() => window.print()}>
                 Print Certified Report
               </Button>
@@ -398,6 +546,16 @@ export default function RadiologyDashboard() {
             </div>
           </div>
         </Modal>
+      )}
+
+      {/* On-Site Popup PDF Viewer Modal */}
+      {activePdfScan && (
+        <PdfViewerModal
+          isOpen={Boolean(activePdfScan)}
+          onClose={() => setActivePdfScan(null)}
+          report={activePdfScan}
+          type="radiology"
+        />
       )}
     </div>
   );

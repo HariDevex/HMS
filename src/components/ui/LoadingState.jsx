@@ -26,6 +26,27 @@ export function SkeletonCard() {
   );
 }
 
+export function PageSkeleton() {
+  return (
+    <div className="space-y-6 animate-pulse p-1">
+      <div className="h-16 bg-white rounded-2xl border border-slate-200/80 p-5 flex items-center justify-between">
+        <div className="space-y-2">
+          <div className="h-4 bg-slate-200 rounded w-48" />
+          <div className="h-3 bg-slate-100 rounded w-72" />
+        </div>
+        <div className="h-8 bg-slate-200 rounded w-28" />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <SkeletonCard />
+        <SkeletonCard />
+        <SkeletonCard />
+        <SkeletonCard />
+      </div>
+      <div className="bg-white rounded-2xl border border-slate-200 p-6 h-64" />
+    </div>
+  );
+}
+
 export default function LoadingState({ message = 'Loading records...' }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center text-slate-500">

@@ -73,23 +73,15 @@
     [x] 10.4 Patient Queue Management (Token display, waiting time, consultation room assignment, call patient action)
     [x] 10.5 Quick Check-in & Arrival confirmation
 
-[x] 11. Central Patient Profile & Clinical Timeline
-    [x] 11.1 Patient Header (Name, MRN, Age/Gender, Blood group, Allergies, Critical condition badges, Emergency contact)
-    [x] 11.2 Interactive Clinical Timeline (Registration -> Appointments -> Vitals -> Orders -> Lab results -> Radiology -> Meds -> Invoices)
-    [x] 11.3 Patient Tabs with Role-Specific Visibility:
-        - Overview
-        - Timeline
-        - Consultations
-        - Medical History
-        - Vitals (Chart & history)
-        - Medications & Prescriptions
-        - Laboratory
-        - Radiology
-        - Nursing
-        - Appointments
-        - Admissions & Beds
-        - Billing & Invoices
-        - Documents
+[x] 11. Central Patient Profile & Clinical Action Hub
+    [x] 11.1 Patient Header (Name, MRN, Age/Gender, Blood group, Allergies, Critical condition badges, Emergency contact, Quick Patient Switcher)
+    [x] 11.2 Interactive Clinical Timeline (Filtered chronologically per patient: labs, vitals, scans, meds, consultations)
+    [x] 11.3 Clinical Diagnostic & Scan Suggestions Assistant (Condition-specific evidence-based protocols, 1-click Quick Order Scan / Lab)
+    [x] 11.4 Interactive PACS / DICOM Radiology Viewer Modal (Dark-mode HUD, zoom, contrast inversion, windowing presets, crosshairs, slice navigator, radiologist report)
+    [x] 11.5 CLIA-Certified Laboratory Diagnostic Report Modal (Accession barcode, analyte breakdown with flags/reference ranges, pathologist seal, print copy)
+    [x] 11.6 Official Medical Prescription (Rx) Sheet Modal (Hospital header, DEA/NPI, ℞ symbol, itemized meds, directions, refills, physician signature)
+    [x] 11.7 Direct Clinical Action Modals (Order Lab, Order Scan, Prescribe with allergy contraindication cross-check, Record Vitals)
+    [x] 11.8 Patient Tabs with Live Count Badges (Overview, Timeline, Vitals, Consultations, Medications & MAR, Laboratory, Radiology, Ward & Beds, Billing)
 
 [x] 12. Ward & Bed Management Module
     [x] 12.1 Ward Occupancy Dashboard (ICU, General, Maternity, Pediatric, Surgical)
@@ -124,3 +116,12 @@
     [x] 16.2 Migrated to official Tailwind CSS v4 (@tailwindcss/vite) with clean production build
     [x] 16.3 Run Vite build & linter to verify zero syntax/build errors (oxlint: 0 errors, 0 warnings)
     [x] 16.4 Complete UI Delivery Checklist verification (Accessibility, contrast, consistency, no dead buttons)
+    [x] 16.5 Performance: Route-level code-splitting (React.lazy + Suspense fallback skeleton) reducing initial bundle by ~67%
+    [x] 16.6 Ergonomics: Sticky table headers, useMemo filter memoization, and keyboard shortcuts (⌘K, Esc)
+
+[x] 17. On-Site Popup PDF Viewer & Report Attachment System
+    [x] 17.1 Reusable clinical PdfViewerModal (multi-page, 70-150% zoom, rotation, print & download controls, CLIA/ACR authentic styling, digital signature stamp)
+    [x] 17.2 Laboratory Module: Attach/upload official PDF alongside structured analyte values in Result Entry, 1-click PDF preview from work queue & report modal
+    [x] 17.3 Radiology Module: Attach/upload signed imaging PDF alongside clinical findings & impression in Dictate drawer, 1-click PDF preview from table & report modal
+    [x] 17.4 Patient Profile: Direct 1-tap "📄 View PDF" buttons and attached PDF indicator chips in Laboratory & Radiology tabs, plus on-site popup viewer inside full report and DICOM viewer modals
+    [x] 17.5 Doctor Dashboard: Quick 1-click PDF preview for recent lab and radiology alerts

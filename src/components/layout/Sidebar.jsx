@@ -157,9 +157,9 @@ export default function Sidebar() {
         />
       )}
 
-      {/* Sidebar Container */}
+      {/* Sidebar Container (Fixed Position) */}
       <aside
-        className={`fixed lg:static top-0 bottom-0 left-0 z-40 flex flex-col bg-slate-900 text-slate-300 transition-all duration-200 ease-in-out border-r border-slate-800 ${
+        className={`fixed lg:relative top-0 bottom-0 left-0 h-full shrink-0 z-40 flex flex-col bg-slate-900 text-slate-300 transition-all duration-200 ease-in-out border-r border-slate-800 ${
           sidebarCollapsed ? 'w-20' : 'w-64'
         } ${
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'

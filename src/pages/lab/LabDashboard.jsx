@@ -16,7 +16,11 @@ import {
   Search,
   Barcode,
   Eye,
+  FileText,
+  UploadCloud,
+  Trash2,
 } from 'lucide-react';
+import PdfViewerModal from '../../components/ui/PdfViewerModal';
 
 export default function LabDashboard() {
   const { labOrders, verifyLabOrder, addToast } = useApp();
@@ -25,6 +29,8 @@ export default function LabDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null); // For Result Entry / Verification Drawer
   const [reportModalOrder, setReportModalOrder] = useState(null); // For Printable Report Preview
+  const [activePdfOrder, setActivePdfOrder] = useState(null); // For On-Site Popup PDF Viewer
+  const [attachedPdf, setAttachedPdf] = useState(null); // Attached PDF state in Drawer
 
   // Result entry form state
   const [paramValues, setParamValues] = useState({});
@@ -58,6 +64,7 @@ export default function LabDashboard() {
     });
     setParamValues(initial);
     setTechComments(order.technicianComment || '');
+    setAttachedPdf(order.pdfReport || null);
   };
 
   const handleVerify = (order) => {
@@ -65,7 +72,14 @@ export default function LabDashboard() {
       ...p,
       value: paramValues[idx] || p.value,
     }));
-    verifyLabOrder(order.id, updatedParameters, techComments);
+    const finalPdf = attachedPdf || order.pdfReport || {
+      fileName: `Certified_Lab_Report_${order.orderNumber || order.id}.pdf`,
+      fileSize: '1.4 MB',
+      pages: 2,
+      uploadedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      uploadedBy: 'Clinical Laboratory Tech',
+    };
+    verifyLabOrder(order.id, updatedParameters, techComments, finalPdf);
     setSelectedOrder(null);
   };
 
@@ -152,6 +166,17 @@ export default function LabDashboard() {
             >
               {isVerified ? 'View Result' : 'Enter / Verify'}
             </Button>
+            {(isVerified || row.pdfReport) && (
+              <Button
+                size="sm"
+                variant="outline"
+                icon={FileText}
+                onClick={() => setActivePdfOrder(row)}
+                title="Open On-Site PDF Report Preview"
+              >
+                PDF
+              </Button>
+            )}
             {isVerified && (
               <Button
                 size="sm"
@@ -380,6 +405,123 @@ export default function LabDashboard() {
               placeholder="e.g. Non-hemolyzed serum sample. Controls in 2SD range."
             />
           </div>
+
+          {/* Official Diagnostic PDF Report Attachment */}
+          <div className="space-y-2 pt-2 border-t border-slate-200">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                Certified PDF Diagnostic Report
+              </label>
+              <span className="text-[11px] text-slate-400">CLIA Accredited Document</span>
+            </div>
+
+            {attachedPdf ? (
+              <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-100">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-slate-900 truncate">{attachedPdf.fileName}</p>
+                    <p className="text-[11px] text-slate-500">
+                      {attachedPdf.fileSize} • {attachedPdf.pages || 2} Pages • {attachedPdf.uploadedAt || 'Ready for publishing'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    icon={Eye}
+                    onClick={() =>
+                      setActivePdfOrder({
+                        ...selectedOrder,
+                        parameters: selectedOrder.parameters.map((p, idx) => ({
+                          ...p,
+                          value: paramValues[idx] || p.value,
+                        })),
+                        technicianComment: techComments,
+                        pdfReport: attachedPdf,
+                      })
+                    }
+                  >
+                    Preview PDF
+                  </Button>
+                  {selectedOrder.status !== 'Verified' && selectedOrder.status !== 'Published' && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                      icon={Trash2}
+                      onClick={() => setAttachedPdf(null)}
+                      title="Remove PDF"
+                    />
+                  )}
+                </div>
+              </div>
+            ) : (
+              selectedOrder.status !== 'Verified' && selectedOrder.status !== 'Published' ? (
+                <div className="p-4 border-2 border-dashed border-slate-200 hover:border-primary/50 rounded-xl bg-slate-50/60 hover:bg-blue-50/20 transition-colors text-center space-y-2.5">
+                  <UploadCloud className="w-8 h-8 text-slate-400 mx-auto" />
+                  <div>
+                    <label className="cursor-pointer text-xs font-bold text-primary hover:underline block">
+                      Attach or Upload Certified Laboratory PDF
+                      <input
+                        type="file"
+                        accept="application/pdf"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setAttachedPdf({
+                              fileName: file.name,
+                              fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+                              pages: 2,
+                              uploadedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                              uploadedBy: 'Clinical Laboratory Tech',
+                            });
+                            addToast({
+                              title: 'PDF Report Attached',
+                              message: `Attached ${file.name} to laboratory order.`,
+                              type: 'success',
+                            });
+                          }
+                        }}
+                      />
+                    </label>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Drag and drop signed pathology PDF or click to browse (up to 25MB)</p>
+                  </div>
+                  <div className="pt-1">
+                    <Button
+                      type="button"
+                      size="xs"
+                      variant="secondary"
+                      onClick={() => {
+                        setAttachedPdf({
+                          fileName: `Report_${selectedOrder.orderNumber}_${selectedOrder.testName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
+                          fileSize: '1.4 MB',
+                          pages: 2,
+                          uploadedAt: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                          uploadedBy: 'Automated Analyzer Core',
+                        });
+                        addToast({
+                          title: 'Standard Lab PDF Generated',
+                          message: 'Standard CLIA laboratory PDF report generated with current analytes.',
+                          type: 'info',
+                        });
+                      }}
+                    >
+                      ⚡ Auto-Generate Standard Laboratory PDF
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3 bg-slate-50 rounded-lg text-xs text-slate-400 border border-slate-200">
+                  No external PDF report attached for this order.
+                </div>
+              )
+            )}
+          </div>
         </Drawer>
       )}
 
@@ -393,6 +535,16 @@ export default function LabDashboard() {
           footer={
             <>
               <Button variant="secondary" onClick={() => setReportModalOrder(null)}>Close</Button>
+              <Button
+                variant="outline"
+                icon={FileText}
+                onClick={() => {
+                  setActivePdfOrder(reportModalOrder);
+                  setReportModalOrder(null);
+                }}
+              >
+                On-Site PDF Preview
+              </Button>
               <Button
                 variant="primary"
                 icon={Printer}
@@ -474,6 +626,16 @@ export default function LabDashboard() {
             )}
           </div>
         </Modal>
+      )}
+
+      {/* On-Site Popup PDF Viewer Modal */}
+      {activePdfOrder && (
+        <PdfViewerModal
+          isOpen={Boolean(activePdfOrder)}
+          onClose={() => setActivePdfOrder(null)}
+          report={activePdfOrder}
+          type="lab"
+        />
       )}
     </div>
   );

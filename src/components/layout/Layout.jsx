@@ -17,19 +17,19 @@ export default function Layout() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex antialiased text-slate-800">
+    <div className="h-screen overflow-hidden bg-slate-50 flex antialiased text-slate-800">
       {/* Global Notifications & Modals */}
       <ToastContainer />
       <GlobalSearchModal />
 
-      {/* Enterprise Staff Collapsible Sidebar */}
+      {/* Enterprise Staff Collapsible Sidebar (Fixed Navigation) */}
       <Sidebar />
 
-      {/* Main Staff App Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      {/* Main Staff App Area (Fixed Header + Independently Scrollable Main) */}
+      <div className="flex-1 flex flex-col h-screen min-w-0 overflow-hidden">
         <Header />
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 scrollbar-thin">
-          <div className="max-w-7xl mx-auto space-y-6">
+          <div className="max-w-7xl mx-auto space-y-6 pb-8">
             <Outlet />
           </div>
         </main>

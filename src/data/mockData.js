@@ -431,6 +431,13 @@ export const INITIAL_LAB_ORDERS = [
       { name: 'Myoglobin', value: '98', unit: 'ng/mL', refRange: '25 - 72', flag: 'High' },
     ],
     technicianComment: 'Sample non-hemolyzed. High values repeated and verified on Roche Cobas e801.',
+    pdfReport: {
+      fileName: 'Certified_Report_ORD-LAB-4401_hs-cTnI.pdf',
+      fileSize: '1.2 MB',
+      pages: 2,
+      uploadedAt: '2026-09-10 08:35 AM',
+      uploadedBy: 'Alex Morgan, MLS(ASCP) & Dr. R. Patel',
+    },
   },
   {
     id: 'LAB-902',
@@ -463,6 +470,13 @@ export const INITIAL_LAB_ORDERS = [
       { name: 'Neutrophils %', value: '74.2', unit: '%', refRange: '40.0 - 70.0', flag: 'High' },
     ],
     technicianComment: 'Slight reactive neutrophilia noted. Platelets adequate on smear.',
+    pdfReport: {
+      fileName: 'Certified_Report_ORD-LAB-4402_CBC.pdf',
+      fileSize: '1.4 MB',
+      pages: 2,
+      uploadedAt: '2026-09-10 08:20 AM',
+      uploadedBy: 'Alex Morgan, MLS(ASCP)',
+    },
   },
   {
     id: 'LAB-903',
@@ -604,6 +618,13 @@ export const INITIAL_RADIOLOGY_ORDERS = [
     imageMock: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=600&h=400&fit=crop',
     dicomSeries: 2,
     dicomImages: 4,
+    pdfReport: {
+      fileName: 'Official_Radiology_Report_REQ-RAD-8801.pdf',
+      fileSize: '2.8 MB',
+      pages: 2,
+      uploadedAt: '2026-09-09 11:30 AM',
+      uploadedBy: 'Dr. David Miller, MD',
+    },
   },
   {
     id: 'RAD-502',
