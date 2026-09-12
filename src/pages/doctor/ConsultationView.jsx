@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { can } from '../../config/permissions';
 import { useNavigate } from 'react-router-dom';
 import Card, { CardHeader, CardBody } from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
@@ -14,14 +15,15 @@ export default function ConsultationView() {
   const {
     selectedPatient,
     currentUser,
+    currentRole,
     addToast,
     logAuditAction,
-    } = useApp();
+  } = useApp();
 
   const navigate = useNavigate();
 
   // Consultation state
-  const [chiefComplaint, setChiefComplaint] = useState(selectedPatient.chiefComplaint || 'Substernal chest pressure');
+  const [chiefComplaint, setChiefComplaint] = useState(selectedPatient?.chiefComplaint || 'Substernal chest pressure');
   const [historyOfPresentIllness, setHistoryOfPresentIllness] = useState(
     'Patient notes intermittent episodes of squeezing retrosternal chest pain occurring with exertion, radiating to the left shoulder. Accompanied by mild diaphoresis and shortness of breath.'
   );
@@ -36,8 +38,18 @@ export default function ConsultationView() {
   const [followUpDate, setFollowUpDate] = useState('2026-09-17');
   const [saving, setSaving] = useState(false);
 
+  const canSign = can(currentRole, 'canPrescribeMedication');
+
   const handleCompleteConsultation = (e) => {
     e.preventDefault();
+    if (!canSign) {
+      addToast({
+        title: 'Unauthorized Action',
+        message: 'Only licensed attending physicians can sign and finalize clinical consultation notes.',
+        type: 'error',
+      });
+      return;
+    }
     setSaving(true);
     setTimeout(() => {
       setSaving(false);
@@ -93,6 +105,7 @@ export default function ConsultationView() {
             size="sm"
             icon={CheckCircle2}
             loading={saving}
+            disabled={!canSign}
             onClick={handleCompleteConsultation}
           >
             Complete & Sign

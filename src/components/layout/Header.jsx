@@ -124,56 +124,67 @@ export default function Header() {
           <Search className="w-5 h-5" />
         </button>
 
-        {/* Live Role Switcher Dropdown (Essential for testing all 7 roles!) */}
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-blue-50/80 border border-blue-200 text-primary hover:bg-blue-100/70 transition-colors text-xs font-semibold cursor-pointer shadow-xs"
-          >
-            <Shield className="w-3.5 h-3.5 text-primary" />
-            <span className="hidden sm:inline">Role:</span>
-            <span className="font-bold">{currentUser.role}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-primary/70" />
-          </button>
+        {/* Live Role Switcher (Gated to Development Only) */}
+        {import.meta.env.DEV ? (
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-blue-50/80 border border-blue-200 text-primary hover:bg-blue-100/70 transition-colors text-xs font-semibold cursor-pointer shadow-xs"
+              title="Dev Persona Switcher"
+            >
+              <Shield className="w-3.5 h-3.5 text-primary" />
+              <span className="hidden sm:inline">Role:</span>
+              <span className="font-bold">{currentUser.role}</span>
+              <span className="text-[10px] uppercase font-mono px-1 py-0.2 bg-blue-200/60 rounded text-blue-900 ml-0.5">DEV</span>
+              <ChevronDown className="w-3.5 h-3.5 text-primary/70" />
+            </button>
 
-          {roleDropdownOpen && (
-            <>
-              <div
-                className="fixed inset-0 z-40"
-                onClick={() => setRoleDropdownOpen(false)}
-              />
-              <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50 animate-slide-up">
-                <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
-                  Switch Persona / Role
+            {roleDropdownOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setRoleDropdownOpen(false)}
+                />
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50 animate-slide-up">
+                  <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
+                    <span>Switch Persona / Role</span>
+                    <span className="text-[9px] text-amber-600 bg-amber-50 px-1 py-0.5 rounded font-mono">Dev Only</span>
+                  </div>
+                  <div className="py-1">
+                    {roles.map((r) => (
+                      <button
+                        key={r.id}
+                        type="button"
+                        onClick={() => {
+                          switchRole(r.id);
+                          setRoleDropdownOpen(false);
+                        }}
+                        className={`w-full px-3 py-2 text-left flex items-center justify-between hover:bg-slate-50 transition-colors text-xs cursor-pointer ${
+                          currentRole === r.id ? 'bg-blue-50/60 font-bold text-primary' : 'text-slate-700'
+                        }`}
+                      >
+                        <div>
+                          <div className="font-medium">{r.role}</div>
+                          <div className="text-[11px] text-slate-400">{r.name}</div>
+                        </div>
+                        {currentRole === r.id && (
+                          <span className="w-2 h-2 rounded-full bg-primary" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div className="py-1">
-                  {roles.map((r) => (
-                    <button
-                      key={r.id}
-                      type="button"
-                      onClick={() => {
-                        switchRole(r.id);
-                        setRoleDropdownOpen(false);
-                      }}
-                      className={`w-full px-3 py-2 text-left flex items-center justify-between hover:bg-slate-50 transition-colors text-xs cursor-pointer ${
-                        currentRole === r.id ? 'bg-blue-50/60 font-bold text-primary' : 'text-slate-700'
-                      }`}
-                    >
-                      <div>
-                        <div className="font-medium">{r.role}</div>
-                        <div className="text-[11px] text-slate-400">{r.name}</div>
-                      </div>
-                      {currentRole === r.id && (
-                        <span className="w-2 h-2 rounded-full bg-primary" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200/80 text-slate-700 text-xs font-semibold">
+            <Shield className="w-3.5 h-3.5 text-slate-500" />
+            <span className="text-slate-400 font-normal">Acting as:</span>
+            <span className="font-bold text-slate-900">{currentUser.role}</span>
+          </div>
+        )}
 
         {/* Notifications Popover */}
         <div className="relative">

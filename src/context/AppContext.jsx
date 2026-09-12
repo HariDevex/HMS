@@ -543,10 +543,10 @@ export function AppProvider({ children }) {
       }
       return inv;
     }));
-    logAuditAction('Payment Recorded', `Received $${amount} via ${method} for invoice ${invoiceId}`, 'Success');
+    logAuditAction('Payment Recorded', `Received ₹${amount} via ${method} for invoice ${invoiceId}`, 'Success');
     addToast({
       title: 'Payment Received',
-      message: `Successfully recorded $${amount} for ${invoiceId}.`,
+      message: `Successfully recorded ₹${amount} for ${invoiceId}.`,
       type: 'success',
     });
   };

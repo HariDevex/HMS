@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { can } from '../../config/permissions';
 import Card, { CardHeader } from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -9,10 +10,12 @@ import CriticalAlert from '../../components/ui/CriticalAlert';
 import { CheckCircle2, Clock } from 'lucide-react';
 
 export default function NurseWorkstation() {
-  const { medications, recordMARAdministration, patients, currentUser } = useApp();
+  const { medications, recordMARAdministration, patients, currentUser, currentRole, addToast } = useApp();
   const [selectedMed, setSelectedMed] = useState(null);
   const [adminNotes, setAdminNotes] = useState('');
   const [filterPatient, setFilterPatient] = useState('All');
+
+  const canAdminister = can(currentRole, 'canAdministerMAR');
 
   const filteredMeds = filterPatient === 'All'
     ? medications
@@ -20,6 +23,14 @@ export default function NurseWorkstation() {
 
   const handleAdminister = () => {
     if (!selectedMed) return;
+    if (!canAdminister) {
+      addToast?.({
+        title: 'Permission Denied',
+        message: 'Only registered nursing staff are authorized to document medication administration.',
+        type: 'error',
+      });
+      return;
+    }
     recordMARAdministration(selectedMed.id, adminNotes);
     setSelectedMed(null);
     setAdminNotes('');
@@ -97,6 +108,11 @@ export default function NurseWorkstation() {
             </span>
           );
         }
+        if (!canAdminister) {
+          return (
+            <span className="text-xs text-slate-400 italic">Nurse auth required</span>
+          );
+        }
         return (
           <Button
             size="sm"
@@ -171,7 +187,7 @@ export default function NurseWorkstation() {
               <Button variant="secondary" onClick={() => setSelectedMed(null)}>
                 Cancel
               </Button>
-              <Button variant="success" icon={CheckCircle2} onClick={handleAdminister}>
+              <Button variant="success" icon={CheckCircle2} disabled={!canAdminister} onClick={handleAdminister}>
                 Verify & Mark Administered
               </Button>
             </>

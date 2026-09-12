@@ -5,6 +5,7 @@ import Card, { CardHeader, CardBody } from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import CriticalAlert from '../../components/ui/CriticalAlert';
+import RupeeIcon from '../../components/ui/RupeeIcon';
 import {
   Users,
   Calendar,
@@ -13,7 +14,6 @@ import {
   FlaskConical,
   Scan,
   BedDouble,
-  DollarSign,
   ShieldCheck,
   } from 'lucide-react';
 import {
@@ -173,7 +173,7 @@ export default function AdminDashboard() {
           subtitle={`MTD: ${metrics.monthRevenue}`}
           trend="+9.1% vs last week"
           trendType="up"
-          icon={DollarSign}
+          icon={RupeeIcon}
           iconBg="bg-emerald-50 text-emerald-700"
           onClick={() => navigate('/billing')}
         />
@@ -237,9 +237,9 @@ export default function AdminDashboard() {
                 <BarChart data={revenueData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                   <XAxis dataKey="day" stroke="#94a3b8" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} tickFormatter={(v) => `$${v / 1000}k`} />
+                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} tickFormatter={(v) => `₹${v / 1000}k`} />
                   <Tooltip
-                    formatter={(value) => [`$${Number(value).toLocaleString()}`, '']}
+                    formatter={(value) => [`₹${Number(value).toLocaleString()}`, '']}
                     contentStyle={{ backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '12px' }}
                   />
                   <Bar dataKey="revenue" name="Total Revenue" fill="#16A34A" radius={[4, 4, 0, 0]} />

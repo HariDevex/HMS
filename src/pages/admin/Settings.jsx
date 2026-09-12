@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { can } from '../../config/permissions';
 import Card, { CardHeader, CardBody, CardFooter } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Field, { Input, Select } from '../../components/ui/Field';
@@ -7,7 +8,7 @@ import Badge from '../../components/ui/Badge';
 import { Save } from 'lucide-react';
 
 export default function Settings() {
-  const { addToast } = useApp();
+  const { addToast, currentRole } = useApp();
   const [hospitalName, setHospitalName] = useState('MediCore Central Hospital');
   const [address, setAddress] = useState('100 Medical Parkway, Springfield, IL 62701');
   const [emergencyPhone, setEmergencyPhone] = useState('+1 (555) 911-0000');
@@ -15,8 +16,18 @@ export default function Settings() {
   const [sessionTimeout, setSessionTimeout] = useState('15');
   const [mfaEnforced, setMfaEnforced] = useState(true);
 
+  const canEdit = can(currentRole, 'canEditSettings');
+
   const handleSave = (e) => {
     e.preventDefault();
+    if (!canEdit) {
+      addToast({
+        title: 'Permission Denied',
+        message: 'Only system administrators have permission to modify hospital facility settings.',
+        type: 'error',
+      });
+      return;
+    }
     addToast({
       title: 'Facility Settings Saved',
       message: 'Hospital configuration and security parameters updated.',
@@ -98,15 +109,16 @@ export default function Settings() {
               </div>
               <input
                 type="checkbox"
+                disabled={!canEdit}
                 checked={mfaEnforced}
                 onChange={(e) => setMfaEnforced(e.target.checked)}
-                className="w-4 h-4 rounded text-primary focus:ring-blue-400 cursor-pointer"
+                className="w-4 h-4 rounded text-primary focus:ring-blue-400 cursor-pointer disabled:cursor-not-allowed"
               />
             </div>
           </CardBody>
           <CardFooter>
             <div className="text-xs text-slate-500">Last security policy audit: Yesterday by Arthur Vance</div>
-            <Button type="submit" variant="primary" icon={Save}>
+            <Button type="submit" variant="primary" icon={Save} disabled={!canEdit}>
               Save Configuration
             </Button>
           </CardFooter>

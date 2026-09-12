@@ -1,15 +1,18 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
-import { ShieldAlert, ArrowLeft, Home } from 'lucide-react';
+import { ShieldAlert, ArrowLeft, Home, Lock } from 'lucide-react';
 import Button from '../../components/ui/Button';
 
 export default function AccessDenied() {
   const { currentRole } = useApp();
   const navigate = useNavigate();
+  const location = useLocation();
+  const attemptedPath = location.state?.attemptedPath;
+  const activeRole = location.state?.currentRole || currentRole;
 
   const getRoleHome = () => {
-    switch (currentRole) {
+    switch (activeRole) {
       case 'patient': return '/portal';
       case 'doctor': return '/doctor';
       case 'nurse': return '/nurse';
@@ -32,9 +35,16 @@ export default function AccessDenied() {
       <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
         Permission Denied
       </h2>
-      <p className="text-sm text-slate-500 max-w-md mt-2 mb-6 leading-relaxed">
-        You do not have administrative or clinical privileges to access this resource under your current role (<span className="font-semibold text-slate-700">{currentRole}</span>). Please consult your department head or system administrator if you believe this is in error.
+      <p className="text-sm text-slate-500 max-w-md mt-2 mb-4 leading-relaxed">
+        You do not have administrative or clinical privileges to access this resource under your current role (<span className="font-semibold text-slate-700 capitalize">{activeRole}</span>). Please consult your department head or system administrator if you believe this is in error.
       </p>
+
+      {attemptedPath && (
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-mono mb-6 border border-slate-200">
+          <Lock className="w-3.5 h-3.5 text-slate-500" />
+          <span>Restricted path: <strong className="text-slate-900">{attemptedPath}</strong></span>
+        </div>
+      )}
 
       <div className="flex items-center gap-3">
         <Button variant="secondary" icon={ArrowLeft} onClick={() => navigate(-1)}>
