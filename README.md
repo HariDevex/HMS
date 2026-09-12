@@ -53,6 +53,7 @@ Built with **React 19**, **Vite 8**, **Tailwind CSS v4** (`@tailwindcss/vite`), 
 10. [Available Scripts](#-available-scripts)
 11. [Interactive Feature Walkthrough Guide](#-interactive-feature-walkthrough-guide)
 12. [Clinical Verification & Quality Standards](#-clinical-verification--quality-standards)
+13. [Summary of Documentation & Configuration Changes](#-summary-of-documentation--configuration-changes)
 
 ---
 
@@ -703,6 +704,26 @@ Follow these steps to experience the complete clinical workflow:
 * **Tamper-Evident Record Simulation**: All finalized laboratory and radiology reports feature read-only locking, verification timestamps, and simulated SHA-256 digital fingerprint seals.
 * **Architecture Design Compliance**: Cleanly decoupled full-stack architecture featuring a modular Express.js REST API with zero-config in-memory mock repository, complete PostgreSQL DDL schemas (`schema.sql`), and a reactive React 19 / Tailwind CSS v4 frontend.
 * **Enterprise Full-Stack Architecture**: Cleanly decoupled full-stack design featuring a modular Express.js REST API, PostgreSQL production DDL schemas (`schema.sql`), automated migrations (`npm run db:init`), persistent local relational caching, and a reactive React 19 / Tailwind CSS v4 frontend.
+
+---
+
+## 📝 Summary of Documentation & Configuration Changes
+
+1. **`package.json`**:
+   * Configured `"start"` and `"dev:all"` to chain `node server/db/initDb.js` before launching `concurrently`.
+   * Added `"all"` shortcut script (`npm run all`).
+2. **`start.sh`**:
+   * Created executable shell runner (`chmod +x start.sh`) that checks PostgreSQL service status, displays active mode, and invokes `npm start`.
+3. **`server/db/initDb.js`**:
+   * Updated so it validates and preserves existing database records in `hms_db.json` during boot rather than overwriting runtime edits.
+4. **`README.md` & `server/README.md`**:
+   * Added prominent top-level launch callouts for single-command execution (`npm start`).
+   * Added Clinical Authority Matrix and RBAC permissions model reference (`src/config/permissions.js`).
+   * Updated Directory Structures to reflect `start.sh`, `server/middleware/`, and `src/config/permissions.js`.
+   * Added Default Test Credentials table and comprehensive Available Scripts table.
+5. **Quality Verification**:
+   * **`npx oxlint`**: Passed with **0 errors, 0 warnings**.
+   * **`npm run build`**: Production bundle compiled cleanly in **4.82s** with zero errors.
 
 ---
 
