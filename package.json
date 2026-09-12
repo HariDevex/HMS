@@ -1,8 +1,20 @@
 {
   "name": "hospital-management-system",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
+  "description": "[![React](https://img.shields.io/badge/React-19.2-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)\r [![Vite](https://img.shields.io/badge/Vite-8.2-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)\r [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.3-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)\r [![React Router](https://img.shields.io/badge/React_Router-v7.1-CA4245?style=flat-square&logo=react-router&logoColor=white)](https://reactrouter.com/)\r [![Lucide Icons](https://img.shields.io/badge/Lucide_React-1.38-F56565?style=flat-square)](https://lucide.dev/)\r [![Oxlint](https://img.shields.io/badge/Oxlint-1.79-brightgreen?style=flat-square)](https://oxc.rs/)",
+  "homepage": "https://github.com/HariDevex/HMS#readme",
+  "bugs": {
+    "url": "https://github.com/HariDevex/HMS/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HariDevex/HMS.git"
+  },
+  "license": "ISC",
+  "author": "",
   "type": "module",
+  "main": "vite.config.js",
   "scripts": {
     "dev": "vite",
     "dev:all": "concurrently -n \"server,client\" -c \"blue,green\" \"npm run server:dev\" \"npm run dev\"",
@@ -32,5 +44,6 @@
     "oxlint": "^1.79.0",
     "tailwindcss": "^4.3.3",
     "vite": "^8.2.2"
-  }
+  },
+  "keywords": []
 }
