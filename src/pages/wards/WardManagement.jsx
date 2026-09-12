@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { can } from '../../config/permissions';
 import Card, { CardHeader } from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -12,10 +13,10 @@ import {
   UserPlus,
   ArrowRightLeft,
   LogOut,
-  } from 'lucide-react';
+} from 'lucide-react';
 
 export default function WardManagement() {
-  const { wards, patients, assignBed, dischargeBed, addToast } = useApp();
+  const { wards, patients, assignBed, dischargeBed, addToast, currentRole } = useApp();
 
   const [selectedWardId, setSelectedWardId] = useState(wards[0].id);
   const [assignModalBed, setAssignModalBed] = useState(null); // Bed object for admission
@@ -23,21 +24,46 @@ export default function WardManagement() {
   const [transferModalBed, setTransferModalBed] = useState(null);
   const [targetTransferWard, setTargetTransferWard] = useState(wards[1].id);
 
+  const canBeds = can(currentRole, 'canManageBeds');
   const activeWard = wards.find((w) => w.id === selectedWardId) || wards[0];
 
   const handleAssignPatient = () => {
     if (!assignModalBed) return;
+    if (!canBeds) {
+      addToast({
+        title: 'Permission Denied',
+        message: 'Only authorized ward administration and nursing staff can assign beds.',
+        type: 'error',
+      });
+      return;
+    }
     const patientObj = patients.find((p) => p.id === selectedPatientId) || patients[0];
     assignBed(selectedWardId, assignModalBed.bedId, patientObj);
     setAssignModalBed(null);
   };
 
   const handleDischarge = (bed) => {
+    if (!canBeds) {
+      addToast({
+        title: 'Permission Denied',
+        message: 'Only authorized ward administration and nursing staff can process bed discharges.',
+        type: 'error',
+      });
+      return;
+    }
     dischargeBed(selectedWardId, bed.bedId, bed.patientName);
   };
 
   const handleTransfer = () => {
     if (!transferModalBed) return;
+    if (!canBeds) {
+      addToast({
+        title: 'Permission Denied',
+        message: 'Only authorized ward administration and nursing staff can transfer inpatients.',
+        type: 'error',
+      });
+      return;
+    }
     addToast({
       title: 'Transfer Completed',
       message: `Transferred ${transferModalBed.patientName} from ${transferModalBed.bedId} to ${targetTransferWard}.`,
@@ -202,56 +228,62 @@ export default function WardManagement() {
 
                 {/* Bed Actions */}
                 <div className="mt-4 pt-3 border-t border-slate-200/60 flex items-center gap-1.5">
-                  {isAvailable && (
-                    <Button
-                      size="sm"
-                      variant="primary"
-                      className="w-full !h-8 !text-xs"
-                      icon={UserPlus}
-                      onClick={() => setAssignModalBed(bed)}
-                    >
-                      Admit Patient
-                    </Button>
-                  )}
-
-                  {isOccupied && (
+                  {!canBeds ? (
+                    <span className="text-xs text-slate-400 italic text-center w-full py-1">Ward management restricted</span>
+                  ) : (
                     <>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className="grow !h-8 !text-xs"
-                        icon={ArrowRightLeft}
-                        onClick={() => setTransferModalBed(bed)}
-                      >
-                        Transfer
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="danger"
-                        className="grow !h-8 !text-xs"
-                        icon={LogOut}
-                        onClick={() => handleDischarge(bed)}
-                      >
-                        Discharge
-                      </Button>
-                    </>
-                  )}
+                      {isAvailable && (
+                        <Button
+                          size="sm"
+                          variant="primary"
+                          className="w-full !h-8 !text-xs"
+                          icon={UserPlus}
+                          onClick={() => setAssignModalBed(bed)}
+                        >
+                          Admit Patient
+                        </Button>
+                      )}
 
-                  {isCleaning && (
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="w-full !h-8 !text-xs"
-                      onClick={() => {
-                        addToast({
-                          title: 'Bed Ready',
-                          message: `${bed.bedId} marked as cleaned and ready for admission.`,
-                          type: 'success',
-                        });
-                      }}
-                    >
-                      Mark Cleaned
-                    </Button>
+                      {isOccupied && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="grow !h-8 !text-xs"
+                            icon={ArrowRightLeft}
+                            onClick={() => setTransferModalBed(bed)}
+                          >
+                            Transfer
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            className="grow !h-8 !text-xs"
+                            icon={LogOut}
+                            onClick={() => handleDischarge(bed)}
+                          >
+                            Discharge
+                          </Button>
+                        </>
+                      )}
+
+                      {isCleaning && (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="w-full !h-8 !text-xs"
+                          onClick={() => {
+                            addToast({
+                              title: 'Bed Ready',
+                              message: `${bed.bedId} marked as cleaned and ready for admission.`,
+                              type: 'success',
+                            });
+                          }}
+                        >
+                          Mark Cleaned
+                        </Button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -270,7 +302,7 @@ export default function WardManagement() {
           footer={
             <>
               <Button variant="secondary" onClick={() => setAssignModalBed(null)}>Cancel</Button>
-              <Button variant="primary" onClick={handleAssignPatient}>Confirm Admission</Button>
+              <Button variant="primary" disabled={!canBeds} onClick={handleAssignPatient}>Confirm Admission</Button>
             </>
           }
         >
@@ -303,7 +335,7 @@ export default function WardManagement() {
           footer={
             <>
               <Button variant="secondary" onClick={() => setTransferModalBed(null)}>Cancel</Button>
-              <Button variant="primary" onClick={handleTransfer}>Authorize Transfer</Button>
+              <Button variant="primary" disabled={!canBeds} onClick={handleTransfer}>Authorize Transfer</Button>
             </>
           }
         >

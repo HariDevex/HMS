@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
+import { can } from '../../config/permissions';
 import Card, { CardHeader } from '../../components/ui/Card';
 import Table from '../../components/ui/Table';
 import Badge from '../../components/ui/Badge';
@@ -14,11 +15,13 @@ import {
 } from 'lucide-react';
 
 export default function AuditLogs() {
-  const { auditLogs, addToast } = useApp();
+  const { auditLogs, addToast, currentRole } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [severityFilter, setSeverityFilter] = useState('All');
   const [selectedLog, setSelectedLog] = useState(null);
+
+  const canViewLogs = can(currentRole, 'canViewAuditLogs');
 
   const filteredLogs = useMemo(() => {
     return auditLogs.filter((log) => {
@@ -133,7 +136,9 @@ export default function AuditLogs() {
           variant="secondary"
           size="sm"
           icon={Download}
+          disabled={!canViewLogs}
           onClick={() => {
+            if (!canViewLogs) return;
             addToast({
               title: 'Audit Report Exported',
               message: 'CSV export downloaded with cryptographic compliance checksum.',

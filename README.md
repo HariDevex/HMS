@@ -13,11 +13,28 @@ Built with **React 19**, **Vite 8**, **Tailwind CSS v4** (`@tailwindcss/vite`), 
 
 ---
 
+> ### ⚡ Instant Full-Stack Launch (Single Command)
+> Launch the **entire application** — Database Initialization, Express REST API Backend (`:5000`), and Vite React Frontend (`:5173`) — with a single command:
+> ```bash
+> npm start
+> # OR
+> npm run dev:all
+> # OR
+> ./start.sh
+> ```
+> * **Frontend Application**: [http://localhost:5173](http://localhost:5173)
+> * **Express Backend API**: [http://localhost:5000](http://localhost:5000)
+> * **API Health & DB Status**: [http://localhost:5000/api/health](http://localhost:5000/api/health)
+
+---
+
 ## 📑 Table of Contents
 
-1. [Key Highlights](#-key-highlights)
-2. [Role-Based Architecture & Personas](#-role-based-architecture--personas)
-3. [Core Clinical & Operational Modules](#-core-clinical--operational-modules)
+1. [⚡ Instant Launch (Single Command)](#-instant-full-stack-launch-single-command)
+2. [Key Highlights](#-key-highlights)
+3. [Role-Based Access Control (RBAC) & Personas](#-role-based-architecture--personas)
+4. [Dual-Engine Database Architecture & PostgreSQL](#-database-architecture--postgresql-setup)
+5. [Core Clinical & Operational Modules](#-core-clinical--operational-modules)
    - [Central Patient Profile & Clinical Action Hub](#1-central-patient-profile--clinical-action-hub)
    - [On-Site Popup PDF Viewer & Report Attachment Engine](#2-on-site-popup-pdf-viewer--report-attachment-engine)
    - [Clinical Pathology & Laboratory Workstation](#3-clinical-pathology--laboratory-workstation)
@@ -29,13 +46,13 @@ Built with **React 19**, **Vite 8**, **Tailwind CSS v4** (`@tailwindcss/vite`), 
    - [Billing, Insurance & Financial Invoicing](#9-billing-insurance--financial-invoicing)
    - [Executive Reports & Operational Analytics](#10-executive-reports--operational-analytics)
    - [Mobile-First Patient Portal](#11-mobile-first-patient-portal)
-4. [Technology Stack](#-technology-stack)
-5. [Directory Structure](#-directory-structure)
-6. [Design System & Ergonomics](#-design-system--ergonomics)
-7. [Getting Started & Installation](#-getting-started--installation)
-8. [Available Scripts](#-available-scripts)
-9. [Interactive Feature Walkthrough Guide](#-interactive-feature-walkthrough-guide)
-10. [Clinical Verification & Quality Standards](#-clinical-verification--quality-standards)
+6. [Technology Stack](#-technology-stack)
+7. [Directory Structure](#-directory-structure)
+8. [Getting Started & Installation](#-getting-started--installation)
+9. [Default Test Credentials](#-default-test-credentials)
+10. [Available Scripts](#-available-scripts)
+11. [Interactive Feature Walkthrough Guide](#-interactive-feature-walkthrough-guide)
+12. [Clinical Verification & Quality Standards](#-clinical-verification--quality-standards)
 
 ---
 
@@ -54,17 +71,33 @@ Built with **React 19**, **Vite 8**, **Tailwind CSS v4** (`@tailwindcss/vite`), 
 
 ## 👥 Role-Based Architecture & Personas
 
-The system provides tailored interfaces, access boundaries, and work queues for 7 distinct hospital personas:
+The system enforces strict **Clinical and Operational Boundaries** across 7 distinct hospital personas, governed by a central Role-Based Access Control (RBAC) engine (`src/config/permissions.js`), route guards (`RequireRole` in `src/App.jsx`), and backend API middlewares (`server/middleware/auth.js` & `server/middleware/requireRole.js`):
 
-| Role | Persona | Default View | Key Responsibilities |
+| Role | Persona | Default View | Key Responsibilities & Access Scope |
 | :--- | :--- | :--- | :--- |
-| **Administrator** | Dr. Katherine Vance | `/admin` | Operational KPI metrics, staff user management, clinical audit logs, shift & department settings |
-| **Doctor / Clinician** | Dr. Sarah Jenkins, MD | `/doctor` | Consultation queue, patient records review, clinical exam, lab/scan ordering, e-prescribing |
-| **Nurse** | Nurse Emily Rodriguez, RN | `/nurse` | Inpatient ward monitoring, vitals recording, MAR administration verification, nursing handover notes |
-| **Laboratory Tech** | Alex Morgan, MLS | `/laboratory` | Barcoded specimen intake, automated analyzer data entry, reference interval verification, PDF report publishing |
+| **Administrator** | Dr. Katherine Vance | `/admin` | Operational KPI metrics, staff user management, clinical audit logs, shift & department settings. *(Zero clinical ordering/prescribing rights)* |
+| **Doctor / Clinician** | Dr. Sarah Jenkins, MD | `/doctor` | Consultation queue, patient records review, clinical exam, lab/scan ordering, e-prescribing (℞), vitals |
+| **Nurse** | Nurse Emily Rodriguez, RN | `/nurse` | Inpatient ward monitoring, vitals recording, MAR administration verification, nursing handover notes. *(No prescribing rights)* |
+| **Laboratory Tech** | Alex Morgan, MLS | `/laboratory` | Barcoded specimen intake, automated analyzer data entry, reference interval verification, certified PDF report publishing |
 | **Radiologist** | Dr. David Miller, MD | `/radiology` | Modality queue (X-Ray/CT/MRI), PACS DICOM viewing, radiological findings & impression dictation, signed PDF reports |
-| **Receptionist** | Marcus Chen | `/reception` | Patient check-ins, token queue assignment, insurance registration, appointment scheduling |
-| **Patient** | James Wilson | `/portal` | Mobile-first portal, appointment management, health records, layman test explanations, bill payment |
+| **Receptionist** | Marcus Chen | `/reception` | Patient check-ins, token queue assignment, insurance registration, appointment scheduling, invoice cashier collection |
+| **Patient** | James Wilson | `/portal` | Mobile-first portal, appointment management, health records, layman test explanations, bill payment. *(Fenced strictly to `/portal/*`)* |
+
+### Clinical Authority Matrix
+
+| Action / Capability | Admin | Doctor | Nurse | Lab | Radiology | Reception | Patient |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Prescribe Medication (℞)** | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Order Lab Tests & Scans** | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Record Patient Vitals** | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Administer Medications (MAR)** | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Verify & Seal Lab Results** | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **Verify & Seal Radiology Reports** | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| **Manage Bed / Ward Allocation** | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Process Billing & Invoices** | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **User & Staff Management** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **System Settings & Audit Logs** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Patient Self-Service Portal** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
 
 ---
 
@@ -228,6 +261,7 @@ HMS/
 ├── index.html                     # HTML entry point
 ├── package.json                   # Project metadata, dependencies, and scripts
 ├── vite.config.js                 # Vite config with React, Tailwind v4, & /api reverse proxy
+├── start.sh                       # Single-command executable launcher script (chmod +x)
 ├── .env                           # Active environment variables (PG credentials, ports)
 ├── .env.example                   # Environment configuration template
 ├── todo.txt                       # Development milestone tracking
@@ -265,6 +299,10 @@ HMS/
 │   │   ├── vitalsController.js    # Patient vital sign logging and trend retrieval
 │   │   └── wardController.js      # Bed allocation, admissions, inter-ward transfers
 │   │
+│   ├── middleware/                # Security, Authentication & Role-Based Access Control
+│   │   ├── auth.js                # JWT Bearer token authentication & req.user injector
+│   │   └── requireRole.js         # Endpoint-level role authorization & HTTP 403 guard
+│   │
 │   ├── routes/                    # Modular Express route declarations
 │   │   ├── appointmentRoutes.js   # /api/appointments
 │   │   ├── auditLogRoutes.js      # /api/audit-logs
@@ -296,8 +334,12 @@ HMS/
 │
 └── src/                           # React 19 Frontend Application
     ├── main.jsx                   # Application bootstrapping
-    ├── App.jsx                    # Route declarations, lazy imports, role path resolvers
+    ├── App.jsx                    # Route declarations, RequireRole guard, lazy imports
     ├── index.css                  # Tailwind v4 import, color tokens, custom scrollbars
+    │
+    ├── config/                    # Access Control & Governance
+    │   └── permissions.js         # Central RBAC rules, route allow-lists, action can() checks
+    │
     │
     ├── components/
     │   ├── layout/
@@ -449,18 +491,13 @@ This automated runner:
 * **Node.js**: `v18.0.0` or higher (Node `v20+` or `v24` recommended)
 * **npm**: `v9.0.0` or higher
 
-### Installation
+---
 
-1. **Clone or navigate to the repository directory**:
-   ```bash
-   cd /path/to/HMS
-   ```
+### ⚡ One Single Command to Run Everything
 
-2. **Install project dependencies**:
-   ```bash
-   npm install
-   ```
+You do not need to juggle multiple terminals or manually execute database migrations. Simply run:
 
+<<<<<<< HEAD
 3. **Start the Full-Stack Application (Frontend + Express API)**:
    Run both the Express backend server and the Vite frontend simultaneously with a single command:
    ```bash
@@ -501,20 +538,67 @@ If you prefer running services in separate terminal windows:
    ```bash
    npm run db:init
    ```
+=======
+```bash
+# 1. Clone the repository
+git clone https://github.com/HariDevex/HMS.git
+cd HMS
+>>>>>>> PPR
 
-4. **Start the Full-Stack Application (Frontend + Express API)**:
-   Run both the Express backend server and the Vite frontend simultaneously with a single command:
-   ```bash
-   npm run dev:all
-   # OR
-   npm start
-   ```
+# 2. Install dependencies
+npm install
 
-5. **Access the application**:
-   * **Frontend Web Application**: [http://localhost:5173](http://localhost:5173)
-   * **Express REST API**: [http://localhost:5000](http://localhost:5000)
-   * **API Health & DB Check**: [http://localhost:5000/api/health](http://localhost:5000/api/health)
-   * **API Reverse Proxy**: All calls from the frontend to `/api/*` are automatically forwarded to `http://localhost:5000` via Vite proxy.
+# 3. Launch Full Stack (Database Initializer + Express API Backend + React Frontend)
+npm start
+# OR
+npm run dev:all
+# OR
+./start.sh
+```
+
+#### What happens under the hood with `npm start`:
+1. **🗄️ Database Initialization & Auto-Detection**:
+   - Executes `node server/db/initDb.js`.
+   - Checks if PostgreSQL is reachable on `localhost:5432`.
+   - **If PostgreSQL is running**: It automatically verifies or creates the database `hms_db`, applies the 11 tables and 14 indexes from `server/db/schema.sql`, and populates realistic seed records from `server/db/seed.sql`.
+   - **If PostgreSQL is offline**: It automatically validates and connects to the persistent local JSON database (`server/db/hms_db.json`), requiring zero configuration and never crashing.
+2. **🏥 Express REST API Backend**:
+   - Boots on `http://localhost:5000` with native hot-reload (`node --watch`).
+   - Serves clinical and operational REST endpoints (`/api/patients`, `/api/labs`, `/api/radiology`, `/api/prescriptions`, `/api/billing`, `/api/wards`, etc.).
+   - Enforces JWT Bearer token authentication and role-based access control.
+3. **💻 Vite React 19 Frontend**:
+   - Launches on `http://localhost:5173` with instant Hot Module Replacement (HMR).
+   - Vite reverse proxy seamlessly routes all `/api/*` requests directly to port `5000`.
+
+---
+
+### 🌐 System URLs & Endpoints
+
+| Service | URL | Description |
+| :--- | :--- | :--- |
+| **Frontend Web Application** | [http://localhost:5173](http://localhost:5173) | Interactive React 19 clinical UI with role switcher & dark-mode PACS viewer |
+| **Express REST API** | [http://localhost:5000](http://localhost:5000) | Express 5 backend API endpoints |
+| **API Health & DB Check** | [http://localhost:5000/api/health](http://localhost:5000/api/health) | Real-time JSON health check reporting active database engine and status |
+| **API Root Information** | [http://localhost:5000/api](http://localhost:5000/api) | API metadata and endpoint directory |
+
+---
+
+## 🔑 Default Test Credentials
+
+Use these pre-configured hospital accounts to log in via the web UI or authenticate API requests:
+
+| Role | Staff / Persona | Email | Password | Accessible Routes |
+| :--- | :--- | :--- | :--- | :--- |
+| **Administrator** | Dr. Katherine Vance | `k.vance@medicore.org` | `Password123!` | `/admin`, `/users`, `/audit-logs`, `/settings`, `/wards`, `/billing`, `/reports` |
+| **Doctor** | Dr. Sarah Jenkins, MD | `s.jenkins@medicore.org` | `Password123!` | `/doctor`, `/consultation`, `/patients`, `/laboratory`, `/radiology`, `/appointments`, `/wards` |
+| **Nurse** | Nurse Emily Rodriguez, RN | `e.rodriguez@medicore.org` | `Password123!` | `/nurse`, `/nurse-workstation`, `/wards`, `/patients`, `/laboratory` |
+| **Laboratory** | Alex Morgan, MLS | `a.morgan@medicore.org` | `Password123!` | `/laboratory`, `/patients`, `/reports` |
+| **Radiology** | Dr. David Miller, MD | `d.miller@medicore.org` | `Password123!` | `/radiology`, `/patients`, `/reports` |
+| **Reception** | Marcus Chen | `m.chen@medicore.org` | `Password123!` | `/reception`, `/reception/register`, `/reception/queue`, `/patients`, `/billing`, `/appointments` |
+| **Patient** | James Wilson | `j.wilson@gmail.com` | `Password123!` | `/portal/*` (Home, Appointments, Records, Prescriptions, Billing) |
+
+> [!TIP]
+> On the web login screen (`/login`), click any **"Quick Demo"** button to authenticate and jump directly into that persona's customized workspace with one click.
 
 ---
 
@@ -545,12 +629,14 @@ If you prefer running services in separate terminal windows:
 
 | Script | Command | Purpose |
 | :--- | :--- | :--- |
-| `npm run dev:all` | `concurrently ...` | **Recommended**: Concurrently launches Express API (`:5000`) and Vite frontend (`:5173`) |
-| `npm start` | `concurrently ...` | Standard alias for `npm run dev:all` |
+| `npm start` | `node server/db/initDb.js && concurrently ...` | **⚡ Primary Full-Stack Command**: Initializes DB, launches Express API (`:5000`) and Vite frontend (`:5173`) |
+| `npm run dev:all` | `node server/db/initDb.js && concurrently ...` | Standard development alias for `npm start` |
+| `npm run all` | `npm start` | Fast shortcut alias to start everything |
+| `./start.sh` | `bash start.sh` | Self-contained bash launcher script (detects PostgreSQL, runs `npm start`) |
 | `npm run dev` | `vite` | Starts Vite local development server with Hot Module Replacement (HMR) on port 5173 |
 | `npm run server:dev` | `node --watch server/index.js` | Starts Express server with native file watching and auto-reload on port 5000 |
 | `npm run server` | `node server/index.js` | Starts Express REST API backend server in production mode on port 5000 |
-| `npm run db:init` | `node server/db/initDb.js` | Creates `hms_db` in PostgreSQL, executes `schema.sql`, and seeds initial data |
+| `npm run db:init` | `node server/db/initDb.js` | Connects to PostgreSQL, executes `schema.sql`, and seeds initial data (or verifies local JSON DB) |
 | `npm run db:seed` | `node server/db/seed.js` | Re-seeds PostgreSQL and resets local database storage |
 | `npm run db:reset` | `node server/db/resetDb.js` | Drops all tables and re-seeds clean hospital records |
 | `npm run build` | `vite build` | Compiles and optimizes assets into `dist/` with chunk splitting |

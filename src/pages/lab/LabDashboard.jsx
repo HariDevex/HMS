@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { can } from '../../config/permissions';
 import Card, { CardHeader } from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -23,7 +24,7 @@ import {
 import PdfViewerModal from '../../components/ui/PdfViewerModal';
 
 export default function LabDashboard() {
-  const { labOrders, verifyLabOrder, addToast } = useApp();
+  const { labOrders, verifyLabOrder, addToast, currentRole } = useApp();
 
   const [activeTab, setActiveTab] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
@@ -35,6 +36,8 @@ export default function LabDashboard() {
   // Result entry form state
   const [paramValues, setParamValues] = useState({});
   const [techComments, setTechComments] = useState('');
+
+  const canVerify = can(currentRole, 'canVerifyLab');
 
   const statusTabs = [
     { id: 'All', label: 'All Orders', count: labOrders.length },
@@ -68,6 +71,14 @@ export default function LabDashboard() {
   };
 
   const handleVerify = (order) => {
+    if (!canVerify) {
+      addToast({
+        title: 'Permission Denied',
+        message: 'Only certified laboratory technologists are authorized to verify and publish diagnostic lab results.',
+        type: 'error',
+      });
+      return;
+    }
     const updatedParameters = order.parameters.map((p, idx) => ({
       ...p,
       value: paramValues[idx] || p.value,
@@ -164,7 +175,7 @@ export default function LabDashboard() {
               icon={isVerified ? Eye : Edit3}
               onClick={() => handleOpenResultEntry(row)}
             >
-              {isVerified ? 'View Result' : 'Enter / Verify'}
+              {isVerified ? 'View Result' : canVerify ? 'Enter / Verify' : 'View Order'}
             </Button>
             {(isVerified || row.pdfReport) && (
               <Button
@@ -284,6 +295,7 @@ export default function LabDashboard() {
                 <Button
                   variant="success"
                   icon={CheckCircle2}
+                  disabled={!canVerify}
                   onClick={() => handleVerify(selectedOrder)}
                 >
                   Verify & Commit Result
@@ -354,7 +366,7 @@ export default function LabDashboard() {
                         <tr key={idx} className={isCritical ? 'bg-red-50/50' : ''}>
                           <td className="p-2.5 font-semibold text-slate-900">{param.name}</td>
                           <td className="p-2.5">
-                            {isVerified ? (
+                            {isVerified || !canVerify ? (
                               <span className={`font-mono font-bold ${isCritical ? 'text-error text-sm' : 'text-slate-900'}`}>
                                 {param.value}
                               </span>
@@ -398,7 +410,7 @@ export default function LabDashboard() {
             </label>
             <textarea
               rows={3}
-              disabled={selectedOrder.status === 'Verified' || selectedOrder.status === 'Published'}
+              disabled={!canVerify || selectedOrder.status === 'Verified' || selectedOrder.status === 'Published'}
               value={techComments}
               onChange={(e) => setTechComments(e.target.value)}
               className="w-full text-xs p-3 rounded-lg border border-slate-300 bg-slate-50 disabled:bg-slate-100 focus:outline-none focus:border-primary"

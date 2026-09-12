@@ -120,15 +120,30 @@ async function initializeDatabase() {
     }
   }
 
-  // Step 3: Always initialize and persist local database store (hms_db.json)
-  console.log(`💾 Initializing persistent local database file at server/db/hms_db.json...`);
+  // Step 3: Always verify/initialize persistent local database store (hms_db.json)
+  console.log(`💾 Verifying persistent local database store at server/db/hms_db.json...`);
   try {
-    const { initialData } = await import('../data/inMemoryDb.js');
-    fs.writeFileSync(localDbPath, JSON.stringify(initialData, null, 2), 'utf8');
-    console.log(`✅ Local database file created: server/db/hms_db.json`);
+    const fileExists = fs.existsSync(localDbPath);
+    const forceReset = process.argv.includes('--force');
+    if (!fileExists || forceReset) {
+      const { initialData } = await import('../data/inMemoryDb.js');
+      fs.writeFileSync(localDbPath, JSON.stringify(initialData, null, 2), 'utf8');
+      console.log(`✅ Local database file created & seeded: server/db/hms_db.json`);
+    } else {
+      // Validate that the JSON file is parseable
+      JSON.parse(fs.readFileSync(localDbPath, 'utf8'));
+      console.log(`✅ Local database file verified & active: server/db/hms_db.json`);
+    }
     console.log(`   Tables synced: users, patients, appointments, vitals, labs, radiology, prescriptions, wards, beds, invoices, audit logs.`);
   } catch (err) {
-    console.warn(`⚠️  Could not write hms_db.json: ${err.message}`);
+    console.warn(`⚠️  Local database check: ${err.message}`);
+    try {
+      const { initialData } = await import('../data/inMemoryDb.js');
+      fs.writeFileSync(localDbPath, JSON.stringify(initialData, null, 2), 'utf8');
+      console.log(`✅ Recovered local database file with standard initial data.`);
+    } catch (writeErr) {
+      console.error(`❌ Could not write hms_db.json:`, writeErr.message);
+    }
   }
 
   console.log('===============================================================');
