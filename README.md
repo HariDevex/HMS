@@ -545,18 +545,21 @@ npm run dev:all
 
 Use these pre-configured hospital accounts to log in via the web UI or authenticate API requests:
 
-| Role | Staff / Persona | Email | Password | Accessible Routes |
+| Role | Staff / Persona | Username / Email | Password | Accessible Routes |
 | :--- | :--- | :--- | :--- | :--- |
-| **Administrator** | Dr. Katherine Vance | `k.vance@medicore.org` | `Password123!` | `/admin`, `/users`, `/audit-logs`, `/settings`, `/wards`, `/billing`, `/reports` |
+| **Administrator** | Arthur Vance | `a.vance@medicore.org` | `Password123!` | `/admin`, `/users`, `/audit-logs`, `/settings`, `/wards`, `/billing`, `/reports` |
 | **Doctor** | Dr. Sarah Jenkins, MD | `s.jenkins@medicore.org` | `Password123!` | `/doctor`, `/consultation`, `/patients`, `/laboratory`, `/radiology`, `/appointments`, `/wards` |
-| **Nurse** | Nurse Emily Rodriguez, RN | `e.rodriguez@medicore.org` | `Password123!` | `/nurse`, `/nurse-workstation`, `/wards`, `/patients`, `/laboratory` |
+| **Nurse** | Michael Chen, RN | `m.chen@medicore.org` | `Password123!` | `/nurse`, `/nurse-workstation`, `/wards`, `/patients`, `/laboratory` |
 | **Laboratory** | Alex Morgan, MLS | `a.morgan@medicore.org` | `Password123!` | `/laboratory`, `/patients`, `/reports` |
 | **Radiology** | Dr. David Miller, MD | `d.miller@medicore.org` | `Password123!` | `/radiology`, `/patients`, `/reports` |
-| **Reception** | Marcus Chen | `m.chen@medicore.org` | `Password123!` | `/reception`, `/reception/register`, `/reception/queue`, `/patients`, `/billing`, `/appointments` |
-| **Patient** | James Wilson | `j.wilson@gmail.com` | `Password123!` | `/portal/*` (Home, Appointments, Records, Prescriptions, Billing) |
+| **Reception** | Emily Watson | `e.watson@medicore.org` | `Password123!` | `/reception`, `/reception/register`, `/reception/queue`, `/patients`, `/billing`, `/appointments` |
+| **Patient** | James Wilson | `j.wilson@email.com` | `Password123!` | `/portal/*` (Home, Appointments, Records, Prescriptions, Billing) |
 
-> [!TIP]
-> On the web login screen (`/login`), click any **"Quick Demo"** button to authenticate and jump directly into that persona's customized workspace with one click.
+> [!IMPORTANT]
+> The login page accepts the **Username / Email** and **Password** shown above. Both fields are validated — an unrecognized username or a wrong password is rejected with an error message. There are no one-click demo buttons; each account must be signed in manually.
+
+> [!NOTE]
+> Credentials are defined in `src/data/mockData.js` (`DEMO_ROLES`). Update that array to add or change accounts.
 
 ---
 

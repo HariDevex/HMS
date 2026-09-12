@@ -19,6 +19,10 @@ const AppContext = createContext(null);
 
 export function AppProvider({ children }) {
   // Role & Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    try { return sessionStorage.getItem('hms_auth') === 'true'; }
+    catch { return false; }
+  });
   const [currentRole, setCurrentRole] = useState('admin');
   const [currentUser, setCurrentUser] = useState(DEMO_ROLES[0]);
   
@@ -89,12 +93,21 @@ export function AppProvider({ children }) {
     const target = DEMO_ROLES.find(r => r.id === roleId);
     if (target) {
       setCurrentUser(target);
-      addToast({
-        title: `Switched Persona: ${target.role}`,
-        message: `Now viewing MediCore HMS as ${target.name} (${target.department})`,
-        type: 'info',
-      });
     }
+  };
+
+  // Login / Logout
+  const login = (roleId) => {
+    setIsAuthenticated(true);
+    try { sessionStorage.setItem('hms_auth', 'true'); } catch {}
+    switchRole(roleId);
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    setCurrentRole('admin');
+    setCurrentUser(DEMO_ROLES[0]);
+    try { sessionStorage.removeItem('hms_auth'); } catch {}
   };
 
   // Actions for Patients
@@ -574,6 +587,9 @@ export function AppProvider({ children }) {
         // Role & Auth
         currentRole,
         currentUser,
+        isAuthenticated,
+        login,
+        logout,
         switchRole,
         roles: DEMO_ROLES,
 

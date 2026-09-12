@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import {
   Hospital,
@@ -16,7 +16,7 @@ import Button from '../../components/ui/Button';
 const HOSPITAL_IMAGE_URL = '/hospital-image.svg';
 
 export default function Login() {
-  const { roles, switchRole, addToast } = useApp();
+  const { roles, login, isAuthenticated, addToast } = useApp();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -25,6 +25,10 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -38,10 +42,15 @@ export default function Login() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      const match = roles.find((r) => r.email.toLowerCase() === email.toLowerCase().trim());
-      if (match) {
-        switchRole(match.id);
-        navigate(match.id === 'patient' ? '/portal' : `/${match.id}`);
+      const input = email.toLowerCase().trim();
+      const match = roles.find(
+        (r) =>
+          r.email.toLowerCase() === input ||
+          (r.username && r.username.toLowerCase() === input)
+      );
+      if (match && match.password === password) {
+        login(match.id);
+        navigate(match.id === 'patient' ? '/portal' : `/${match.id}`, { replace: true });
         addToast({
           title: 'Login Successful',
           message: `Welcome back, ${match.name}.`,
@@ -51,16 +60,6 @@ export default function Login() {
         setError('Invalid username or password. Please try again.');
       }
     }, 600);
-  };
-
-  const handleQuickDemo = (roleId) => {
-    const roleObj = roles.find((r) => r.id === roleId);
-    if (roleObj) {
-      setEmail(roleObj.email);
-      setPassword('Password123!');
-      switchRole(roleId);
-      navigate(roleId === 'patient' ? '/portal' : `/${roleId}`);
-    }
   };
 
   return (
@@ -229,26 +228,6 @@ export default function Login() {
               <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </form>
-
-          {/* Quick Demo Buttons */}
-          <div className="mt-6 pt-5 border-t border-slate-100">
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center mb-2.5">
-              Quick Access &mdash; One-Click Demo
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-              {roles.map((r) => (
-                <button
-                  key={r.id}
-                  type="button"
-                  onClick={() => handleQuickDemo(r.id)}
-                  className="p-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-primary/5 hover:border-primary/30 hover:text-primary text-slate-600 text-[11px] font-semibold text-center transition-colors truncate cursor-pointer"
-                  title={`Login as ${r.name}`}
-                >
-                  {r.role}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
 

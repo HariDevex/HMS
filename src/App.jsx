@@ -17,6 +17,18 @@ function RequireRole({ children, path }) {
   return children;
 }
 
+// Authentication Guard
+function RequireAuth({ children }) {
+  const { isAuthenticated } = useApp();
+  const location = useLocation();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+
+  return children;
+}
+
 // Layout
 import Layout from './components/layout/Layout';
 
@@ -97,8 +109,8 @@ export default function App() {
         <Route path="/2fa" element={<TwoFactor />} />
         <Route path="/access-denied" element={<AccessDenied />} />
 
-        {/* Main App Layout */}
-        <Route path="/" element={<Layout />}>
+        {/* Main App Layout (Protected — requires login) */}
+        <Route path="/" element={<RequireAuth><Layout /></RequireAuth>}>
           {/* Role Default Redirect */}
           <Route index element={<Navigate to={getRoleDefaultPath()} replace />} />
 

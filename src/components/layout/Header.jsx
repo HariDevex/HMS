@@ -8,19 +8,22 @@ import {
   Shield,
   AlertCircle,
   Clock,
+  LogOut,
 } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 export default function Header() {
   const {
     currentRole,
     currentUser,
     switchRole,
+    logout,
     roles,
     setGlobalSearchOpen,
     mobileMenuOpen,
     setMobileMenuOpen,
   } = useApp();
+  const navigate = useNavigate();
 
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -262,6 +265,18 @@ export default function Header() {
               {currentUser.department}
             </div>
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              logout();
+              navigate('/login', { replace: true });
+            }}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+            title="Log out"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="hidden sm:inline">Logout</span>
+          </button>
         </div>
       </div>
     </header>
