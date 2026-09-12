@@ -1,4 +1,4 @@
-import { db } from '../data/inMemoryDb.js';
+import { db } from '../db/db.js';
 
 export const getAuditLogs = (req, res) => {
   const { status, action } = req.query;

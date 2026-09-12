@@ -105,6 +105,64 @@ const initialPatients = [
       { allergen: 'Latex', severity: 'Mild', reaction: 'Contact dermatitis' },
     ],
   },
+  {
+    id: 'PAT-104',
+    mrn: 'MC-2026-0923',
+    name: 'Emily Davis',
+    age: 29,
+    gender: 'Female',
+    bloodGroup: 'AB+',
+    contactPhone: '+1 (555) 612-4490',
+    contactEmail: 'emily.davis@designstudio.org',
+    address: '88 River Street, Evanston, IL',
+    emergencyContact: 'Lucas Davis (Spouse) - +1 (555) 612-4491',
+    primaryCondition: 'Type 1 Diabetes / DKA Monitoring',
+    chiefComplaint: 'Nausea, persistent vomiting, blood glucose reading > 420 mg/dL at home',
+    diagnosis: 'Mild Diabetic Ketoacidosis without Coma, Glycemic Dysregulation',
+    attendingDoctorId: 'USR-002',
+    attendingDoctor: 'Dr. Sarah Jenkins, MD',
+    department: 'Endocrinology',
+    wardId: 'WARD-GEN',
+    ward: 'General Medical Ward',
+    bedId: 'BED-G101',
+    bed: 'Bed G-101',
+    admissionDate: '2026-09-10 11:20',
+    status: 'Outpatient',
+    insuranceProvider: 'UnitedHealthcare Choice Plus',
+    policyNumber: 'UHC-IL-772190',
+    allergies: [
+      { allergen: 'Latex', severity: 'Mild', reaction: 'Contact dermatitis' },
+    ],
+  },
+  {
+    id: 'PAT-105',
+    mrn: 'MC-2026-1502',
+    name: 'Thomas Miller',
+    age: 45,
+    gender: 'Male',
+    bloodGroup: 'O-',
+    contactPhone: '+1 (555) 903-8821',
+    contactEmail: 'thomas.miller@logistics.com',
+    address: '512 Elmwood Park, Naperville, IL',
+    emergencyContact: 'Karen Miller (Sister) - +1 (555) 903-8822',
+    primaryCondition: 'Acute Pyelonephritis',
+    chiefComplaint: 'Left flank pain with radiation to groin, chills, dysuria for 3 days',
+    diagnosis: 'Acute Left Pyelonephritis secondary to E. coli urinary tract infection',
+    attendingDoctorId: 'USR-002',
+    attendingDoctor: 'Dr. Sarah Jenkins, MD',
+    department: 'Nephrology',
+    wardId: 'WARD-GEN',
+    ward: 'General Medical Ward',
+    bedId: 'BED-G102',
+    bed: 'Bed G-102',
+    admissionDate: '2026-09-10 16:45',
+    status: 'Admitted',
+    insuranceProvider: 'Cigna Open Access Plus',
+    policyNumber: 'CIG-90812-US',
+    allergies: [
+      { allergen: 'Ciprofloxacin', severity: 'Severe', reaction: 'Tendinopathy, Rash' },
+    ],
+  },
 ];
 
 const initialLabOrders = [
@@ -333,6 +391,12 @@ const initialInvoices = [
   },
 ];
 
+const initialVitals = [
+  { id: 'VIT-001', patientId: 'PAT-101', recordedById: 'USR-003', recordedAt: '2026-09-11 08:30', bp: '138/88', systolic: 138, diastolic: 88, heartRate: 76, temperature: 98.6, tempUnit: '°F', respRate: 16, oxygenSaturation: 98.0, painLevel: 2, notes: 'Patient resting comfortably in semi-Fowler position.' },
+  { id: 'VIT-002', patientId: 'PAT-101', recordedById: 'USR-003', recordedAt: '2026-09-11 04:00', bp: '142/90', systolic: 142, diastolic: 90, heartRate: 82, temperature: 98.4, tempUnit: '°F', respRate: 18, oxygenSaturation: 97.0, painLevel: 3, notes: 'Overnight vitals check.' },
+  { id: 'VIT-003', patientId: 'PAT-102', recordedById: 'USR-003', recordedAt: '2026-09-11 08:00', bp: '110/72', systolic: 110, diastolic: 72, heartRate: 98, temperature: 101.4, tempUnit: '°F', respRate: 24, oxygenSaturation: 93.0, painLevel: 4, notes: 'High flow O2 via nasal cannula.' },
+];
+
 const initialAuditLogs = [
   { id: 'LOG-001', userId: 'USR-002', action: 'Patient Record Accessed', details: 'Viewed patient chart and telemetry timeline', status: 'Success', timestamp: '2026-09-11 10:14:02', ipAddress: '192.168.1.45', patientName: 'James Wilson' },
   { id: 'LOG-002', userId: 'USR-004', action: 'Lab Result Verified', details: 'Order ORD-LAB-4401 verified and published to clinical record. PDF attached.', status: 'Success', timestamp: '2026-09-10 09:12:30', ipAddress: '192.168.1.88', patientName: 'James Wilson' },
@@ -383,6 +447,20 @@ class Collection {
   }
 }
 
+export const initialData = {
+  users: initialUsers,
+  patients: initialPatients,
+  appointments: initialAppointments,
+  vitals: initialVitals,
+  labOrders: initialLabOrders,
+  radiologyOrders: initialRadiologyOrders,
+  prescriptions: initialPrescriptions,
+  wards: initialWards,
+  beds: initialBeds,
+  invoices: initialInvoices,
+  auditLogs: initialAuditLogs,
+};
+
 // Global In-Memory Database Instance
 export const db = {
   users: new Collection(initialUsers),
@@ -390,9 +468,11 @@ export const db = {
   labOrders: new Collection(initialLabOrders),
   radiologyOrders: new Collection(initialRadiologyOrders),
   appointments: new Collection(initialAppointments),
+  vitals: new Collection(initialVitals),
   prescriptions: new Collection(initialPrescriptions),
   wards: new Collection(initialWards),
   beds: new Collection(initialBeds),
   invoices: new Collection(initialInvoices),
   auditLogs: new Collection(initialAuditLogs),
 };
+

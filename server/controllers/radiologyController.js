@@ -1,4 +1,4 @@
-import { db } from '../data/inMemoryDb.js';
+import { db } from '../db/db.js';
 
 export const getRadiologyOrders = (req, res) => {
   const { modality, status, patientId, search } = req.query;

@@ -34,44 +34,58 @@ curl http://localhost:5000/api/health
 
 ---
 
-## 🗄️ PostgreSQL Database Integration Guide
+## 🗄️ Database Architecture & PostgreSQL Setup
 
-When you are ready to connect a live PostgreSQL database:
+The backend features a **Dual-Mode Hybrid Architecture**:
+1. **Live PostgreSQL Database**: Full production relational engine powered by `pg` connection pool (`server/db/postgresClient.js`).
+2. **Persistent Local Database (`server/db/hms_db.json`)**: Zero-setup local JSON relational store that persists state changes immediately, enabling full offline operation and seamless UI development even when PostgreSQL is not yet started.
 
-### 1. Initialize PostgreSQL Database
-Create a database in PostgreSQL:
+### 1. Automated Database Initialization (`npm run db:init`)
+Run the all-in-one database creation script:
 ```bash
-createdb hms_db
+npm run db:init
+```
+This automated runner:
+1. Connects to PostgreSQL server.
+2. Creates the database `hms_db` if it doesn't already exist.
+3. Applies `server/db/schema.sql` (creates 7 enums, 11 tables, foreign key constraints, and 14 performance indexes).
+4. Executes `server/db/seed.sql` to populate high-fidelity clinical and administrative seed records.
+5. Synchronizes the persistent local store (`server/db/hms_db.json`).
+
+### 2. Available Database Scripts
+
+| Command | Purpose |
+| :--- | :--- |
+| `npm run db:init` | Creates `hms_db`, executes `schema.sql`, and inserts `seed.sql` |
+| `npm run db:seed` | Re-seeds PostgreSQL and resets local database file |
+| `npm run db:reset` | Drops all tables and re-seeds clean hospital records |
+
+### 3. Environment Variables Configuration (`.env`)
+Create or update `.env` in the root directory:
+```env
+PORT=5000
+NODE_ENV=development
+
+# PostgreSQL Connection
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/hms_db
+PGHOST=localhost
+PGPORT=5432
+PGUSER=postgres
+PGPASSWORD=postgres
+PGDATABASE=hms_db
+
+CLIENT_URL=http://localhost:5173
 ```
 
-### 2. Run the DDL Schema Script
-Execute the included schema file located at `server/db/schema.sql`:
-```bash
-psql -d hms_db -f server/db/schema.sql
-```
-This initializes all relational tables, enums (`user_role`, `lab_status`, `bed_status`), foreign keys, and indexes:
-* `users`
-* `patients`
-* `appointments`
-* `vitals`
-* `lab_orders` & `lab_order_parameters`
-* `radiology_orders`
-* `prescriptions` & `medication_administrations`
-* `wards` & `beds`
-* `invoices` & `invoice_items`
-* `audit_logs` & `clinical_timeline`
-
-### 3. Connect Express to PostgreSQL
-1. Install `pg` (node-postgres):
-   ```bash
-   npm install pg
-   ```
-2. Create or update your `.env` file:
-   ```env
-   PORT=5000
-   DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/hms_db
-   ```
-3. Activate the connection pool in `server/db/postgresClient.js`.
+### 4. Starting PostgreSQL Locally
+* **Linux (systemd)**:
+  ```bash
+  sudo systemctl start postgresql
+  ```
+* **Docker Container (Alternative)**:
+  ```bash
+  docker run --name hms-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=hms_db -p 5432:5432 -d postgres:16
+  ```
 
 ---
 
@@ -173,7 +187,13 @@ server/
 │
 └── db/
     ├── schema.sql              # Complete PostgreSQL DDL schema & table definitions
-    └── postgresClient.js       # PostgreSQL client adapter ready for live connection
+    ├── seed.sql                # Pure SQL seed script for PostgreSQL (11 tables)
+    ├── postgresClient.js       # PostgreSQL client adapter with pg.Pool & health checks
+    ├── db.js                   # Universal database persistence layer (dual PostgreSQL + local store)
+    ├── initDb.js               # Database creation & initialization script (npm run db:init)
+    ├── seed.js                 # Standalone seed executor (npm run db:seed)
+    ├── resetDb.js              # Database reset utility (npm run db:reset)
+    └── hms_db.json             # Persistent local JSON database storage
 ```
 
 ---
