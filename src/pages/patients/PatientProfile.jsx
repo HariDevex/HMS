@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
+import { can } from '../../config/permissions';
 import Card, { CardHeader, CardBody } from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -536,47 +537,54 @@ export default function PatientProfile() {
               </select>
             </div>
 
-            {(currentRole === 'doctor' || currentRole === 'admin') && (
-              <>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  icon={FlaskConical}
-                  onClick={() => setIsLabModalOpen(true)}
-                >
-                  Order Lab
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  icon={Scan}
-                  onClick={() => setIsScanModalOpen(true)}
-                >
-                  Order Scan
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  icon={Pill}
-                  onClick={() => setIsPrescribeModalOpen(true)}
-                >
-                  Prescribe
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  icon={Stethoscope}
-                  onClick={() => {
-                    setSelectedPatientId(patient.id);
-                    navigate('/consultation');
-                  }}
-                >
-                  Encounter
-                </Button>
-              </>
+            {can(currentRole, 'canOrderLab') && (
+              <Button
+                variant="primary"
+                size="sm"
+                icon={FlaskConical}
+                onClick={() => setIsLabModalOpen(true)}
+              >
+                Order Lab
+              </Button>
             )}
 
-            {(currentRole === 'nurse' || currentRole === 'admin') && (
+            {can(currentRole, 'canOrderRadiology') && (
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={Scan}
+                onClick={() => setIsScanModalOpen(true)}
+              >
+                Order Scan
+              </Button>
+            )}
+
+            {can(currentRole, 'canPrescribeMedication') && (
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={Pill}
+                onClick={() => setIsPrescribeModalOpen(true)}
+              >
+                Prescribe
+              </Button>
+            )}
+
+            {currentRole === 'doctor' && (
+              <Button
+                variant="outline"
+                size="sm"
+                icon={Stethoscope}
+                onClick={() => {
+                  setSelectedPatientId(patient.id);
+                  navigate('/consultation');
+                }}
+              >
+                Encounter
+              </Button>
+            )}
+
+            {can(currentRole, 'canRecordVitals') && (
               <Button
                 variant="primary"
                 size="sm"
@@ -665,15 +673,21 @@ export default function PatientProfile() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 self-start sm:self-auto">
-                  <span className="text-[11px] text-slate-400 font-medium hidden md:inline">1-Click Fast Ordering:</span>
-                  <Button size="sm" variant="outline" icon={Scan} onClick={() => setIsScanModalOpen(true)}>
-                    Custom Scan
-                  </Button>
-                  <Button size="sm" variant="outline" icon={FlaskConical} onClick={() => setIsLabModalOpen(true)}>
-                    Custom Lab
-                  </Button>
-                </div>
+                {(can(currentRole, 'canOrderRadiology') || can(currentRole, 'canOrderLab')) && (
+                  <div className="flex items-center gap-2 self-start sm:self-auto">
+                    <span className="text-[11px] text-slate-400 font-medium hidden md:inline">1-Click Fast Ordering:</span>
+                    {can(currentRole, 'canOrderRadiology') && (
+                      <Button size="sm" variant="outline" icon={Scan} onClick={() => setIsScanModalOpen(true)}>
+                        Custom Scan
+                      </Button>
+                    )}
+                    {can(currentRole, 'canOrderLab') && (
+                      <Button size="sm" variant="outline" icon={FlaskConical} onClick={() => setIsLabModalOpen(true)}>
+                        Custom Lab
+                      </Button>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Suggestions Grid */}
@@ -707,15 +721,17 @@ export default function PatientProfile() {
                           </span>
                         </div>
 
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          icon={Scan}
-                          onClick={() => handleQuickOrderScan(s)}
-                          className="shrink-0 self-end sm:self-center"
-                        >
-                          Order Scan
-                        </Button>
+                        {can(currentRole, 'canOrderRadiology') && (
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            icon={Scan}
+                            onClick={() => handleQuickOrderScan(s)}
+                            className="shrink-0 self-end sm:self-center"
+                          >
+                            Order Scan
+                          </Button>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -750,15 +766,17 @@ export default function PatientProfile() {
                           </span>
                         </div>
 
-                        <Button
-                          size="sm"
-                          variant="primary"
-                          icon={FlaskConical}
-                          onClick={() => handleQuickOrderLab(l)}
-                          className="shrink-0 self-end sm:self-center"
-                        >
-                          Order Lab
-                        </Button>
+                        {can(currentRole, 'canOrderLab') && (
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            icon={FlaskConical}
+                            onClick={() => handleQuickOrderLab(l)}
+                            className="shrink-0 self-end sm:self-center"
+                          >
+                            Order Lab
+                          </Button>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -788,9 +806,11 @@ export default function PatientProfile() {
                   title="Current Bedside Vitals"
                   subtitle={`Last recorded: ${patient.vitals?.lastRecorded || 'Today 08:00'}`}
                   action={
-                    <Button size="sm" variant="outline" icon={Activity} onClick={() => setIsVitalsModalOpen(true)}>
-                      Update
-                    </Button>
+                    can(currentRole, 'canRecordVitals') ? (
+                      <Button size="sm" variant="outline" icon={Activity} onClick={() => setIsVitalsModalOpen(true)}>
+                        Update
+                      </Button>
+                    ) : null
                   }
                 />
                 <CardBody className="pt-3">
@@ -917,9 +937,11 @@ export default function PatientProfile() {
               title="Hemodynamic & Vital Trends"
               subtitle="Continuous 24-hour vital signs telemetry"
               action={
-                <Button size="sm" icon={Plus} onClick={() => setIsVitalsModalOpen(true)}>
-                  Record Vitals
-                </Button>
+                can(currentRole, 'canRecordVitals') ? (
+                  <Button size="sm" icon={Plus} onClick={() => setIsVitalsModalOpen(true)}>
+                    Record Vitals
+                  </Button>
+                ) : null
               }
             />
             <CardBody className="pt-4">
@@ -1052,9 +1074,11 @@ export default function PatientProfile() {
             title={`Laboratory Diagnostic Orders (${patientLabs.length})`}
             subtitle="Verified pathology panels, reference ranges, and STAT results"
             action={
-              <Button size="sm" icon={Plus} onClick={() => setIsLabModalOpen(true)}>
-                Order Lab Test
-              </Button>
+              can(currentRole, 'canOrderLab') ? (
+                <Button size="sm" icon={Plus} onClick={() => setIsLabModalOpen(true)}>
+                  Order Lab Test
+                </Button>
+              ) : null
             }
           />
           <CardBody className="space-y-4 pt-3">
@@ -1063,7 +1087,9 @@ export default function PatientProfile() {
                 <FlaskConical className="w-10 h-10 text-slate-300 mx-auto mb-2" />
                 <p className="text-sm font-semibold text-slate-700">No laboratory tests ordered yet</p>
                 <p className="text-xs text-slate-400 mt-1 mb-4">Request a diagnostic panel or STAT pathology order for this patient.</p>
-                <Button size="sm" icon={Plus} onClick={() => setIsLabModalOpen(true)}>Order First Lab Test</Button>
+                {can(currentRole, 'canOrderLab') && (
+                  <Button size="sm" icon={Plus} onClick={() => setIsLabModalOpen(true)}>Order First Lab Test</Button>
+                )}
               </div>
             ) : (
               patientLabs.map((lab) => (
@@ -1181,9 +1207,11 @@ export default function PatientProfile() {
             title={`Radiology Imaging Studies (${patientScans.length})`}
             subtitle="Medical imaging findings, PACS DICOM scans, and certified radiologist impressions"
             action={
-              <Button size="sm" icon={Plus} onClick={() => setIsScanModalOpen(true)}>
-                Request Imaging Scan
-              </Button>
+              can(currentRole, 'canOrderRadiology') ? (
+                <Button size="sm" icon={Plus} onClick={() => setIsScanModalOpen(true)}>
+                  Request Imaging Scan
+                </Button>
+              ) : null
             }
           />
           <CardBody className="space-y-4 pt-3">
@@ -1192,7 +1220,9 @@ export default function PatientProfile() {
                 <Scan className="w-10 h-10 text-slate-300 mx-auto mb-2" />
                 <p className="text-sm font-semibold text-slate-700">No radiology scans requested yet</p>
                 <p className="text-xs text-slate-400 mt-1 mb-4">Order X-Ray, CT, MRI, Ultrasound, or PET imaging for this patient.</p>
-                <Button size="sm" icon={Plus} onClick={() => setIsScanModalOpen(true)}>Request First Scan</Button>
+                {can(currentRole, 'canOrderRadiology') && (
+                  <Button size="sm" icon={Plus} onClick={() => setIsScanModalOpen(true)}>Request First Scan</Button>
+                )}
               </div>
             ) : (
               patientScans.map((scan) => (
@@ -1302,9 +1332,11 @@ export default function PatientProfile() {
                 <Button size="sm" variant="outline" icon={FileText} onClick={() => setIsRxModalOpen(true)}>
                   Official Rx Sheet
                 </Button>
-                <Button size="sm" icon={Plus} onClick={() => setIsPrescribeModalOpen(true)}>
-                  Prescribe Drug
-                </Button>
+                {can(currentRole, 'canPrescribeMedication') && (
+                  <Button size="sm" icon={Plus} onClick={() => setIsPrescribeModalOpen(true)}>
+                    Prescribe Drug
+                  </Button>
+                )}
               </div>
             }
           />
@@ -1314,7 +1346,9 @@ export default function PatientProfile() {
                 <Pill className="w-10 h-10 text-slate-300 mx-auto mb-2" />
                 <p className="text-sm font-semibold text-slate-700">No active medication orders</p>
                 <p className="text-xs text-slate-400 mt-1 mb-4">Prescribe inpatient medication with automated allergy checking.</p>
-                <Button size="sm" icon={Plus} onClick={() => setIsPrescribeModalOpen(true)}>Write Prescription</Button>
+                {can(currentRole, 'canPrescribeMedication') && (
+                  <Button size="sm" icon={Plus} onClick={() => setIsPrescribeModalOpen(true)}>Write Prescription</Button>
+                )}
               </div>
             ) : (
               <div className="divide-y divide-slate-100">

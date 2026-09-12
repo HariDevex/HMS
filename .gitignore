@@ -17,6 +17,7 @@ dist-ssr
 .DS_Store
 *.suo
 *.swp
+.fuse_hidden*
 
 # Env
 .env

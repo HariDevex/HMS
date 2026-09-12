@@ -13,11 +13,28 @@ Built with **React 19**, **Vite 8**, **Tailwind CSS v4** (`@tailwindcss/vite`), 
 
 ---
 
+> ### ⚡ Instant Full-Stack Launch (Single Command)
+> Launch the **entire application** — Database Initialization, Express REST API Backend (`:5000`), and Vite React Frontend (`:5173`) — with a single command:
+> ```bash
+> npm start
+> # OR
+> npm run dev:all
+> # OR
+> ./start.sh
+> ```
+> * **Frontend Application**: [http://localhost:5173](http://localhost:5173)
+> * **Express Backend API**: [http://localhost:5000](http://localhost:5000)
+> * **API Health & DB Status**: [http://localhost:5000/api/health](http://localhost:5000/api/health)
+
+---
+
 ## 📑 Table of Contents
 
-1. [Key Highlights](#-key-highlights)
-2. [Role-Based Architecture & Personas](#-role-based-architecture--personas)
-3. [Core Clinical & Operational Modules](#-core-clinical--operational-modules)
+1. [⚡ Instant Launch (Single Command)](#-instant-full-stack-launch-single-command)
+2. [Key Highlights](#-key-highlights)
+3. [Role-Based Access Control (RBAC) & Personas](#-role-based-architecture--personas)
+4. [Dual-Engine Database Architecture & PostgreSQL](#-database-architecture--postgresql-setup)
+5. [Core Clinical & Operational Modules](#-core-clinical--operational-modules)
    - [Central Patient Profile & Clinical Action Hub](#1-central-patient-profile--clinical-action-hub)
    - [On-Site Popup PDF Viewer & Report Attachment Engine](#2-on-site-popup-pdf-viewer--report-attachment-engine)
    - [Clinical Pathology & Laboratory Workstation](#3-clinical-pathology--laboratory-workstation)
@@ -29,13 +46,14 @@ Built with **React 19**, **Vite 8**, **Tailwind CSS v4** (`@tailwindcss/vite`), 
    - [Billing, Insurance & Financial Invoicing](#9-billing-insurance--financial-invoicing)
    - [Executive Reports & Operational Analytics](#10-executive-reports--operational-analytics)
    - [Mobile-First Patient Portal](#11-mobile-first-patient-portal)
-4. [Technology Stack](#-technology-stack)
-5. [Directory Structure](#-directory-structure)
-6. [Design System & Ergonomics](#-design-system--ergonomics)
-7. [Getting Started & Installation](#-getting-started--installation)
-8. [Available Scripts](#-available-scripts)
-9. [Interactive Feature Walkthrough Guide](#-interactive-feature-walkthrough-guide)
-10. [Clinical Verification & Quality Standards](#-clinical-verification--quality-standards)
+6. [Technology Stack](#-technology-stack)
+7. [Directory Structure](#-directory-structure)
+8. [Getting Started & Installation](#-getting-started--installation)
+9. [Default Test Credentials](#-default-test-credentials)
+10. [Available Scripts](#-available-scripts)
+11. [Interactive Feature Walkthrough Guide](#-interactive-feature-walkthrough-guide)
+12. [Clinical Verification & Quality Standards](#-clinical-verification--quality-standards)
+13. [Summary of Documentation & Configuration Changes](#-summary-of-documentation--configuration-changes)
 
 ---
 
@@ -54,17 +72,33 @@ Built with **React 19**, **Vite 8**, **Tailwind CSS v4** (`@tailwindcss/vite`), 
 
 ## 👥 Role-Based Architecture & Personas
 
-The system provides tailored interfaces, access boundaries, and work queues for 7 distinct hospital personas:
+The system enforces strict **Clinical and Operational Boundaries** across 7 distinct hospital personas, governed by a central Role-Based Access Control (RBAC) engine (`src/config/permissions.js`), route guards (`RequireRole` in `src/App.jsx`), and backend API middlewares (`server/middleware/auth.js` & `server/middleware/requireRole.js`):
 
-| Role | Persona | Default View | Key Responsibilities |
+| Role | Persona | Default View | Key Responsibilities & Access Scope |
 | :--- | :--- | :--- | :--- |
-| **Administrator** | Dr. Katherine Vance | `/admin` | Operational KPI metrics, staff user management, clinical audit logs, shift & department settings |
-| **Doctor / Clinician** | Dr. Sarah Jenkins, MD | `/doctor` | Consultation queue, patient records review, clinical exam, lab/scan ordering, e-prescribing |
-| **Nurse** | Nurse Emily Rodriguez, RN | `/nurse` | Inpatient ward monitoring, vitals recording, MAR administration verification, nursing handover notes |
-| **Laboratory Tech** | Alex Morgan, MLS | `/laboratory` | Barcoded specimen intake, automated analyzer data entry, reference interval verification, PDF report publishing |
+| **Administrator** | Dr. Katherine Vance | `/admin` | Operational KPI metrics, staff user management, clinical audit logs, shift & department settings. *(Zero clinical ordering/prescribing rights)* |
+| **Doctor / Clinician** | Dr. Sarah Jenkins, MD | `/doctor` | Consultation queue, patient records review, clinical exam, lab/scan ordering, e-prescribing (℞), vitals |
+| **Nurse** | Nurse Emily Rodriguez, RN | `/nurse` | Inpatient ward monitoring, vitals recording, MAR administration verification, nursing handover notes. *(No prescribing rights)* |
+| **Laboratory Tech** | Alex Morgan, MLS | `/laboratory` | Barcoded specimen intake, automated analyzer data entry, reference interval verification, certified PDF report publishing |
 | **Radiologist** | Dr. David Miller, MD | `/radiology` | Modality queue (X-Ray/CT/MRI), PACS DICOM viewing, radiological findings & impression dictation, signed PDF reports |
-| **Receptionist** | Marcus Chen | `/reception` | Patient check-ins, token queue assignment, insurance registration, appointment scheduling |
-| **Patient** | James Wilson | `/portal` | Mobile-first portal, appointment management, health records, layman test explanations, bill payment |
+| **Receptionist** | Marcus Chen | `/reception` | Patient check-ins, token queue assignment, insurance registration, appointment scheduling, invoice cashier collection |
+| **Patient** | James Wilson | `/portal` | Mobile-first portal, appointment management, health records, layman test explanations, bill payment. *(Fenced strictly to `/portal/*`)* |
+
+### Clinical Authority Matrix
+
+| Action / Capability | Admin | Doctor | Nurse | Lab | Radiology | Reception | Patient |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Prescribe Medication (℞)** | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Order Lab Tests & Scans** | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Record Patient Vitals** | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Administer Medications (MAR)** | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Verify & Seal Lab Results** | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **Verify & Seal Radiology Reports** | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| **Manage Bed / Ward Allocation** | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Process Billing & Invoices** | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **User & Staff Management** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **System Settings & Audit Logs** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Patient Self-Service Portal** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
 
 ---
 
@@ -214,9 +248,9 @@ Accessible patient experience (`/portal`, `/portal/*`):
 | **Routing** | React Router DOM v7 (`v7.18.3`) | Declarative client-side routing, redirects, and dynamic params |
 | **Charts & Graphs** | Recharts (`v3.10.1`) | Responsive SVG clinical vitals charts and analytics bars/lines |
 | **Iconography** | Lucide React (`v1.38.0`) | Clean, accessible healthcare and operational vector icons |
-| **Backend Framework** | Express 5 (`v5.2.1`) | Fast, minimalist REST API backend with modular controllers & routes |
-| **Database Architecture** | PostgreSQL Ready | Complete production DDL schema (`schema.sql`), connection adapter, & zero-config in-memory mock store |
-| **Process Orchestration** | Concurrently (`v10.0.5`) | Multi-process task runner managing frontend (Vite) and backend (Express) concurrently |
+| **Backend Framework** | Express 5 (`v5.2.1`) | High-performance modular REST API backend with request logging & proxy |
+| **Database Architecture** | Dual Engine (SQLite + PostgreSQL Ready) | Production SQLite on-disk store (`hms.db`), PostgreSQL DDL schema & migrations |
+| **Process Orchestration** | Concurrently (`v10.0.5`) | Multi-process runner launching Express backend (`:5000`) and Vite (`:5173`) |
 | **Linter & Quality** | Oxlint (`v1.79.0`) | High-performance Rust-based linter with zero errors across the codebase |
 
 ---
@@ -226,8 +260,11 @@ Accessible patient experience (`/portal`, `/portal/*`):
 ```text
 HMS/
 ├── index.html                     # HTML entry point
-├── package.json                   # Project metadata, scripts, and dependencies
-├── vite.config.js                 # Vite config with React, Tailwind v4, and /api proxy
+├── package.json                   # Project metadata, dependencies, and scripts
+├── vite.config.js                 # Vite config with React, Tailwind v4, & /api reverse proxy
+├── start.sh                       # Single-command executable launcher script (chmod +x)
+├── .env                           # Active environment variables (PG credentials, ports)
+├── .env.example                   # Environment configuration template
 ├── todo.txt                       # Development milestone tracking
 ├── README.md                      # Comprehensive project documentation
 │
@@ -248,6 +285,26 @@ HMS/
 │   │   └── wardController.js      # Bed allocation, admissions, inter-ward transfers
 │   │
 │   ├── routes/                    # Express modular route definitions
+│   ├── index.js                   # Server entry point (port 5000, CORS, logging, health check)
+│   ├── README.md                  # Comprehensive Backend & REST API documentation
+│   │
+│   ├── controllers/               # Request handling & clinical business logic
+│   │   ├── appointmentController.js # Scheduling, status updates, token queues
+│   │   ├── authController.js      # Session management & user directories
+│   │   ├── billingController.js   # Invoices, claims, payments, co-pay calculation
+│   │   ├── labController.js       # Pathology queue, result entry, verification, PDF attach
+│   │   ├── patientController.js   # Master patient index, demographic CRUD, clinical suggestions
+│   │   ├── prescriptionController.js # Medication orders, dispensing, MAR administration
+│   │   ├── radiologyController.js # Imaging studies, DICOM views, radiologist reports, PDF attach
+│   │   ├── reportsController.js   # Analytics, ward occupancy, clinical KPI aggregates
+│   │   ├── vitalsController.js    # Patient vital sign logging and trend retrieval
+│   │   └── wardController.js      # Bed allocation, admissions, inter-ward transfers
+│   │
+│   ├── middleware/                # Security, Authentication & Role-Based Access Control
+│   │   ├── auth.js                # JWT Bearer token authentication & req.user injector
+│   │   └── requireRole.js         # Endpoint-level role authorization & HTTP 403 guard
+│   │
+│   ├── routes/                    # Modular Express route declarations
 │   │   ├── appointmentRoutes.js   # /api/appointments
 │   │   ├── auditLogRoutes.js      # /api/audit-logs
 │   │   ├── authRoutes.js          # /api/auth
@@ -260,17 +317,30 @@ HMS/
 │   │   ├── vitalsRoutes.js        # /api/vitals
 │   │   └── wardRoutes.js          # /api/wards
 │   │
-│   ├── db/                        # Database schemas and connection management
-│   │   ├── schema.sql             # PostgreSQL production DDL (tables, enums, FKs, indexes)
-│   │   └── postgresClient.js      # PostgreSQL client adapter (DATABASE_URL fallback)
+│   ├── db/                        # Database Layer (SQLite + PostgreSQL + Local Persistence)
+│   │   ├── schema.sql             # PostgreSQL production DDL (11 tables, 7 enums, 14 indexes)
+│   │   ├── seed.sql               # Pure SQL seed script for PostgreSQL insertion
+│   │   ├── sqliteClient.js        # Active SQLite database client (better-sqlite3)
+│   │   ├── seedData.js            # SQLite seed datasets and initialization
+│   │   ├── postgresClient.js      # PostgreSQL client adapter with pg.Pool & connection checks
+│   │   ├── db.js                  # Universal persistence layer (PostgreSQL query & fallback)
+│   │   ├── initDb.js              # Database creation & initialization script (npm run db:init)
+│   │   ├── seed.js                # Standalone database seed runner (npm run db:seed)
+│   │   ├── resetDb.js             # Database reset utility (npm run db:reset)
+│   │   └── hms_db.json            # Persistent local JSON database storage
 │   │
-│   └── data/                      # Backend mock repository data store
-│       └── inMemoryDb.js          # In-memory relational store matching PostgreSQL schema
+│   └── data/
+│       ├── hms.db                 # Active on-disk SQLite database
+│       └── inMemoryDb.js          # Relational seed data definitions and fallback store
 │
 └── src/                           # React 19 Frontend Application
     ├── main.jsx                   # Application bootstrapping
-    ├── App.jsx                    # Route declarations, lazy imports, role path resolvers
+    ├── App.jsx                    # Route declarations, RequireRole guard, lazy imports
     ├── index.css                  # Tailwind v4 import, color tokens, custom scrollbars
+    │
+    ├── config/                    # Access Control & Governance
+    │   └── permissions.js         # Central RBAC rules, route allow-lists, action can() checks
+    │
     │
     ├── components/
     │   ├── layout/
@@ -381,24 +451,54 @@ The application utilizes a custom healthcare-themed design system built directly
 
 ---
 
+## 🗄️ Database Architecture & PostgreSQL Setup
+
+The system features an enterprise-grade **Dual-Engine Relational Database Architecture**:
+1. **Live PostgreSQL Engine**: Powered by `pg` connection pool with automatic health checks (`server/db/postgresClient.js`).
+2. **Persistent Local Database (`server/db/hms_db.json`)**: Zero-setup local JSON relational store that persists state changes across restarts, allowing full offline execution even before PostgreSQL is launched.
+
+### Database Relational Model
+* **11 Core Tables**: `users`, `wards`, `beds`, `patients`, `appointments`, `vitals`, `lab_orders`, `radiology_orders`, `prescriptions`, `invoices`, `audit_logs`
+* **7 Custom Enum Types**: `user_role`, `priority_level`, `appointment_status`, `lab_status`, `radiology_status`, `bed_status`, `invoice_status`
+* **14 Performance Indexes**: Configured on foreign keys, MRNs, study modalities, order numbers, and patient lookup filters.
+
+### Automated Database Initialization (`npm run db:init`)
+Run the all-in-one database creation script:
+```bash
+npm run db:init
+```
+This automated runner:
+1. Connects to the PostgreSQL server.
+2. Creates the database `hms_db` if it does not exist.
+3. Applies `server/db/schema.sql` (creates enums, tables, foreign keys, and indexes).
+4. Executes `server/db/seed.sql` to populate realistic clinical and administrative seed records.
+5. Synchronizes the persistent local store (`server/db/hms_db.json`).
+
+### Starting PostgreSQL Locally
+* **Linux (systemd service)**:
+  ```bash
+  sudo systemctl start postgresql
+  ```
+* **Docker Container (Zero-Install Alternative)**:
+  ```bash
+  docker run --name hms-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=hms_db -p 5432:5432 -d postgres:16
+  ```
+
+---
+
 ## 🚀 Getting Started & Installation
 
 ### Prerequisites
 * **Node.js**: `v18.0.0` or higher (Node `v20+` or `v24` recommended)
 * **npm**: `v9.0.0` or higher
 
-### Installation
+---
 
-1. **Clone or navigate to the repository directory**:
-   ```bash
-   cd /path/to/HMS
-   ```
+### ⚡ One Single Command to Run Everything
 
-2. **Install project dependencies**:
-   ```bash
-   npm install
-   ```
+You do not need to juggle multiple terminals or manually execute database migrations. Simply run:
 
+<<<<<<< HEAD
 3. **Start the Full-Stack Application (Frontend + Express API)**:
    Run both the Express backend server and the Vite frontend simultaneously with a single command:
    ```bash
@@ -435,6 +535,94 @@ If you prefer running services in separate terminal windows:
   ```bash
   npm run server
   ```
+3. **Initialize the Database**:
+   ```bash
+   npm run db:init
+   ```
+=======
+```bash
+# 1. Clone the repository
+git clone https://github.com/HariDevex/HMS.git
+cd HMS
+>>>>>>> PPR
+
+# 2. Install dependencies
+npm install
+
+# 3. Launch Full Stack (Database Initializer + Express API Backend + React Frontend)
+npm start
+# OR
+npm run dev:all
+# OR
+./start.sh
+```
+
+#### What happens under the hood with `npm start`:
+1. **🗄️ Database Initialization & Auto-Detection**:
+   - Executes `node server/db/initDb.js`.
+   - Checks if PostgreSQL is reachable on `localhost:5432`.
+   - **If PostgreSQL is running**: It automatically verifies or creates the database `hms_db`, applies the 11 tables and 14 indexes from `server/db/schema.sql`, and populates realistic seed records from `server/db/seed.sql`.
+   - **If PostgreSQL is offline**: It automatically validates and connects to the persistent local JSON database (`server/db/hms_db.json`), requiring zero configuration and never crashing.
+2. **🏥 Express REST API Backend**:
+   - Boots on `http://localhost:5000` with native hot-reload (`node --watch`).
+   - Serves clinical and operational REST endpoints (`/api/patients`, `/api/labs`, `/api/radiology`, `/api/prescriptions`, `/api/billing`, `/api/wards`, etc.).
+   - Enforces JWT Bearer token authentication and role-based access control.
+3. **💻 Vite React 19 Frontend**:
+   - Launches on `http://localhost:5173` with instant Hot Module Replacement (HMR).
+   - Vite reverse proxy seamlessly routes all `/api/*` requests directly to port `5000`.
+
+---
+
+### 🌐 System URLs & Endpoints
+
+| Service | URL | Description |
+| :--- | :--- | :--- |
+| **Frontend Web Application** | [http://localhost:5173](http://localhost:5173) | Interactive React 19 clinical UI with role switcher & dark-mode PACS viewer |
+| **Express REST API** | [http://localhost:5000](http://localhost:5000) | Express 5 backend API endpoints |
+| **API Health & DB Check** | [http://localhost:5000/api/health](http://localhost:5000/api/health) | Real-time JSON health check reporting active database engine and status |
+| **API Root Information** | [http://localhost:5000/api](http://localhost:5000/api) | API metadata and endpoint directory |
+
+---
+
+## 🔑 Default Test Credentials
+
+Use these pre-configured hospital accounts to log in via the web UI or authenticate API requests:
+
+| Role | Staff / Persona | Email | Password | Accessible Routes |
+| :--- | :--- | :--- | :--- | :--- |
+| **Administrator** | Dr. Katherine Vance | `k.vance@medicore.org` | `Password123!` | `/admin`, `/users`, `/audit-logs`, `/settings`, `/wards`, `/billing`, `/reports` |
+| **Doctor** | Dr. Sarah Jenkins, MD | `s.jenkins@medicore.org` | `Password123!` | `/doctor`, `/consultation`, `/patients`, `/laboratory`, `/radiology`, `/appointments`, `/wards` |
+| **Nurse** | Nurse Emily Rodriguez, RN | `e.rodriguez@medicore.org` | `Password123!` | `/nurse`, `/nurse-workstation`, `/wards`, `/patients`, `/laboratory` |
+| **Laboratory** | Alex Morgan, MLS | `a.morgan@medicore.org` | `Password123!` | `/laboratory`, `/patients`, `/reports` |
+| **Radiology** | Dr. David Miller, MD | `d.miller@medicore.org` | `Password123!` | `/radiology`, `/patients`, `/reports` |
+| **Reception** | Marcus Chen | `m.chen@medicore.org` | `Password123!` | `/reception`, `/reception/register`, `/reception/queue`, `/patients`, `/billing`, `/appointments` |
+| **Patient** | James Wilson | `j.wilson@gmail.com` | `Password123!` | `/portal/*` (Home, Appointments, Records, Prescriptions, Billing) |
+
+> [!TIP]
+> On the web login screen (`/login`), click any **"Quick Demo"** button to authenticate and jump directly into that persona's customized workspace with one click.
+
+---
+
+### Running Individual Services (Optional)
+
+If you prefer running services in separate terminal windows:
+
+* **Frontend Only**:
+  ```bash
+  npm run dev
+  ```
+  Accessible at `http://localhost:5173`.
+
+* **Express API Server Only (with hot-reload)**:
+  ```bash
+  npm run server:dev
+  ```
+  Accessible at `http://localhost:5000`.
+
+* **Express API Server (production mode)**:
+  ```bash
+  npm run server
+  ```
 
 ---
 
@@ -442,11 +630,16 @@ If you prefer running services in separate terminal windows:
 
 | Script | Command | Purpose |
 | :--- | :--- | :--- |
-| `npm run dev:all` | `concurrently ...` | **Recommended**: Concurrently launches Express API (`:5000`) and Vite frontend (`:5173`) |
-| `npm start` | `concurrently ...` | Standard alias for `npm run dev:all` |
+| `npm start` | `node server/db/initDb.js && concurrently ...` | **⚡ Primary Full-Stack Command**: Initializes DB, launches Express API (`:5000`) and Vite frontend (`:5173`) |
+| `npm run dev:all` | `node server/db/initDb.js && concurrently ...` | Standard development alias for `npm start` |
+| `npm run all` | `npm start` | Fast shortcut alias to start everything |
+| `./start.sh` | `bash start.sh` | Self-contained bash launcher script (detects PostgreSQL, runs `npm start`) |
 | `npm run dev` | `vite` | Starts Vite local development server with Hot Module Replacement (HMR) on port 5173 |
 | `npm run server:dev` | `node --watch server/index.js` | Starts Express server with native file watching and auto-reload on port 5000 |
 | `npm run server` | `node server/index.js` | Starts Express REST API backend server in production mode on port 5000 |
+| `npm run db:init` | `node server/db/initDb.js` | Connects to PostgreSQL, executes `schema.sql`, and seeds initial data (or verifies local JSON DB) |
+| `npm run db:seed` | `node server/db/seed.js` | Re-seeds PostgreSQL and resets local database storage |
+| `npm run db:reset` | `node server/db/resetDb.js` | Drops all tables and re-seeds clean hospital records |
 | `npm run build` | `vite build` | Compiles and optimizes assets into `dist/` with chunk splitting |
 | `npm run preview` | `vite preview` | Previews the production build locally |
 | `npm run lint` | `oxlint` | Runs fast Oxlint checks across all JavaScript and JSX source files |
@@ -510,6 +703,27 @@ Follow these steps to experience the complete clinical workflow:
 * **Accessibility & Contrast**: Built to meet WCAG AA standards with clear typography, visible focus rings, and distinguishable color contrasts for medical alerts.
 * **Tamper-Evident Record Simulation**: All finalized laboratory and radiology reports feature read-only locking, verification timestamps, and simulated SHA-256 digital fingerprint seals.
 * **Architecture Design Compliance**: Cleanly decoupled full-stack architecture featuring a modular Express.js REST API with zero-config in-memory mock repository, complete PostgreSQL DDL schemas (`schema.sql`), and a reactive React 19 / Tailwind CSS v4 frontend.
+* **Enterprise Full-Stack Architecture**: Cleanly decoupled full-stack design featuring a modular Express.js REST API, PostgreSQL production DDL schemas (`schema.sql`), automated migrations (`npm run db:init`), persistent local relational caching, and a reactive React 19 / Tailwind CSS v4 frontend.
+
+---
+
+## 📝 Summary of Documentation & Configuration Changes
+
+1. **`package.json`**:
+   * Configured `"start"` and `"dev:all"` to chain `node server/db/initDb.js` before launching `concurrently`.
+   * Added `"all"` shortcut script (`npm run all`).
+2. **`start.sh`**:
+   * Created executable shell runner (`chmod +x start.sh`) that checks PostgreSQL service status, displays active mode, and invokes `npm start`.
+3. **`server/db/initDb.js`**:
+   * Updated so it validates and preserves existing database records in `hms_db.json` during boot rather than overwriting runtime edits.
+4. **`README.md` & `server/README.md`**:
+   * Added prominent top-level launch callouts for single-command execution (`npm start`).
+   * Added Clinical Authority Matrix and RBAC permissions model reference (`src/config/permissions.js`).
+   * Updated Directory Structures to reflect `start.sh`, `server/middleware/`, and `src/config/permissions.js`.
+   * Added Default Test Credentials table and comprehensive Available Scripts table.
+5. **Quality Verification**:
+   * **`npx oxlint`**: Passed with **0 errors, 0 warnings**.
+   * **`npm run build`**: Production bundle compiled cleanly in **4.82s** with zero errors.
 
 ---
 
