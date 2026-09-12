@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { can } from '../../config/permissions';
 import Card, { CardHeader } from '../../components/ui/Card';
 import Table from '../../components/ui/Table';
 import Badge from '../../components/ui/Badge';
@@ -15,11 +16,13 @@ import {
 } from 'lucide-react';
 
 export default function UserManagement() {
-  const { users, addUser, addToast } = useApp();
+  const { users, addUser, addToast, currentRole } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const canManage = can(currentRole, 'canManageUsers');
 
   // New User Form State
   const [newUserName, setNewUserName] = useState('');
@@ -40,6 +43,14 @@ export default function UserManagement() {
 
   const handleCreateUser = (e) => {
     e.preventDefault();
+    if (!canManage) {
+      addToast({
+        title: 'Permission Denied',
+        message: 'Only system administrators have permissions to provision staff accounts.',
+        type: 'error',
+      });
+      return;
+    }
     if (!newUserName || !newUserEmail) return;
 
     addUser({
@@ -129,20 +140,24 @@ export default function UserManagement() {
       key: 'actions',
       label: 'Action',
       render: (_, row) => (
-        <Button
-          size="sm"
-          variant="ghost"
-          icon={Edit2}
-          onClick={() => {
-            addToast({
-              title: 'Edit Permissions',
-              message: `Opened security permissions editor for ${row.name}.`,
-              type: 'info',
-            });
-          }}
-        >
-          Edit
-        </Button>
+        canManage ? (
+          <Button
+            size="sm"
+            variant="ghost"
+            icon={Edit2}
+            onClick={() => {
+              addToast({
+                title: 'Edit Permissions',
+                message: `Opened security permissions editor for ${row.name}.`,
+                type: 'info',
+              });
+            }}
+          >
+            Edit
+          </Button>
+        ) : (
+          <span className="text-xs text-slate-400 italic">Read-only</span>
+        )
       ),
     },
   ];
@@ -157,9 +172,11 @@ export default function UserManagement() {
             Manage hospital staff accounts, clinical roles, department affiliations, and authentication status.
           </p>
         </div>
-        <Button variant="primary" icon={UserPlus} onClick={() => setIsAddModalOpen(true)}>
-          Add New Staff Member
-        </Button>
+        {canManage && (
+          <Button variant="primary" icon={UserPlus} onClick={() => setIsAddModalOpen(true)}>
+            Add New Staff Member
+          </Button>
+        )}
       </div>
 
       {/* Filter and Search Bar */}
@@ -226,7 +243,7 @@ export default function UserManagement() {
             <Button variant="secondary" onClick={() => setIsAddModalOpen(false)}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={handleCreateUser}>
+            <Button variant="primary" disabled={!canManage} onClick={handleCreateUser}>
               Save & Provision Account
             </Button>
           </>

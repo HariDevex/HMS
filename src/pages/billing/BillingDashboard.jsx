@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { can } from '../../config/permissions';
 import Card, { CardHeader } from '../../components/ui/Card';
 import StatCard from '../../components/ui/StatCard';
 import Table from '../../components/ui/Table';
@@ -18,7 +19,7 @@ import {
 } from 'lucide-react';
 
 export default function BillingDashboard() {
-  const { invoices, recordPayment, addToast } = useApp();
+  const { invoices, recordPayment, addToast, currentRole } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -26,6 +27,8 @@ export default function BillingDashboard() {
   const [paymentModalInvoice, setPaymentModalInvoice] = useState(null); // For Record Payment
   const [paymentAmount, setPaymentAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Credit Card');
+
+  const canPay = can(currentRole, 'canRecordPayment');
 
   const totalBilled = invoices.reduce((acc, i) => acc + i.subtotal, 0);
   const totalPaid = invoices.reduce((acc, i) => acc + i.paidAmount, 0);
@@ -42,6 +45,14 @@ export default function BillingDashboard() {
 
   const handleProcessPayment = (e) => {
     e.preventDefault();
+    if (!canPay) {
+      addToast({
+        title: 'Permission Denied',
+        message: 'Only authorized billing staff and administrators can record or process payments.',
+        type: 'error',
+      });
+      return;
+    }
     if (!paymentModalInvoice || !paymentAmount) return;
     recordPayment(paymentModalInvoice.id, paymentAmount, paymentMethod);
     setPaymentModalInvoice(null);
@@ -124,7 +135,7 @@ export default function BillingDashboard() {
             Invoice
           </Button>
 
-          {row.balanceDue > 0 && (
+          {row.balanceDue > 0 && canPay && (
             <Button
               size="sm"
               variant="primary"
@@ -155,20 +166,22 @@ export default function BillingDashboard() {
           </p>
         </div>
 
-        <Button
-          variant="primary"
-          size="sm"
-          icon={ReceiptText}
-          onClick={() => {
-            addToast({
-              title: 'Generate Invoice',
-              message: 'Billing draft created from active admission encounter.',
-              type: 'info',
-            });
-          }}
-        >
-          Create New Invoice
-        </Button>
+        {canPay && (
+          <Button
+            variant="primary"
+            size="sm"
+            icon={ReceiptText}
+            onClick={() => {
+              addToast({
+                title: 'Generate Invoice',
+                message: 'Billing draft created from active admission encounter.',
+                type: 'info',
+              });
+            }}
+          >
+            Create New Invoice
+          </Button>
+        )}
       </div>
 
       {/* Financial Summary Cards */}
@@ -253,7 +266,7 @@ export default function BillingDashboard() {
           footer={
             <>
               <Button variant="secondary" onClick={() => setPaymentModalInvoice(null)}>Cancel</Button>
-              <Button variant="primary" onClick={handleProcessPayment}>Confirm Payment Receipt</Button>
+              <Button variant="primary" disabled={!canPay} onClick={handleProcessPayment}>Confirm Payment Receipt</Button>
             </>
           }
         >

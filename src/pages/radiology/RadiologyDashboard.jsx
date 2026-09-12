@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { can } from '../../config/permissions';
 import Card, { CardHeader } from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -21,7 +22,7 @@ import {
 import PdfViewerModal from '../../components/ui/PdfViewerModal';
 
 export default function RadiologyDashboard() {
-  const { radiologyOrders, verifyRadiologyReport, addToast } = useApp();
+  const { radiologyOrders, verifyRadiologyReport, addToast, currentRole } = useApp();
 
   const [activeTab, setActiveTab] = useState('All');
   const [modalityFilter, setModalityFilter] = useState('All');
@@ -34,6 +35,8 @@ export default function RadiologyDashboard() {
   // Report writing form state
   const [findings, setFindings] = useState('');
   const [impression, setImpression] = useState('');
+
+  const canVerify = can(currentRole, 'canVerifyRadiology');
 
   const statusTabs = [
     { id: 'All', label: 'All Requests', count: radiologyOrders.length },
@@ -62,6 +65,14 @@ export default function RadiologyDashboard() {
   };
 
   const handleVerifyReport = (scan) => {
+    if (!canVerify) {
+      addToast({
+        title: 'Permission Denied',
+        message: 'Only certified radiologists are authorized to verify and sign diagnostic imaging reports.',
+        type: 'error',
+      });
+      return;
+    }
     const finalPdf = attachedPdf || scan.pdfReport || {
       fileName: `Certified_Radiology_Report_${scan.requestNumber || scan.id}.pdf`,
       fileSize: '2.8 MB',
@@ -143,7 +154,7 @@ export default function RadiologyDashboard() {
               icon={isVerified ? Eye : FileText}
               onClick={() => handleOpenScan(row)}
             >
-              {isVerified ? 'View Report' : 'Dictate / Report'}
+              {isVerified ? 'View Report' : canVerify ? 'Dictate / Report' : 'View Study'}
             </Button>
             {(isVerified || row.pdfReport) && (
               <Button
@@ -262,12 +273,13 @@ export default function RadiologyDashboard() {
               </Button>
             ) : (
               <>
-                <Button variant="secondary" onClick={() => setSelectedScan(null)}>
+                <Button variant="secondary" disabled={!canVerify} onClick={() => setSelectedScan(null)}>
                   Save Draft
                 </Button>
                 <Button
                   variant="success"
                   icon={CheckCircle2}
+                  disabled={!canVerify}
                   onClick={() => handleVerifyReport(selectedScan)}
                 >
                   Verify & Sign Diagnostic Report
@@ -336,7 +348,7 @@ export default function RadiologyDashboard() {
             <Field label="Technique & Radiological Findings" required>
               <Textarea
                 rows={4}
-                disabled={selectedScan.status === 'Verified' || selectedScan.status === 'Published'}
+                disabled={!canVerify || selectedScan.status === 'Verified' || selectedScan.status === 'Published'}
                 value={findings}
                 onChange={(e) => setFindings(e.target.value)}
                 placeholder="Describe anatomical observations, lung fields, mediastinum, bone architecture, or focal lesions..."
@@ -346,7 +358,7 @@ export default function RadiologyDashboard() {
             <Field label="Impression & Conclusion" required>
               <Textarea
                 rows={3}
-                disabled={selectedScan.status === 'Verified' || selectedScan.status === 'Published'}
+                disabled={!canVerify || selectedScan.status === 'Verified' || selectedScan.status === 'Published'}
                 value={impression}
                 onChange={(e) => setImpression(e.target.value)}
                 placeholder="1. Summary diagnosis\n2. Comparison with prior studies"

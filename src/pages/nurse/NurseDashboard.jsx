@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
+import { can } from '../../config/permissions';
 import StatCard from '../../components/ui/StatCard';
 import Card, { CardHeader, CardBody } from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
@@ -27,6 +28,7 @@ export default function NurseDashboard() {
     recordVitals,
     setSelectedPatientId,
     currentUser,
+    currentRole,
     addToast,
   } = useApp();
 
@@ -57,6 +59,14 @@ export default function NurseDashboard() {
 
   const handleSaveVitals = (e) => {
     e.preventDefault();
+    if (!can(currentRole, 'canRecordVitals')) {
+      addToast({
+        title: 'Permission Denied',
+        message: 'Only licensed clinical nursing and physician staff can record vital signs.',
+        type: 'error',
+      });
+      return;
+    }
     const targetPatient = patients.find((p) => p.id === targetPatientId) || patients[0];
     recordVitals(targetPatient.id, {
       bp: `${systolic}/${diastolic}`,
@@ -105,14 +115,16 @@ export default function NurseDashboard() {
 
         {/* Primary Actions required by Master Prompt Section 9 */}
         <div className="flex items-center gap-2 flex-wrap">
-          <Button
-            variant="primary"
-            icon={Activity}
-            size="sm"
-            onClick={() => setIsVitalsModalOpen(true)}
-          >
-            Record Vitals
-          </Button>
+          {can(currentRole, 'canRecordVitals') && (
+            <Button
+              variant="primary"
+              icon={Activity}
+              size="sm"
+              onClick={() => setIsVitalsModalOpen(true)}
+            >
+              Record Vitals
+            </Button>
+          )}
 
           <Button
             variant="secondary"

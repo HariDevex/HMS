@@ -2,10 +2,20 @@ import { db } from '../db/db.js';
 
 export const login = (req, res) => {
   const { email, role } = req.body;
-  const user = db.users.find((u) => u.email === email || (role && u.role === role))[0] || db.users.find((u) => u.role === (role || 'doctor'))[0];
+
+  if (!email && !role) {
+    return res.status(400).json({ success: false, message: 'Email or role is required' });
+  }
+
+  let user = null;
+  if (email) {
+    user = db.users.find((u) => u.email.toLowerCase() === email.trim().toLowerCase())[0];
+  } else if (role) {
+    user = db.users.find((u) => u.role.toLowerCase() === role.trim().toLowerCase())[0];
+  }
 
   if (!user) {
-    return res.status(401).json({ success: false, message: 'Invalid credentials or user not found' });
+    return res.status(401).json({ success: false, message: 'Invalid credentials' });
   }
 
   return res.json({
