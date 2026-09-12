@@ -498,53 +498,10 @@ This automated runner:
 
 You do not need to juggle multiple terminals or manually execute database migrations. Simply run:
 
-<<<<<<< HEAD
-3. **Start the Full-Stack Application (Frontend + Express API)**:
-   Run both the Express backend server and the Vite frontend simultaneously with a single command:
-   ```bash
-   npm run dev:all
-   # OR
-   npm start
-   ```
-
-4. **Access the application**:
-   * **Frontend Web Application**: [http://localhost:5173](http://localhost:5173)
-   * **Express REST API**: [http://localhost:5000](http://localhost:5000)
-   * **API Health Check**: [http://localhost:5000/api/health](http://localhost:5000/api/health)
-   * **API Reverse Proxy**: All calls from the frontend to `/api/*` are automatically forwarded to `http://localhost:5000` via Vite proxy.
-
----
-
-### Running Individual Services (Optional)
-
-If you prefer running services in separate terminal windows:
-
-* **Frontend Only**:
-  ```bash
-  npm run dev
-  ```
-  Accessible at `http://localhost:5173`.
-
-* **Express API Server Only (with hot-reload)**:
-  ```bash
-  npm run server:dev
-  ```
-  Accessible at `http://localhost:5000`.
-
-* **Express API Server (production mode)**:
-  ```bash
-  npm run server
-  ```
-3. **Initialize the Database**:
-   ```bash
-   npm run db:init
-   ```
-=======
 ```bash
 # 1. Clone the repository
 git clone https://github.com/HariDevex/HMS.git
 cd HMS
->>>>>>> PPR
 
 # 2. Install dependencies
 npm install

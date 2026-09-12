@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="280" viewBox="0 0 400 280">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#e0f2fe"/>
+    </linearGradient>
+    <linearGradient id="roof" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0c4a6e"/>
+      <stop offset="100%" stop-color="#075985"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect x="0" y="0" width="400" height="280" fill="url(#sky)"/>
+  <!-- Sun -->
+  <circle cx="330" cy="50" r="28" fill="#fde68a" opacity="0.9"/>
+
+  <!-- Ground -->
+  <rect x="0" y="210" width="400" height="70" fill="#bbf7d0"/>
+
+  <!-- Main hospital building -->
+  <rect x="70" y="78" width="160" height="132" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" rx="4"/>
+  <!-- Roof -->
+  <rect x="48" y="62" width="204" height="22" fill="url(#roof)" rx="3"/>
+
+  <!-- Left wing -->
+  <rect x="230" y="108" width="90" height="102" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" rx="3"/>
+
+  <!-- Right wing -->
+  <rect x="60" y="108" width="86" height="102" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" rx="3"/>
+
+  <!-- Windows main -->
+  <g fill="#7dd3fc" stroke="#94a3b8" stroke-width="1">
+    <rect x="92" y="96" width="26" height="26" rx="2"/>
+    <rect x="132" y="96" width="26" height="26" rx="2"/>
+    <rect x="172" y="96" width="26" height="26" rx="2"/>
+    <rect x="112" y="140" width="26" height="26" rx="2"/>
+    <rect x="152" y="140" width="26" height="26" rx="2"/>
+    <rect x="92" y="184" width="26" height="26" rx="2"/>
+    <rect x="132" y="184" width="26" height="26" rx="2"/>
+    <rect x="172" y="184" width="26" height="26" rx="2"/>
+  </g>
+
+  <!-- Entrance -->
+  <rect x="138" y="156" width="40" height="54" fill="#0c4a6e" rx="3"/>
+
+  <!-- Red medical cross -->
+  <rect x="146" y="118" width="6" height="20" fill="#dc2626"/>
+  <g transform="translate(149,121) rotate(90)" fill="#dc2626">
+    <rect x="-3" y="-10" width="6" height="20"/>
+  </g>
+
+  <!-- Ambulance -->
+  <rect x="270" y="190" width="70" height="26" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" rx="4"/>
+  <circle cx="286" cy="220" r="7" fill="#1e293b"/>
+  <circle cx="326" cy="220" r="7" fill="#1e293b"/>
+  <rect x="330" y="196" width="8" height="10" fill="#3b82f6" rx="1"/>
+
+  <!-- Red cross on ambulance -->
+  <g transform="translate(308,203)">
+    <rect x="-2.5" y="-7" width="5" height="14" fill="#dc2626"/>
+    <rect x="-7" y="-2.5" width="14" height="5" fill="#dc2626"/>
+  </g>
+
+  <!-- Trees -->
+  <g>
+    <rect x="36" y="172" width="8" height="40" fill="#92400e"/>
+    <circle cx="40" cy="158" r="22" fill="#22c55e"/>
+    <rect x="352" y="172" width="8" height="40" fill="#92400e"/>
+    <circle cx="356" cy="158" r="22" fill="#22c55e"/>
+  </g>
+</svg>
