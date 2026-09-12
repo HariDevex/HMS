@@ -214,15 +214,9 @@ Accessible patient experience (`/portal`, `/portal/*`):
 | **Routing** | React Router DOM v7 (`v7.18.3`) | Declarative client-side routing, redirects, and dynamic params |
 | **Charts & Graphs** | Recharts (`v3.10.1`) | Responsive SVG clinical vitals charts and analytics bars/lines |
 | **Iconography** | Lucide React (`v1.38.0`) | Clean, accessible healthcare and operational vector icons |
-<<<<<<< HEAD
-| **Backend Framework** | Express 5 (`v5.2.1`) | Fast, minimalist REST API backend with modular controllers & routes |
-| **Database Architecture** | PostgreSQL Ready | Complete production DDL schema (`schema.sql`), connection adapter, & zero-config in-memory mock store |
-| **Process Orchestration** | Concurrently (`v10.0.5`) | Multi-process task runner managing frontend (Vite) and backend (Express) concurrently |
-=======
 | **Backend Framework** | Express 5 (`v5.2.1`) | High-performance modular REST API backend with request logging & proxy |
-| **Database Architecture** | PostgreSQL 14+ Ready | Production DDL schema, dual-engine persistence (PostgreSQL + local JSON store) |
+| **Database Architecture** | Dual Engine (SQLite + PostgreSQL Ready) | Production SQLite on-disk store (`hms.db`), PostgreSQL DDL schema & migrations |
 | **Process Orchestration** | Concurrently (`v10.0.5`) | Multi-process runner launching Express backend (`:5000`) and Vite (`:5173`) |
->>>>>>> PPR
 | **Linter & Quality** | Oxlint (`v1.79.0`) | High-performance Rust-based linter with zero errors across the codebase |
 
 ---
@@ -232,20 +226,14 @@ Accessible patient experience (`/portal`, `/portal/*`):
 ```text
 HMS/
 ├── index.html                     # HTML entry point
-<<<<<<< HEAD
-├── package.json                   # Project metadata, scripts, and dependencies
-├── vite.config.js                 # Vite config with React, Tailwind v4, and /api proxy
-=======
 ├── package.json                   # Project metadata, dependencies, and scripts
 ├── vite.config.js                 # Vite config with React, Tailwind v4, & /api reverse proxy
 ├── .env                           # Active environment variables (PG credentials, ports)
 ├── .env.example                   # Environment configuration template
->>>>>>> PPR
 ├── todo.txt                       # Development milestone tracking
 ├── README.md                      # Comprehensive project documentation
 │
 ├── server/                        # Express.js REST API Backend
-<<<<<<< HEAD
 │   ├── index.js                   # Express server entry point (port 5000, CORS, logging, proxy)
 │   ├── README.md                  # Comprehensive Backend & REST API documentation
 │   │
@@ -262,7 +250,6 @@ HMS/
 │   │   └── wardController.js      # Bed allocation, admissions, inter-ward transfers
 │   │
 │   ├── routes/                    # Express modular route definitions
-=======
 │   ├── index.js                   # Server entry point (port 5000, CORS, logging, health check)
 │   ├── README.md                  # Comprehensive Backend & REST API documentation
 │   │
@@ -279,7 +266,6 @@ HMS/
 │   │   └── wardController.js      # Bed allocation, admissions, inter-ward transfers
 │   │
 │   ├── routes/                    # Modular Express route declarations
->>>>>>> PPR
 │   │   ├── appointmentRoutes.js   # /api/appointments
 │   │   ├── auditLogRoutes.js      # /api/audit-logs
 │   │   ├── authRoutes.js          # /api/auth
@@ -292,17 +278,11 @@ HMS/
 │   │   ├── vitalsRoutes.js        # /api/vitals
 │   │   └── wardRoutes.js          # /api/wards
 │   │
-<<<<<<< HEAD
-│   ├── db/                        # Database schemas and connection management
-│   │   ├── schema.sql             # PostgreSQL production DDL (tables, enums, FKs, indexes)
-│   │   └── postgresClient.js      # PostgreSQL client adapter (DATABASE_URL fallback)
-│   │
-│   └── data/                      # Backend mock repository data store
-│       └── inMemoryDb.js          # In-memory relational store matching PostgreSQL schema
-=======
-│   ├── db/                        # Database Layer (PostgreSQL + Local Persistence)
+│   ├── db/                        # Database Layer (SQLite + PostgreSQL + Local Persistence)
 │   │   ├── schema.sql             # PostgreSQL production DDL (11 tables, 7 enums, 14 indexes)
 │   │   ├── seed.sql               # Pure SQL seed script for PostgreSQL insertion
+│   │   ├── sqliteClient.js        # Active SQLite database client (better-sqlite3)
+│   │   ├── seedData.js            # SQLite seed datasets and initialization
 │   │   ├── postgresClient.js      # PostgreSQL client adapter with pg.Pool & connection checks
 │   │   ├── db.js                  # Universal persistence layer (PostgreSQL query & fallback)
 │   │   ├── initDb.js              # Database creation & initialization script (npm run db:init)
@@ -311,8 +291,8 @@ HMS/
 │   │   └── hms_db.json            # Persistent local JSON database storage
 │   │
 │   └── data/
+│       ├── hms.db                 # Active on-disk SQLite database
 │       └── inMemoryDb.js          # Relational seed data definitions and fallback store
->>>>>>> PPR
 │
 └── src/                           # React 19 Frontend Application
     ├── main.jsx                   # Application bootstrapping
@@ -481,7 +461,6 @@ This automated runner:
    npm install
    ```
 
-<<<<<<< HEAD
 3. **Start the Full-Stack Application (Frontend + Express API)**:
    Run both the Express backend server and the Vite frontend simultaneously with a single command:
    ```bash
@@ -518,7 +497,6 @@ If you prefer running services in separate terminal windows:
   ```bash
   npm run server
   ```
-=======
 3. **Initialize the Database**:
    ```bash
    npm run db:init
@@ -531,7 +509,6 @@ If you prefer running services in separate terminal windows:
    # OR
    npm start
    ```
->>>>>>> PPR
 
 5. **Access the application**:
    * **Frontend Web Application**: [http://localhost:5173](http://localhost:5173)
@@ -573,12 +550,9 @@ If you prefer running services in separate terminal windows:
 | `npm run dev` | `vite` | Starts Vite local development server with Hot Module Replacement (HMR) on port 5173 |
 | `npm run server:dev` | `node --watch server/index.js` | Starts Express server with native file watching and auto-reload on port 5000 |
 | `npm run server` | `node server/index.js` | Starts Express REST API backend server in production mode on port 5000 |
-<<<<<<< HEAD
-=======
 | `npm run db:init` | `node server/db/initDb.js` | Creates `hms_db` in PostgreSQL, executes `schema.sql`, and seeds initial data |
 | `npm run db:seed` | `node server/db/seed.js` | Re-seeds PostgreSQL and resets local database storage |
 | `npm run db:reset` | `node server/db/resetDb.js` | Drops all tables and re-seeds clean hospital records |
->>>>>>> PPR
 | `npm run build` | `vite build` | Compiles and optimizes assets into `dist/` with chunk splitting |
 | `npm run preview` | `vite preview` | Previews the production build locally |
 | `npm run lint` | `oxlint` | Runs fast Oxlint checks across all JavaScript and JSX source files |
@@ -641,11 +615,8 @@ Follow these steps to experience the complete clinical workflow:
 
 * **Accessibility & Contrast**: Built to meet WCAG AA standards with clear typography, visible focus rings, and distinguishable color contrasts for medical alerts.
 * **Tamper-Evident Record Simulation**: All finalized laboratory and radiology reports feature read-only locking, verification timestamps, and simulated SHA-256 digital fingerprint seals.
-<<<<<<< HEAD
 * **Architecture Design Compliance**: Cleanly decoupled full-stack architecture featuring a modular Express.js REST API with zero-config in-memory mock repository, complete PostgreSQL DDL schemas (`schema.sql`), and a reactive React 19 / Tailwind CSS v4 frontend.
-=======
 * **Enterprise Full-Stack Architecture**: Cleanly decoupled full-stack design featuring a modular Express.js REST API, PostgreSQL production DDL schemas (`schema.sql`), automated migrations (`npm run db:init`), persistent local relational caching, and a reactive React 19 / Tailwind CSS v4 frontend.
->>>>>>> PPR
 
 ---
 

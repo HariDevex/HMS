@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { getDbStatus } from './db/postgresClient.js';
+import { getDbStatus } from './db/sqliteClient.js';
 
 // Import Route Handlers
 import authRoutes from './routes/authRoutes.js';
@@ -32,8 +32,8 @@ app.use((req, res, next) => {
 });
 
 // Health & System Status Endpoint
-app.get('/api/health', async (req, res) => {
-  const dbStatus = await getDbStatus();
+app.get('/api/health', (req, res) => {
+  const dbStatus = getDbStatus();
   res.json({
     status: 'healthy',
     system: 'Hospital Management System (HMS) — Express Backend',
@@ -59,8 +59,8 @@ app.get('/api/health', async (req, res) => {
 app.get('/api', (req, res) => {
   res.json({
     name: 'HMS Clinical & Administrative REST API',
-    version: '1.0.0',
-    documentation: 'See server/README.md and server/db/schema.sql for PostgreSQL schema',
+    version: '2.0.0',
+    documentation: 'See server/README.md and server/db/schema.sql for schema details',
     health: '/api/health',
   });
 });
@@ -98,12 +98,12 @@ app.use((err, req, res, _next) => {
 
 // Start Server
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, async () => {
+  app.listen(PORT, () => {
+    const dbStatus = getDbStatus();
     console.log('====================================================');
     console.log(`🏥 HMS Express Backend running on http://localhost:${PORT}`);
     console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-    const status = await getDbStatus();
-    console.log(`🗄️  Database engine: ${status.engine} (${status.status})`);
+    console.log(`🗄️  Database: ${dbStatus.engine} @ ${dbStatus.path}`);
     console.log('====================================================');
   });
 }

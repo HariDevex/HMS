@@ -1,4 +1,4 @@
-import { db } from '../db/db.js';
+import { db } from '../db/sqliteClient.js';
 
 export const getPrescriptions = (req, res) => {
   const { patientId, status } = req.query;

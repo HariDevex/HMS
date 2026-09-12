@@ -7,8 +7,8 @@ import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
 import Field, { Input, Select } from '../../components/ui/Field';
+import RupeeIcon from '../../components/ui/RupeeIcon';
 import {
-  DollarSign,
   ReceiptText,
   CreditCard,
   Printer,
@@ -80,12 +80,12 @@ export default function BillingDashboard() {
       key: 'subtotal',
       label: 'Total Billed',
       sortable: true,
-      render: (val) => <span className="font-mono font-bold text-slate-900">${val.toFixed(2)}</span>,
+      render: (val) => <span className="font-mono font-bold text-slate-900">₹{val.toFixed(2)}</span>,
     },
     {
       key: 'insuranceCovered',
       label: 'Insurance Paid',
-      render: (val) => <span className="font-mono text-emerald-700 font-semibold">${val.toFixed(2)}</span>,
+      render: (val) => <span className="font-mono text-emerald-700 font-semibold">₹{val.toFixed(2)}</span>,
     },
     {
       key: 'balanceDue',
@@ -93,7 +93,7 @@ export default function BillingDashboard() {
       sortable: true,
       render: (val) => (
         <span className={`font-mono font-bold ${val > 0 ? 'text-error' : 'text-slate-400'}`}>
-          ${val.toFixed(2)}
+          ₹{val.toFixed(2)}
         </span>
       ),
     },
@@ -175,16 +175,16 @@ export default function BillingDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard
           title="Total Gross Billed"
-          value={`$${totalBilled.toLocaleString()}`}
+          value={`₹${totalBilled.toLocaleString()}`}
           subtitle="All encounters"
           trend="+8.2% vs last month"
           trendType="up"
-          icon={DollarSign}
+          icon={RupeeIcon}
           iconBg="bg-blue-50 text-primary"
         />
         <StatCard
           title="Collected Revenue"
-          value={`$${totalPaid.toLocaleString()}`}
+          value={`₹${totalPaid.toLocaleString()}`}
           subtitle="Insurance & copays settled"
           trend="86.5% collection rate"
           trendType="up"
@@ -193,7 +193,7 @@ export default function BillingDashboard() {
         />
         <StatCard
           title="Outstanding Patient Balance"
-          value={`$${totalBalance.toLocaleString()}`}
+          value={`₹${totalBalance.toLocaleString()}`}
           subtitle="Pending settlement"
           trend="3 accounts active"
           trendType="neutral"
@@ -261,15 +261,15 @@ export default function BillingDashboard() {
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex justify-between items-center text-xs">
               <div>
                 <span className="text-slate-400 block uppercase font-bold text-[10px]">Total Patient Responsibility</span>
-                <span className="font-bold text-slate-900 text-base">${paymentModalInvoice.patientResponsibility.toFixed(2)}</span>
+                <span className="font-bold text-slate-900 text-base">₹{paymentModalInvoice.patientResponsibility.toFixed(2)}</span>
               </div>
               <div className="text-right">
                 <span className="text-slate-400 block uppercase font-bold text-[10px]">Current Balance Due</span>
-                <span className="font-bold text-error text-base font-mono">${paymentModalInvoice.balanceDue.toFixed(2)}</span>
+                <span className="font-bold text-error text-base font-mono">₹{paymentModalInvoice.balanceDue.toFixed(2)}</span>
               </div>
             </div>
 
-            <Field label="Payment Amount ($)" required>
+            <Field label="Payment Amount (₹)" required>
               <Input
                 type="number"
                 step="0.01"
@@ -352,8 +352,8 @@ export default function BillingDashboard() {
                       <tr key={idx}>
                         <td className="p-2 font-medium">{item.description}</td>
                         <td className="p-2">{item.quantity}</td>
-                        <td className="p-2 font-mono">${item.unitPrice.toFixed(2)}</td>
-                        <td className="p-2 text-right font-mono font-bold">${item.total.toFixed(2)}</td>
+                        <td className="p-2 font-mono">₹{item.unitPrice.toFixed(2)}</td>
+                        <td className="p-2 text-right font-mono font-bold">₹{item.total.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -366,23 +366,23 @@ export default function BillingDashboard() {
               <div className="w-64 space-y-1.5 text-xs">
                 <div className="flex justify-between text-slate-600">
                   <span>Subtotal:</span>
-                  <span className="font-mono">${selectedInvoice.subtotal.toFixed(2)}</span>
+                  <span className="font-mono">₹{selectedInvoice.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-emerald-700">
                   <span>Insurance Adjustment:</span>
-                  <span className="font-mono">-${selectedInvoice.insuranceCovered.toFixed(2)}</span>
+                  <span className="font-mono">-₹{selectedInvoice.insuranceCovered.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-slate-900 pt-1 border-t border-slate-200">
                   <span>Patient Responsibility:</span>
-                  <span className="font-mono">${selectedInvoice.patientResponsibility.toFixed(2)}</span>
+                  <span className="font-mono">₹{selectedInvoice.patientResponsibility.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-slate-600">
                   <span>Payments Received:</span>
-                  <span className="font-mono">-${selectedInvoice.paidAmount.toFixed(2)}</span>
+                  <span className="font-mono">-₹{selectedInvoice.paidAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-black text-sm text-error pt-1 border-t border-slate-200">
                   <span>Balance Due:</span>
-                  <span className="font-mono">${selectedInvoice.balanceDue.toFixed(2)}</span>
+                  <span className="font-mono">₹{selectedInvoice.balanceDue.toFixed(2)}</span>
                 </div>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import { db } from '../db/db.js';
+import { db } from '../db/sqliteClient.js';
 
 export const getInvoices = (req, res) => {
   const { status, patientId } = req.query;
@@ -12,20 +12,15 @@ export const getInvoices = (req, res) => {
     invoices = invoices.filter((inv) => inv.patientId === patientId);
   }
 
-  const totalBilled = invoices.reduce((sum, inv) => sum + (inv.totalAmount || 0), 0);
-  const totalCollected = invoices.reduce((sum, inv) => sum + (inv.paidAmount || 0), 0);
-  const pendingAmount = invoices.reduce(
-    (sum, inv) => (inv.status === 'Pending' || inv.status === 'Partially Paid' ? sum + (inv.patientPayable - inv.paidAmount) : sum),
-    0
-  );
+  const summary = db.getInvoiceSummary();
 
   return res.json({
     success: true,
     count: invoices.length,
     summary: {
-      totalBilled,
-      totalCollected,
-      pendingAmount,
+      totalBilled: summary.totalBilled,
+      totalCollected: summary.totalCollected,
+      pendingAmount: summary.pendingAmount,
     },
     invoices,
   });
@@ -62,7 +57,7 @@ export const recordPayment = (req, res) => {
 
   db.auditLogs.create({
     action: 'Payment Processed',
-    details: `Processed $${amount} for invoice ${invoice.invoiceNumber} via ${paymentMethod || 'Card'}`,
+    details: `Processed ₹${amount} for invoice ${invoice.invoiceNumber} via ${paymentMethod || 'Card'}`,
     status: 'Success',
     patientName: invoice.patientName,
   });

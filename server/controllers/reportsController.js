@@ -1,4 +1,4 @@
-import { db } from '../db/db.js';
+import { db } from '../db/sqliteClient.js';
 
 export const getAuditLogs = (req, res) => {
   const { status, action } = req.query;
@@ -30,28 +30,12 @@ export const createAuditLog = (req, res) => {
 };
 
 export const getReportsSummary = (req, res) => {
-  const patientsCount = db.patients.find().length;
-  const appointmentsCount = db.appointments.find().length;
-  const totalLabs = db.labOrders.find().length;
-  const radOrdersCount = db.radiologyOrders.find().length;
-  const beds = db.beds.find();
-  const occupiedBeds = beds.filter((b) => b.status === 'Occupied').length;
-  const bedOccupancyRate = beds.length > 0 ? Math.round((occupiedBeds / beds.length) * 100) : 0;
-
-  const invoices = db.invoices.find();
-  const totalRevenue = invoices.reduce((sum, i) => sum + (i.paidAmount || 0), 0);
+  const data = db.getReportsSummary();
 
   return res.json({
     success: true,
     data: {
-      totalPatients: patientsCount,
-      totalAppointments: appointmentsCount,
-      totalLabs,
-      pendingLabs: db.labOrders.find((l) => l.status !== 'Verified').length,
-      verifiedLabs: db.labOrders.find((l) => l.status === 'Verified').length,
-      totalScans: radOrdersCount,
-      bedOccupancyRate: `${bedOccupancyRate}%`,
-      totalRevenue: `$${totalRevenue.toLocaleString()}`,
+      ...data,
       departmentOccupancy: [
         { name: 'Cardiology', occupancy: 85 },
         { name: 'ICU', occupancy: 92 },

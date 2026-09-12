@@ -1177,7 +1177,7 @@ export const HOSPITAL_METRICS = {
   availableBeds: 24,
   totalBeds: 84,
   occupancyRate: '71.4%',
-  todayRevenue: '$42,850',
-  monthRevenue: '$1,280,400',
+  todayRevenue: '₹42,850',
+  monthRevenue: '₹12,80,400',
   criticalAlertsCount: 3,
 };
