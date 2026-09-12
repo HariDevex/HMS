@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { getDbStatus } from './db/sqliteClient.js';
 
 // Import Route Handlers
 import authRoutes from './routes/authRoutes.js';
@@ -31,10 +32,11 @@ app.use((req, res, next) => {
 
 // Health & System Status Endpoint
 app.get('/api/health', (req, res) => {
+  const dbStatus = getDbStatus();
   res.json({
     status: 'healthy',
     system: 'Hospital Management System (HMS) — Express Backend',
-    database: 'In-Memory Store (PostgreSQL-Ready Schema)',
+    database: dbStatus,
     timestamp: new Date().toISOString(),
     endpoints: {
       auth: '/api/auth',
@@ -56,8 +58,8 @@ app.get('/api/health', (req, res) => {
 app.get('/api', (req, res) => {
   res.json({
     name: 'HMS Clinical & Administrative REST API',
-    version: '1.0.0',
-    documentation: 'See server/README.md and server/db/schema.sql for PostgreSQL schema',
+    version: '2.0.0',
+    documentation: 'See server/README.md and server/db/schema.sql for schema details',
     health: '/api/health',
   });
 });
@@ -96,10 +98,11 @@ app.use((err, req, res, _next) => {
 // Start Server
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
+    const dbStatus = getDbStatus();
     console.log('====================================================');
     console.log(`🏥 HMS Express Backend running on http://localhost:${PORT}`);
     console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-    console.log('🗄️  Database mode: In-Memory (PostgreSQL Schema Compatible)');
+    console.log(`🗄️  Database: ${dbStatus.engine} @ ${dbStatus.path}`);
     console.log('====================================================');
   });
 }

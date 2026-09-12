@@ -1,21 +1,7 @@
-import { db } from '../data/inMemoryDb.js';
+import { db } from '../db/sqliteClient.js';
 
 export const getWards = (req, res) => {
-  const wards = db.wards.find();
-  const beds = db.beds.find();
-
-  const wardsWithStats = wards.map((w) => {
-    const wardBeds = beds.filter((b) => b.wardId === w.id);
-    const occupied = wardBeds.filter((b) => b.status === 'Occupied').length;
-    const available = wardBeds.filter((b) => b.status === 'Available').length;
-    return {
-      ...w,
-      occupiedBeds: occupied,
-      availableBeds: available,
-      occupancyRate: wardBeds.length > 0 ? Math.round((occupied / wardBeds.length) * 100) : 0,
-    };
-  });
-
+  const wardsWithStats = db.getWardStats();
   return res.json({ success: true, count: wardsWithStats.length, wards: wardsWithStats });
 };
 

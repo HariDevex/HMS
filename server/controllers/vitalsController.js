@@ -1,4 +1,4 @@
-import { db } from '../data/inMemoryDb.js';
+import { db } from '../db/sqliteClient.js';
 
 export const getPatientVitals = (req, res) => {
   const { patientId } = req.params;
@@ -8,7 +8,8 @@ export const getPatientVitals = (req, res) => {
     return res.status(404).json({ success: false, message: `Patient ${patientId} not found` });
   }
 
-  // Simulated trend history for patient
+  const latestVitals = db.vitals.findByPatientId(patientId)[0] || null;
+
   const vitalsTrend = [
     { time: '08:00', systolic: 148, diastolic: 92, hr: 90, spo2: 95 },
     { time: '12:00', systolic: 142, diastolic: 88, hr: 84, spo2: 97 },
@@ -17,7 +18,7 @@ export const getPatientVitals = (req, res) => {
     { time: '08:00 (Today)', systolic: 128, diastolic: 80, hr: 74, spo2: 99 },
   ];
 
-  return res.json({ success: true, patientId, vitals: patient.vitals || null, vitalsTrend });
+  return res.json({ success: true, patientId, vitals: latestVitals, vitalsTrend });
 };
 
 export const recordVitals = (req, res) => {
@@ -29,7 +30,6 @@ export const recordVitals = (req, res) => {
     return res.status(404).json({ success: false, message: `Patient ${patientId} not found` });
   }
 
-  // Compute BMI if weight and height provided
   let bmi = 24.2;
   const wNum = parseFloat(weight);
   const hNum = parseFloat(height);
@@ -38,7 +38,10 @@ export const recordVitals = (req, res) => {
     bmi = Number((wNum / (heightM * heightM)).toFixed(1));
   }
 
-  const newVitalsRecord = {
+  const newVitalsRecord = db.vitals.create({
+    id: `VIT-${Date.now()}`,
+    patientId,
+    recordedBy: req.body.recordedBy || 'USR-003',
     recordedAt: new Date().toISOString().replace('T', ' ').slice(0, 16),
     bp: bp || `${systolic || 120}/${diastolic || 80}`,
     systolic: Number(systolic || 120),
@@ -53,9 +56,7 @@ export const recordVitals = (req, res) => {
     height: height || '175 cm',
     bmi,
     notes: notes || '',
-  };
-
-  db.patients.update(patientId, { vitals: newVitalsRecord });
+  });
 
   db.auditLogs.create({
     action: 'Vitals Recorded',

@@ -1,4 +1,4 @@
-import { db } from '../data/inMemoryDb.js';
+import { db } from '../db/sqliteClient.js';
 
 export const getPatients = (req, res) => {
   const { search, department, status } = req.query;
