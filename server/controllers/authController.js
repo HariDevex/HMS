@@ -1,4 +1,4 @@
-import { db } from '../data/inMemoryDb.js';
+import { db } from '../db/db.js';
 
 export const login = (req, res) => {
   const { email, role } = req.body;

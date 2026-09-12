@@ -1,4 +1,4 @@
-import { db } from '../data/inMemoryDb.js';
+import { db } from '../db/db.js';
 
 export const getAppointments = (req, res) => {
   const { date, doctorId, patientId, status } = req.query;
