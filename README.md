@@ -7,9 +7,11 @@
 [![Lucide Icons](https://img.shields.io/badge/Lucide_React-1.38-F56565?style=flat-square)](https://lucide.dev/)
 [![Oxlint](https://img.shields.io/badge/Oxlint-1.79-brightgreen?style=flat-square)](https://oxc.rs/)
 
-A comprehensive, clinical-grade **Hospital Management System (HMS) Frontend User Interface** engineered for multi-department healthcare operations, outpatient consultations, inpatient management, emergency departments, diagnostic laboratories, medical imaging suites, and patient portals.
+A multi-department **Hospital Management System** with a role-specific workspace for each of 7 hospital personas: admin, doctor, nurse, laboratory, radiology, reception, and patient. Built as a full-stack **React 19 + Express 5** application covering outpatient consultations, inpatient management, diagnostic laboratories, medical imaging, billing, and a patient portal.
 
-Built with **React 19**, **Vite 8**, **Tailwind CSS v4** (`@tailwindcss/vite`), and **Recharts**, featuring interactive medical workflows, realistic clinical mock stores, evidence-based diagnostic assistants, and an on-site popup PDF reporting engine.
+It ships with interactive clinical workflows, realistic mock stores, evidence-based diagnostic assistants, and an on-site popup PDF reporting engine.
+
+> **Status:** portfolio / demo build. Login is simulated (email or role, no password) and uses sample data. See [Roadmap](#roadmap) for production hardening.
 
 ---
 
@@ -33,40 +35,34 @@ Built with **React 19**, **Vite 8**, **Tailwind CSS v4** (`@tailwindcss/vite`), 
 1. [⚡ Instant Launch (Single Command)](#-instant-full-stack-launch-single-command)
 2. [Key Highlights](#-key-highlights)
 3. [Role-Based Access Control (RBAC) & Personas](#-role-based-architecture--personas)
-4. [Dual-Engine Database Architecture & PostgreSQL](#-database-architecture--postgresql-setup)
-5. [Core Clinical & Operational Modules](#-core-clinical--operational-modules)
-   - [Central Patient Profile & Clinical Action Hub](#1-central-patient-profile--clinical-action-hub)
-   - [On-Site Popup PDF Viewer & Report Attachment Engine](#2-on-site-popup-pdf-viewer--report-attachment-engine)
-   - [Clinical Pathology & Laboratory Workstation](#3-clinical-pathology--laboratory-workstation)
-   - [Diagnostic Radiology & Medical Imaging (PACS/DICOM)](#4-diagnostic-radiology--medical-imaging-pacsdicom)
-   - [Physician Workspace & Consultation](#5-physician-workspace--consultation)
-   - [Nursing Station & Medication Administration Record (MAR)](#6-nursing-station--medication-administration-record-mar)
-   - [Reception, Triage & Queue Management](#7-reception-triage--queue-management)
-   - [Inpatient Ward & Bed Grid System](#8-inpatient-ward--bed-grid-system)
-   - [Billing, Insurance & Financial Invoicing](#9-billing-insurance--financial-invoicing)
-   - [Executive Reports & Operational Analytics](#10-executive-reports--operational-analytics)
-   - [Mobile-First Patient Portal](#11-mobile-first-patient-portal)
-6. [Technology Stack](#-technology-stack)
-7. [Directory Structure](#-directory-structure)
-8. [Getting Started & Installation](#-getting-started--installation)
-9. [Default Test Credentials](#-default-test-credentials)
-10. [Available Scripts](#-available-scripts)
-11. [Interactive Feature Walkthrough Guide](#-interactive-feature-walkthrough-guide)
-12. [Clinical Verification & Quality Standards](#-clinical-verification--quality-standards)
-13. [Summary of Documentation & Configuration Changes](#-summary-of-documentation--configuration-changes)
+4. [Core Clinical & Operational Modules](#-core-clinical--operational-modules)
+5. [Technology Stack](#-technology-stack)
+6. [Directory Structure](#-directory-structure)
+7. [Database Architecture & PostgreSQL](#-database-architecture--postgresql-setup)
+8. [Design System & Ergonomics](#-design-system--ergonomics)
+9. [Getting Started & Installation](#-getting-started--installation)
+10. [Default Test Credentials](#-default-test-credentials)
+11. [Available Scripts](#️-available-scripts)
+12. [Interactive Feature Walkthrough Guide](#-interactive-feature-walkthrough-guide)
+13. [Clinical Verification & Quality Standards](#️-clinical-verification--quality-standards)
+14. [Roadmap](#-roadmap)
+15. [Author](#-author)
 
 ---
 
 ## 🌟 Key Highlights
 
+* **Role-based workspaces** for all 7 personas, each with tailored navigation, dashboards, and permissions.
+* **Strict permissions**: doctors prescribe and order tests, nurses administer medication, labs and radiology verify their own results, and patients are fenced to `/portal/*`. Enforced by route guards (`RequireRole`) in the UI and `requireRole` middleware in the API.
 * **100% UI-First Architecture**: Fully interactive frontend with dynamic state management via React Context (`AppContext.jsx`), eliminating backend setup while simulating production hospital behavior.
 * **Instant Role Switcher**: Seamlessly switch between **7 enterprise healthcare roles** directly from the top header navigation bar without logging out.
+* **Patient profile hub**: Demographics, allergy badges, timeline, vitals charts (Recharts), SOAP consultations, medications and MAR, plus dedicated lab and radiology tabs.
 * **On-Site Popup PDF Viewer**: Built-in, high-fidelity PDF modal reader featuring zoom ($70\% - 150\%$), 90° clockwise rotation, page navigation, certified digital signatures, SHA-256 tamper-evident seals, and hospital printing triggers.
 * **Clinical Diagnostic & Scan Suggestions Engine**: Automatic protocol suggestions (e.g., Acute Coronary Syndrome, Sepsis, Stroke) with 1-click test and scan ordering.
-* **Interactive DICOM Viewer Simulation**: Radiograph viewing workstation equipped with window presets (Lung, Bone, Soft Tissue), zoom controls, contrast inversion, crosshairs, and multi-slice navigation.
+* **Interactive DICOM Viewer Simulation**: Radiograph viewing workstation with window presets (Lung, Bone, Soft Tissue), zoom controls, contrast inversion, crosshairs, and multi-slice navigation.
 * **Medication Safety & E-Prescribing**: Automated drug allergy cross-checking, RxNorm contraindication indicators, and official ℞ prescription slips.
-* **Route-Level Code Splitting**: React `lazy()` and `Suspense` with clinical loading skeletons, ensuring sub-second bundle performance.
-* **Zero Linter & Build Errors**: Strictly linted with `oxlint` (0 errors, 0 warnings) and compiled with Vite.
+* **Route-level code splitting**: React `lazy()`, `Suspense`, and clinical loading skeletons for fast bundle performance.
+* **Zero Linter & Build Errors**: Strictly linted with `oxlint` and compiled with Vite.
 
 ---
 
@@ -120,8 +116,6 @@ The central command center for patient care (`/patients/:id`):
   * `Ward & Beds`: Admission history, current room and bed allocation, and bed transfer controls.
   * `Billing`: Inpatient service invoices, payments ledger, and discharge payment receipts.
 
----
-
 ### 2. On-Site Popup PDF Viewer & Report Attachment Engine
 A built-in clinical document reader (`PdfViewerModal.jsx`) that displays pathology and radiology reports directly in an on-site popup:
 * **Interactive Document Toolbar**:
@@ -135,8 +129,6 @@ A built-in clinical document reader (`PdfViewerModal.jsx`) that displays patholo
   * **Technicians/Radiologists** can attach external PDF files or click **"⚡ Auto-Generate Certified PDF"** while entering dependent values.
   * **Clinicians/Doctors** can preview the structured report and tap the **`[📄 View PDF]`** button or chip to launch the on-site popup preview instantly.
 
----
-
 ### 3. Clinical Pathology & Laboratory Workstation
 The laboratory workstation (`/laboratory`) manages specimens from order to verification:
 * **Queue Filter Tabs**: Filter by lifecycle stage (`All`, `Ordered`, `Sample Pending`, `Processing`, `Result Ready`, `Verified`, `Published`).
@@ -145,8 +137,6 @@ The laboratory workstation (`/laboratory`) manages specimens from order to verif
 * **Technologist Log & PDF Attachment**: Record instrument calibration logs and attach official certified PDFs.
 * **STAT Panic Value Banner**: High-priority alert banner for critical biomarker findings (e.g., elevated hs-cTnI Troponin).
 * **Official Verification**: Read-only lock upon verification with tamper-evident digital certification.
-
----
 
 ### 4. Diagnostic Radiology & Medical Imaging (PACS/DICOM)
 The diagnostic imaging center (`/radiology`):
@@ -158,8 +148,6 @@ The diagnostic imaging center (`/radiology`):
   * Toggleable diagnostic crosshair overlay.
   * Multi-slice pagination simulator (`Slice 1 of 12`).
 * **Structured Reporting Interface**: Technique notes, anatomical findings, prioritized clinical impressions, and signed PDF report export.
-
----
 
 ### 5. Physician Workspace & Consultation
 Designed for outpatient and inpatient rounds (`/doctor` and `/consultation`):
@@ -174,8 +162,6 @@ Designed for outpatient and inpatient rounds (`/doctor` and `/consultation`):
 * **E-Prescribing (℞)**: Drug search with dosage, route, frequency, duration, indication, and automatic patient allergy contraindication warnings.
 * **Official Rx Slip Modal**: Formatted printable prescription document with DEA/NPI identifiers and physician signature line.
 
----
-
 ### 6. Nursing Station & Medication Administration Record (MAR)
 Comprehensive inpatient nursing station (`/nurse` and `/nurse-workstation`):
 * **Assigned Inpatients Overview**: Acuity badges, current bed, diet orders, and resuscitation status (DNR/Full Code).
@@ -186,15 +172,11 @@ Comprehensive inpatient nursing station (`/nurse` and `/nurse-workstation`):
   * One-click "Confirm Administration" workflow with nurse authentication stamps.
 * **Nursing Care Notes Drawer**: Shift handover documentation, clinical observations, and vital sign change logs.
 
----
-
 ### 7. Reception, Triage & Queue Management
 Front-desk reception operations (`/reception`, `/reception/register`, `/reception/queue`):
 * **Patient Registration Modal**: Full demographic collection, contact details, emergency contacts, primary insurance provider, policy numbers, and copay requirements.
 * **Queue Token Management**: Token assignment, estimated waiting times, consultation room routing, and "Call Next Patient" audio-visual alerts.
 * **Appointment Scheduler**: Calendar and list views showing doctor availability, appointment slots, and booking statuses (`Confirmed`, `In Consultation`, `Completed`, `Cancelled`).
-
----
 
 ### 8. Inpatient Ward & Bed Grid System
 Hospital bed occupancy and ward management (`/wards`):
@@ -207,16 +189,12 @@ Hospital bed occupancy and ward management (`/wards`):
   * ⚫ **Maintenance**: Bed equipment inspection.
 * **Admission & Transfer Modals**: One-click bed allocation, inter-ward transfers, and discharge clearing.
 
----
-
 ### 9. Billing, Insurance & Financial Invoicing
 Hospital billing and cashier workstation (`/billing`):
 * **Financial Metric Cards**: Total Billed, Total Collected, Outstanding Arrears, and Pending Insurance Claims.
 * **Invoice Directory**: Filterable by status (`Paid`, `Pending`, `Partially Paid`, `Overdue`).
 * **Itemized Invoice Modal**: Detailed billing statement breaking down room rates, surgical fees, pharmacy orders, nursing fees, laboratory tests, and insurance coverage deductibles.
 * **Payment Entry Modal**: Process payments via Cash, Credit/Debit Card, Wire Transfer, or Direct Insurance Claim.
-
----
 
 ### 10. Executive Reports & Operational Analytics
 Hospital leadership insights (`/reports`):
@@ -225,8 +203,6 @@ Hospital leadership insights (`/reports`):
 * **Departmental Volume**: Outpatient vs. Emergency vs. Inpatient consultation volume.
 * **Revenue Breakdown**: Pharmacy, Diagnostics, Surgical, and Room revenue streams.
 * **Export Controls**: PDF, CSV, and printable audit export triggers.
-
----
 
 ### 11. Mobile-First Patient Portal
 Accessible patient experience (`/portal`, `/portal/*`):
@@ -244,13 +220,13 @@ Accessible patient experience (`/portal`, `/portal/*`):
 | :--- | :--- | :--- |
 | **Frontend Framework** | React 19 (`v19.2.8`) | Modern React with hooks, lazy loading, and suspense |
 | **Build Tooling** | Vite 8 (`v8.2.2`) | Ultra-fast HMR and optimized production asset bundling |
-| **Styling Engine** | Tailwind CSS v4 (`v4.3.3`) | Tailwind v4 with `@tailwindcss/vite` plugin and modern CSS tokens |
-| **Routing** | React Router DOM v7 (`v7.18.3`) | Declarative client-side routing, redirects, and dynamic params |
+| **Styling Engine** | Tailwind CSS v4 (`v4.3.3`) | Tailwind v4 with the `@tailwindcss/vite` plugin and modern CSS tokens |
+| **Routing** | React Router DOM v7 (`v7.18.3`) | Declarative client-side routing, redirects, guards, and dynamic params |
 | **Charts & Graphs** | Recharts (`v3.10.1`) | Responsive SVG clinical vitals charts and analytics bars/lines |
 | **Iconography** | Lucide React (`v1.38.0`) | Clean, accessible healthcare and operational vector icons |
 | **Backend Framework** | Express 5 (`v5.2.1`) | High-performance modular REST API backend with request logging & proxy |
-| **Database Architecture** | PostgreSQL 14+ Ready | Production DDL schema, dual-engine persistence (PostgreSQL + local JSON store) |
-| **Process Orchestration** | Concurrently (`v10.0.5`) | Multi-process runner launching Express backend (`:5000`) and Vite (`:5173`) |
+| **Database** | PostgreSQL (`pg`) + local fallback | Production DDL schema with a zero-setup SQLite/JSON local store for development |
+| **Process Orchestration** | Concurrently (`v10.0.5`) | Multi-process runner launching Express (`:5000`) and Vite (`:5173`) |
 | **Linter & Quality** | Oxlint (`v1.79.0`) | High-performance Rust-based linter with zero errors across the codebase |
 
 ---
@@ -266,11 +242,11 @@ HMS/
 ├── .env                           # Active environment variables (PG credentials, ports)
 ├── .env.example                   # Environment configuration template
 ├── todo.txt                       # Development milestone tracking
-├── README.md                      # Comprehensive project documentation
+├── README.md                      # Project documentation
 │
 ├── server/                        # Express.js REST API Backend
 │   ├── index.js                   # Server entry point (port 5000, CORS, logging, health check)
-│   ├── README.md                  # Comprehensive Backend & REST API documentation
+│   ├── README.md                  # Backend & REST API documentation
 │   │
 │   ├── controllers/               # Request handling & clinical business logic
 │   │   ├── appointmentController.js # Scheduling, status updates, token queues
@@ -285,7 +261,7 @@ HMS/
 │   │   └── wardController.js      # Bed allocation, admissions, inter-ward transfers
 │   │
 │   ├── middleware/                # Security, Authentication & Role-Based Access Control
-│   │   ├── auth.js                # JWT Bearer token authentication & req.user injector
+│   │   ├── auth.js                # Bearer token authentication & req.user injector
 │   │   └── requireRole.js         # Endpoint-level role authorization & HTTP 403 guard
 │   │
 │   ├── routes/                    # Modular Express route declarations
@@ -321,7 +297,6 @@ HMS/
     │
     ├── config/                    # Access Control & Governance
     │   └── permissions.js         # Central RBAC rules, route allow-lists, action can() checks
-    │
     │
     ├── components/
     │   ├── layout/
@@ -435,8 +410,10 @@ The application utilizes a custom healthcare-themed design system built directly
 ## 🗄️ Database Architecture & PostgreSQL Setup
 
 The system features an enterprise-grade **Dual-Engine Relational Database Architecture**:
-1. **Live PostgreSQL Engine**: Powered by `pg` connection pool with automatic health checks (`server/db/postgresClient.js`).
+1. **Live PostgreSQL Engine**: Powered by a `pg` connection pool with automatic health checks (`server/db/postgresClient.js`).
 2. **Persistent Local Database (`server/db/hms_db.json`)**: Zero-setup local JSON relational store that persists state changes across restarts, allowing full offline execution even before PostgreSQL is launched.
+
+> **Note:** In this demo build, login is simulated (email or role, no password) and no database files should be committed. Production hardening is tracked in the [Roadmap](#-roadmap).
 
 ### Database Relational Model
 * **11 Core Tables**: `users`, `wards`, `beds`, `patients`, `appointments`, `vitals`, `lab_orders`, `radiology_orders`, `prescriptions`, `invoices`, `audit_logs`
@@ -473,8 +450,6 @@ This automated runner:
 * **Node.js**: `v18.0.0` or higher (Node `v20+` or `v24` recommended)
 * **npm**: `v9.0.0` or higher
 
----
-
 ### ⚡ One Single Command to Run Everything
 
 You do not need to juggle multiple terminals or manually execute database migrations. Simply run:
@@ -487,7 +462,10 @@ cd HMS
 # 2. Install dependencies
 npm install
 
-# 3. Launch Full Stack (Database Initializer + Express API Backend + React Frontend)
+# 3. (Optional) Configure PostgreSQL
+cp .env.example .env
+
+# 4. Launch Full Stack (Database Initializer + Express API Backend + React Frontend)
 npm start
 # OR
 npm run dev:all
@@ -504,12 +482,10 @@ npm run dev:all
 2. **🏥 Express REST API Backend**:
    - Boots on `http://localhost:5000` with native hot-reload (`node --watch`).
    - Serves clinical and operational REST endpoints (`/api/patients`, `/api/labs`, `/api/radiology`, `/api/prescriptions`, `/api/billing`, `/api/wards`, etc.).
-   - Enforces JWT Bearer token authentication and role-based access control.
+   - Enforces token authentication and role-based access control.
 3. **💻 Vite React 19 Frontend**:
    - Launches on `http://localhost:5173` with instant Hot Module Replacement (HMR).
    - Vite reverse proxy seamlessly routes all `/api/*` requests directly to port `5000`.
-
----
 
 ### 🌐 System URLs & Endpoints
 
@@ -524,22 +500,20 @@ npm run dev:all
 
 ## 🔑 Default Test Credentials
 
-Use these pre-configured hospital accounts to log in via the web UI or authenticate API requests:
+Use these pre-configured hospital accounts to log in via the web UI or authenticate API requests. Login is simulated — no password is required.
 
-| Role | Staff / Persona | Email | Password | Accessible Routes |
-| :--- | :--- | :--- | :--- | :--- |
-| **Administrator** | Dr. Katherine Vance | `k.vance@medicore.org` | `Password123!` | `/admin`, `/users`, `/audit-logs`, `/settings`, `/wards`, `/billing`, `/reports` |
-| **Doctor** | Dr. Sarah Jenkins, MD | `s.jenkins@medicore.org` | `Password123!` | `/doctor`, `/consultation`, `/patients`, `/laboratory`, `/radiology`, `/appointments`, `/wards` |
-| **Nurse** | Nurse Emily Rodriguez, RN | `e.rodriguez@medicore.org` | `Password123!` | `/nurse`, `/nurse-workstation`, `/wards`, `/patients`, `/laboratory` |
-| **Laboratory** | Alex Morgan, MLS | `a.morgan@medicore.org` | `Password123!` | `/laboratory`, `/patients`, `/reports` |
-| **Radiology** | Dr. David Miller, MD | `d.miller@medicore.org` | `Password123!` | `/radiology`, `/patients`, `/reports` |
-| **Reception** | Marcus Chen | `m.chen@medicore.org` | `Password123!` | `/reception`, `/reception/register`, `/reception/queue`, `/patients`, `/billing`, `/appointments` |
-| **Patient** | James Wilson | `j.wilson@gmail.com` | `Password123!` | `/portal/*` (Home, Appointments, Records, Prescriptions, Billing) |
+| Role | Staff / Persona | Email | Accessible Routes |
+| :--- | :--- | :--- | :--- |
+| **Administrator** | Dr. Katherine Vance | `k.vance@medicore.org` | `/admin`, `/users`, `/audit-logs`, `/settings`, `/wards`, `/billing`, `/reports` |
+| **Doctor** | Dr. Sarah Jenkins, MD | `s.jenkins@medicore.org` | `/doctor`, `/consultation`, `/patients`, `/laboratory`, `/radiology`, `/appointments`, `/wards` |
+| **Nurse** | Nurse Emily Rodriguez, RN | `e.rodriguez@medicore.org` | `/nurse`, `/nurse-workstation`, `/wards`, `/patients`, `/laboratory` |
+| **Laboratory** | Alex Morgan, MLS | `a.morgan@medicore.org` | `/laboratory`, `/patients`, `/reports` |
+| **Radiology** | Dr. David Miller, MD | `d.miller@medicore.org` | `/radiology`, `/patients`, `/reports` |
+| **Reception** | Marcus Chen | `m.chen@medicore.org` | `/reception`, `/reception/register`, `/reception/queue`, `/patients`, `/billing`, `/appointments` |
+| **Patient** | James Wilson | `j.wilson@gmail.com` | `/portal/*` (Home, Appointments, Records, Prescriptions, Billing) |
 
 > [!TIP]
 > On the web login screen (`/login`), click any **"Quick Demo"** button to authenticate and jump directly into that persona's customized workspace with one click.
-
----
 
 ### Running Individual Services (Optional)
 
@@ -640,27 +614,23 @@ Follow these steps to experience the complete clinical workflow:
 
 * **Accessibility & Contrast**: Built to meet WCAG AA standards with clear typography, visible focus rings, and distinguishable color contrasts for medical alerts.
 * **Tamper-Evident Record Simulation**: All finalized laboratory and radiology reports feature read-only locking, verification timestamps, and simulated SHA-256 digital fingerprint seals.
-* **Enterprise Full-Stack Architecture**: Cleanly decoupled full-stack design featuring a modular Express.js REST API, PostgreSQL production DDL schemas (`schema.sql`), automated migrations (`npm run db:init`), persistent local relational caching, and a reactive React 19 / Tailwind CSS v4 frontend.
+* **Enterprise Full-Stack Architecture**: Cleanly decoupled design featuring a modular Express.js REST API, PostgreSQL production DDL schemas (`schema.sql`), automated migrations (`npm run db:init`), persistent local relational caching, and a reactive React 19 / Tailwind CSS v4 frontend.
+* **Quality Verification**: `npx oxlint` passes with **0 errors, 0 warnings**, and `npm run build` compiles the production bundle cleanly.
 
 ---
 
-## 📝 Summary of Documentation & Configuration Changes
+## 🗺️ Roadmap
 
-1. **`package.json`**:
-   * Configured `"start"` and `"dev:all"` to chain `node server/db/initDb.js` before launching `concurrently`.
-   * Added `"all"` shortcut script (`npm run all`).
-2. **`start.sh`**:
-   * Created executable shell runner (`chmod +x start.sh`) that checks PostgreSQL service status, displays active mode, and invokes `npm start`.
-3. **`server/db/initDb.js`**:
-   * Updated so it validates and preserves existing database records in `hms_db.json` during boot rather than overwriting runtime edits.
-4. **`README.md` & `server/README.md`**:
-   * Added prominent top-level launch callouts for single-command execution (`npm start`).
-   * Added Clinical Authority Matrix and RBAC permissions model reference (`src/config/permissions.js`).
-   * Updated Directory Structures to reflect `start.sh`, `server/middleware/`, and `src/config/permissions.js`.
-   * Added Default Test Credentials table and comprehensive Available Scripts table.
-5. **Quality Verification**:
-   * **`npx oxlint`**: Passed with **0 errors, 0 warnings**.
-   * **`npm run build`**: Production bundle compiled cleanly in **4.82s** with zero errors.
+- [ ] Replace the demo token with signed JWTs and real password hashing (bcrypt)
+- [ ] Remove committed database files; seed from scripts only
+- [ ] Add automated tests (Playwright end-to-end)
+- [ ] Deploy a live demo
+
+---
+
+## Author
+
+Hariharan N — [GitHub](https://github.com/HariDevex) · [Portfolio](https://hari-devx-portfolio.vercel.app)
 
 ---
 
